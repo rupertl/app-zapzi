@@ -1,8 +1,10 @@
 use utf8;
 use strict;
 use warnings;
+
 package App::Zapzi::Database::Schema::Article;
 # VERSION
+# ABSTRACT: zapzi article table
 
 use base 'DBIx::Class::Core';
 

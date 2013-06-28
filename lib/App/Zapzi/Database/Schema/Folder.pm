@@ -1,7 +1,9 @@
 use strict;
 use warnings;
+
 package App::Zapzi::Database::Schema::Folder;
 # VERSION
+# ABSTRACT: zapzi folder table
 
 use base 'DBIx::Class::Core';
 

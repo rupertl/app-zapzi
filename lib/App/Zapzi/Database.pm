@@ -4,6 +4,7 @@ use warnings;
 
 package App::Zapzi::Database;
 # VERSION
+# ABSTRACT: database access for zapzi
 
 use Moo;
 use SQL::Translator;
