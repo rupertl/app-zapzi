@@ -5,6 +5,8 @@ use warnings;
 
 use App::Zapzi;
 # VERSION
+# ABSTRACT: store articles and publish them to read later
+# PODNAME: zapzi
 
 my $app = App::Zapzi->new();
 $app->process_args(@ARGV);
