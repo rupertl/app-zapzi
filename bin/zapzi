@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+use utf8;
+use strict;
+use warnings;
+
+use App::Zapzi;
+# VERSION
+
+my $app = App::Zapzi->new();
+$app->process_args(@ARGV);
+exit $app->run;
