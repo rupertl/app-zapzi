@@ -6,6 +6,8 @@ package App::Zapzi;
 use Getopt::Lucid qw( :all );
 use File::HomeDir;
 use App::Zapzi::Database;
+use App::Zapzi::Folders;
+use App::Zapzi::Articles;
 use Moo;
 
 # VERSION
@@ -14,6 +16,10 @@ use Moo;
 has run => (is => 'rw', default => 0);
 has force => (is => 'rw', default => 0);
 has folder => (is => 'rw', default => 'Inbox');
+
+our $the_app;
+sub BUILD { $the_app = shift; }
+sub get_app { die 'unbuilt' unless $the_app; return $the_app; }
 
 has zapzi_dir => 
 (
@@ -38,7 +44,7 @@ sub process_args
 {
     my $self = shift;
     my @args = @_;
-    
+
     my @specs =
     (
         Switch("init"),
@@ -56,8 +62,9 @@ sub process_args
     $self->folder = $options->get_folder // $self->folder;
     
     $self->init if $options->get_init;
-    print "add...\n" if $options->get_add;
     $self->list if $options->get_list;
+
+    print "add...\n" if $options->get_add;
     print "publish...\n" if $options->get_publish;
 }
 
@@ -90,6 +97,14 @@ sub list
 {
     my $self = shift;
     
-    print "Listing ", $self->folder, "\n";
+    if (! App::Zapzi::Articles::get_folder($self->folder))
+    {
+        printf("Folder '%s' does not exist\n", $self->folder);
+        $self->run = 1;
+        return;
+    }
+    
+    App::Zapzi::Articles::list_articles($self->folder);
 }
+
 1;
