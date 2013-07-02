@@ -1,8 +1,5 @@
 #!perl
-use utf8;
-use strict;
-use warnings FATAL => 'all';
-use Test::More;
+use Test::Most;
 use File::Temp ();
 use Test::DBIx::Class::Schema;
 
