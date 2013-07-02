@@ -27,7 +27,7 @@ sub get_folder
     return $rs;
 }
 
-=method get_folder(name)
+=method add_folder(name)
 
 Adds a new folder called C<name>. Will return false if it exists
 already, otherwise the result of the DB add function.

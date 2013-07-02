@@ -76,6 +76,8 @@ __PACKAGE__->add_unique_constraint("name_unique", ["name"]);
 
 =item * articles (-> Article)
 
+=back
+
 =cut
 
 __PACKAGE__->has_many(articles =>

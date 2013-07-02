@@ -13,13 +13,48 @@ use Moo;
 # VERSION
 # ABSTRACT: store articles and publish them to read later
 
+=attr run
+
+The current state of the application, 0 being OK. Used for exit code
+when the process terminates.
+
+=cut
+
 has run => (is => 'rw', default => 0);
+
+=attr force
+
+Option to force processing of the init command. Default is unset. 
+
+=cut
+
 has force => (is => 'rw', default => 0);
+
+=attr folder
+
+Folder to work on. Default is 'Inbox'
+
+=cut
+
 has folder => (is => 'rw', default => 'Inbox');
+
+=method get_app
+=method BUILD
+
+At construction time, a copy of the application object is stored and
+can be retrieved later via C<get_app>.
+
+=cut
 
 our $the_app;
 sub BUILD { $the_app = shift; }
 sub get_app { die 'unbuilt' unless $the_app; return $the_app; }
+
+=attr zapzi_dir
+
+The folder where Zapzi files are stored.
+
+=cut
 
 has zapzi_dir => 
 (
@@ -30,6 +65,12 @@ has zapzi_dir =>
     }
 );
 
+=attr database
+
+The instance of App:Zapzi::Database used by the application.
+
+=cut
+
 has database =>
 (
     is => 'ro', 
@@ -39,6 +80,14 @@ has database =>
         return App::Zapzi::Database->new(app => $self);
     }
 );
+
+=method process_args(@args)
+
+Read the arguments C<@args> (normally you'd pass in C<@ARGV> and
+process them according to the command line specification for the
+application.
+
+=cut
 
 sub process_args
 {
@@ -68,6 +117,13 @@ sub process_args
     print "publish...\n" if $options->get_publish;
 }
 
+=method init
+
+Creates the database. Will only do so if the database does not exist
+already or if the L<force> attribute is set.
+
+=cut
+
 sub init
 {
     my $self = shift;
@@ -92,6 +148,12 @@ sub init
     print "Created Zapzi directory $dir\n";
     return 1;
 }
+
+=method list
+
+Lists out the articles in L<folder>.
+
+=cut
 
 sub list
 {

@@ -4,19 +4,37 @@ use warnings;
 
 package App::Zapzi::Database;
 # VERSION
-# ABSTRACT: database access for zapzi
+# ABSTRACT: database access for Zapzi
 
 use Moo;
 use SQL::Translator;
 use App::Zapzi::Database::Schema;
 
+=attr app
+
+Link to the App::Zapzi application object.
+
+=cut
+
 has app => (is => 'ro');
+
+=method database_file
+
+The SQLite file where the database is stored.
+
+=cut
 
 sub database_file
 {
     my $self = shift;
     return $self->app->zapzi_dir . "/zapzi.db";
 }
+
+=method dsn
+
+The DSN used to connect to the SQLite database.
+
+=cut
 
 sub dsn
 {
@@ -26,6 +44,12 @@ sub dsn
 
 our $_schema;
 
+=method schema
+
+The DBIx::Class::Schema object for the application.
+
+=cut
+
 sub schema
 {
     my $self = shift;
@@ -34,6 +58,12 @@ sub schema
         on_connect_do => 'PRAGMA foreign_keys = ON'});
     return $_schema;
 }
+
+=method init
+
+Initialise the database to a new state.
+
+=cut
 
 sub init
 {
