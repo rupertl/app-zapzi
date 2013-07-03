@@ -62,9 +62,9 @@ sub list_articles
 
     while (my $article = $rs->next) 
     {
-        printf("%s %4d %s %s\n", $article->folder->name,
-               $article->id, $article->title,
-               $article->article_text->text);
+        printf("%s %4d %s %-45s\n", $article->folder->name,
+               $article->id, $article->created->strftime('%d-%b-%Y'),
+               $article->title);
     }
 }
 

@@ -7,6 +7,7 @@ package App::Zapzi::Database::Schema::Article;
 # ABSTRACT: zapzi article table
 
 use base 'DBIx::Class::Core';
+__PACKAGE__->load_components(qw/InflateColumn::DateTime/);
 
 =head1 SYNOPSIS
 
@@ -39,6 +40,13 @@ __PACKAGE__->table("articles");
   data_type: 'integer'
   is_nullable: 0
 
+=head2 created
+
+  Date/time article was created
+  data_type: 'datetime'
+  default_value: datetime('now','localtime')
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns
@@ -49,6 +57,9 @@ __PACKAGE__->add_columns
     { data_type => "text", default_value => "Unknown", is_nullable => 0 },
     "folder",
     { data_type => "integer", is_nullable => 0 },
+    "created",
+    { data_type => 'datetime', is_nullable => 0,
+      default_value => \"(datetime('now', 'localtime'))" }
 );
 
 =head1 PRIMARY KEY

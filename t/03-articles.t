@@ -48,6 +48,8 @@ sub test_get
     my $first = get_article(1);
     ok( $first, 'Can read Inbox first article' );
     is( $first->id, 1, 'Inbox first article ID is 1' );
+    is( $first->created->delta_days(DateTime->now)->days, 0, 
+        'Date inflated in articles OK' );
     
     my $false_article = get_article(0);
     ok( ! $false_article, 'Can detect articles that do not exist' );

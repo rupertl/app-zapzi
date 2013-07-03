@@ -54,7 +54,7 @@ sub test_schema
     subtest 'Article' => sub 
     {
         ZapziSchemaTest->test($schema, 'Article', 
-                              [ qw(id title folder) ],
+                              [ qw(id title folder created) ],
                               [ qw(folder article_text) ]);
     };
                              
