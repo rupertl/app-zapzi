@@ -99,6 +99,7 @@ sub process_args
         Switch("init"),
         Switch("add"),
         Switch("list"),
+        Switch("list-folders"),
         Switch("publish"),
 
         Param("folder|f"),
@@ -112,6 +113,7 @@ sub process_args
     
     $self->init if $options->get_init;
     $self->list if $options->get_list;
+    $self->list_folders if $options->get_list_folders;
 
     print "add...\n" if $options->get_add;
     print "publish...\n" if $options->get_publish;
@@ -167,6 +169,17 @@ sub list
     }
     
     App::Zapzi::Articles::list_articles($self->folder);
+}
+
+=method list_folders
+
+List a summary of folders in the database.
+
+=cut
+
+sub list_folders
+{
+    App::Zapzi::Folders::list_folders();
 }
 
 1;

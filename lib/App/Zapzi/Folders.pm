@@ -8,7 +8,7 @@ package App::Zapzi::Folders;
 
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(get_folder add_folder delete_folder);
+our @EXPORT_OK = qw(get_folder add_folder delete_folder list_folders);
 
 use App::Zapzi;
 use Carp;
@@ -61,6 +61,24 @@ sub delete_folder
     return 1 unless $folder;
 
     return $folder->delete;
+}
+
+=method list_folders
+
+Print a summary of all folders in the database showing name and count
+of articles.
+
+=cut
+
+sub list_folders
+{
+    my $rs = _folders()->search(undef, 
+                                {prefetch => [qw(articles)]});
+
+    while (my $folder = $rs->next) 
+    {
+        printf("%-10s %3d\n", $folder->name, $folder->articles->count);
+    }
 }
 
 # Convenience function to get the DBIx::Class::ResultSet object for

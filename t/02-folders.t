@@ -1,9 +1,10 @@
 #!perl
 use Test::Most;
 use File::Temp ();
+use Test::Output;
 
 use App::Zapzi;
-use App::Zapzi::Folders qw(get_folder add_folder delete_folder);
+use App::Zapzi::Folders qw(get_folder add_folder delete_folder list_folders);
 
 test_can();
 
@@ -13,6 +14,7 @@ my $app = get_test_app($test_dir);
 test_get();
 test_add();
 test_delete();
+test_list();
 
 done_testing();
 
@@ -67,4 +69,10 @@ sub test_delete
     ok( delete_folder("Foo"), 'Can delete folder'  );
     my $foo = get_folder("Foo");
     ok( ! $foo, 'Deletion works' );
+}
+
+sub test_list
+{
+    stdout_like( sub { list_folders() },
+                 qr/Inbox\s+1/, 'Can list folders' );
 }

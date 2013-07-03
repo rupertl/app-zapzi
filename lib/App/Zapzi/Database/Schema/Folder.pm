@@ -82,6 +82,6 @@ __PACKAGE__->add_unique_constraint("name_unique", ["name"]);
 
 __PACKAGE__->has_many(articles =>
                       'App::Zapzi::Database::Schema::Article',
-                      'id');
+                      'folder');
 
 1;
