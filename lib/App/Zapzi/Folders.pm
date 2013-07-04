@@ -8,10 +8,24 @@ package App::Zapzi::Folders;
 
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(get_folder add_folder delete_folder list_folders);
+our @EXPORT_OK = qw(is_system_folder get_folder add_folder delete_folder 
+                    list_folders);
 
 use App::Zapzi;
 use Carp;
+
+=method is_system_folder(name)
+
+Returns true if the folder is used by the system eg Inbox.
+
+=cut
+
+sub is_system_folder
+{
+    my ($name) = @_;
+
+    return $name eq 'Inbox' || $name eq 'Archive';
+}
 
 =method get_folder(name)
 

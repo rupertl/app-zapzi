@@ -29,16 +29,10 @@ sub test_init
     my $test_dir = shift;
     my $dir = "$test_dir/zapzi";
 
-    my $app = App::Zapzi->new(zapzi_dir => '');
-    ok( ! $app->init, 'try to init with a non directory' );
+    my $app = App::Zapzi->new(zapzi_dir => $dir);
+    $app->init;
+    ok( ! $app->run, 'init' );
 
-    $app = App::Zapzi->new(zapzi_dir => $dir);
-    ok( $app->init, 'init' );
-
-    ok( ! $app->init, 'init cannot be run twice' );
-
-    $app->force = 1;
-    ok( $app->init, 'init can be re-run with force option' );
     return $app;
 }
 
