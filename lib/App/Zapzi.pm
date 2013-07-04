@@ -8,6 +8,7 @@ use File::HomeDir;
 use App::Zapzi::Database;
 use App::Zapzi::Folders;
 use App::Zapzi::Articles;
+use App::Zapzi::FetchArticle;
 use Moo;
 use Carp;
 
@@ -134,8 +135,8 @@ sub process_args
     $self->list_folders if $options->get_list_folders;
     $self->make_folder(@args) if $options->get_make_folder;
     $self->delete_folder(@args) if $options->get_delete_folder;
+    $self->add(@args) if $options->get_add;
 
-    print "add...\n" if $options->get_add;
     print "publish...\n" if $options->get_publish;
 }
 
@@ -267,25 +268,57 @@ sub delete_folder
         print "Need to provide folder names to delete\n";
         $self->run = 1;
     }
-    else
+
+    for (@args)
     {
-        for (@args)
+        my $folder = $_;
+        if (App::Zapzi::Folders::is_system_folder($folder))
         {
-            my $folder = $_;
-            if (App::Zapzi::Folders::is_system_folder($folder))
-            {
-                print "Can't remove '$folder' as it is needed by the system\n";
-            }
-            elsif (! App::Zapzi::Folders::get_folder($folder))
-            {
-                print "Folder '$folder' does not exist\n";
-            }
-            else
-            {
-                App::Zapzi::Folders::delete_folder($folder);
-                print "Deleted folder '$folder'\n";
-            }
+            print "Can't remove '$folder' as it is needed by the system\n";
+        }
+        elsif (! App::Zapzi::Folders::get_folder($folder))
+        {
+            print "Folder '$folder' does not exist\n";
+        }
+        else
+        {
+            App::Zapzi::Folders::delete_folder($folder);
+            print "Deleted folder '$folder'\n";
         }
     }
 }
+
+=method add
+
+Add an article to the database for later publication. 
+
+=cut
+
+sub add
+{
+    my $self = shift;
+    my @args = @_;
+
+    if (! @args)
+    {
+        print "Need to provide articles names to add\n";
+        $self->run = 1;
+        return;
+    }
+
+    for (@args)
+    {
+        print "Adding $_\n";
+        my $f = App::Zapzi::FetchArticle->new(source => $_);
+        if ($f->fetch())
+        {
+            print "Got: ", $f->text(), "\n";
+        }
+        else
+        {
+            print "Could not get article: ", $f->error, "\n";
+        }
+    }
+}
+
 1;
