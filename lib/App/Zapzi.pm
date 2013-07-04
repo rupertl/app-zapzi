@@ -312,7 +312,7 @@ sub add
         my $f = App::Zapzi::FetchArticle->new(source => $_);
         if ($f->fetch())
         {
-            print "Got: ", $f->text(), "\n";
+            print "Got: ", substr($f->text(), 0, 100), "\n";
         }
         else
         {

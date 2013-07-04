@@ -22,6 +22,7 @@ use App::Zapzi;
 use Moo;
 use HTTP::Tiny;
 use HTTP::CookieJar;
+use File::MMagic;
 
 =attr source
 
@@ -38,6 +39,14 @@ Holds the raw text of the article
 =cut
 
 has text => (is => 'ro', default => '');
+
+=attr content_type
+
+MIME content type for text.
+
+=cut
+
+has content_type => (is => 'ro', default => 'text/plain');
 
 =attr error
 
@@ -67,8 +76,6 @@ sub fetch
     {
         return $self->_fetch_url;
     }
-
-    return 1;
 }
 
 sub _fetch_file
@@ -88,6 +95,10 @@ sub _fetch_file
     }
 
     close $file;
+
+    my $mm = new File::MMagic;
+    $self->content_type = $mm->checktype_contents($self->text) // 'text/plain';
+
     return 1;
 }
 
@@ -99,7 +110,7 @@ sub _fetch_url
     my $http = HTTP::Tiny->new(cookie_jar => $jar);
 
     my $url = $self->source;
-    my $response = $http->get($url);
+    my $response = $http->get($url, $self->_http_request_headers());
 
     if (! $response->{success} || ! length($response->{content}))
     {
@@ -119,7 +130,23 @@ sub _fetch_url
     }
 
     $self->text = $response->{content};
+    $self->content_type = $response->{headers}->{'content-type'};
+
     return 1;
 }
+
+sub _http_request_headers
+{
+    my $self = shift;
+
+    my $ua = "App::Zapzi";
+
+    no strict 'vars';
+    $ua .= "/$VERSION" if defined $VERSION;
+
+    return {headers => {'User-agent' => $ua}};
+}
+
+
 
 1;
