@@ -9,6 +9,7 @@ use App::Zapzi::Database;
 use App::Zapzi::Folders;
 use App::Zapzi::Articles;
 use App::Zapzi::FetchArticle;
+use App::Zapzi::Transform;
 use Moo;
 use Carp;
 
@@ -310,16 +311,25 @@ sub add
 
     for (@args)
     {
-        print "Adding $_\n";
-        my $f = App::Zapzi::FetchArticle->new(source => $_);
-        if ($f->fetch())
-        {
-            print "Got: ", substr($f->text(), 0, 100), "\n";
-        }
-        else
+        my $source = $_;
+        print "Adding $source\n";
+        my $f = App::Zapzi::FetchArticle->new(source => $source);
+        if (! $f->fetch)
         {
             print "Could not get article: ", $f->error, "\n";
+            next;
         }
+
+        my $tx = App::Zapzi::Transform->new(source => $f);
+        if (! $tx->to_readable)
+        {
+            print "Could not transform article\n";
+            next;
+        }
+
+        App::Zapzi::Articles::add_article(title => "Test $source",
+                                          text => $tx->readable_text,
+                                          folder => $self->folder);
     }
 }
 
