@@ -110,6 +110,7 @@ sub process_args
         Switch("list-folders|lsf"),
         Switch("make-folder|mkf"),
         Switch("delete-folder|rmf"),
+        Switch("show"),
         Switch("publish"),
 
         Param("folder|f"),
@@ -136,6 +137,7 @@ sub process_args
     $self->make_folder(@args) if $options->get_make_folder;
     $self->delete_folder(@args) if $options->get_delete_folder;
     $self->add(@args) if $options->get_add;
+    $self->show(@args) if $options->get_show;
 
     print "publish...\n" if $options->get_publish;
 }
@@ -317,6 +319,39 @@ sub add
         else
         {
             print "Could not get article: ", $f->error, "\n";
+        }
+    }
+}
+
+=method show
+
+Outputs text of an article
+
+=cut
+
+sub show
+{
+    my $self = shift;
+    my @args = @_;
+
+    if (! @args)
+    {
+        print "Need to provide article IDs\n";
+        $self->run = 1;
+        return;
+    }
+
+    for (@args)
+    {
+        my $art_rs = App::Zapzi::Articles::get_article($_);
+        if ($art_rs)
+        {
+            print $art_rs->article_text->text, "\n\n";
+        }
+        else
+        {
+            print "Could not get article $_\n\n";
+            $self->run = 1;
         }
     }
 }

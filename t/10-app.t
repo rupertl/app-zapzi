@@ -12,6 +12,7 @@ test_list();
 test_list_folders();
 test_make_folder();
 test_delete_folder();
+test_show();
 
 done_testing();
 
@@ -110,3 +111,17 @@ sub test_delete_folder
                  qr/does not exist/, 'delete-folder for non-existent folder' );
     ok( ! $app->run, 'make-folder run' );
 }
+
+sub test_show
+{
+    my $app = get_test_app();
+
+    stdout_like( sub { $app->process_args(qw(show 1)) }, qr/Welcome to/, 
+                 'show' );
+    ok( ! $app->run, 'show run' );
+
+    stdout_like( sub { $app->process_args(qw(show 0)) }, qr/Could not/, 
+                 'show error' );
+    ok( $app->run, 'make-folder run' );
+}
+
