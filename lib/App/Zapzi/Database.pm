@@ -72,6 +72,7 @@ sub init
     mkdir $self->app->zapzi_dir;
     die "Can't access ", $self->app->zapzi_dir 
         if ! -d $self->app->zapzi_dir;
+    mkdir $self->app->zapzi_ebook_dir;
 
     $self->schema->storage->disconnect if $self->app->force;
     unlink $self->database_file;
@@ -88,7 +89,7 @@ sub init
 
     my @articles = ({title => 'Welcome to Zapzi', folder => 100,
                      article_text => 
-                         { text => '<h1>Welcome to Zapzi!</h1>'}});
+                         { text => '<p>Welcome to Zapzi! Please run <pre>zapzi -h</pre> to see documentation.</p>'}});
     $self->schema->populate('Article', \@articles);
 }
 

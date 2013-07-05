@@ -15,6 +15,7 @@ test_delete_folder();
 test_show();
 test_add();
 test_delete_article();
+test_publish();
 
 done_testing();
 
@@ -136,6 +137,11 @@ sub test_add
                  'add' );
     ok( ! $app->run, 'add run' );
 
+    stdout_like( sub { $app->process_args(qw(add t/testfiles/sample.html)) }, 
+                 qr/Added article/, 
+                 'add html' );
+    ok( ! $app->run, 'add html run' );
+
     stdout_like( sub { $app->process_args(qw(add t/testfiles/nonesuch.txt)) }, 
                  qr/Could not/, 
                  'add error' );
@@ -155,5 +161,25 @@ sub test_delete_article
                  qr/Could not/, 
                  'delete article error' );
     ok( $app->run, 'rm run' );
+}
+
+sub test_publish
+{
+    my $app = get_test_app();
+
+    stdout_like( sub { $app->process_args(qw(publish)) }, 
+                 qr/2 articles.*Published/s, 
+                 'publish' );
+    ok( ! $app->run, 'publish run' );
+
+    stdout_like( sub { $app->process_args(qw(publish)) }, 
+                 qr/No articles/, 
+                 'publish archives OK and rerun gives 0 articles' );
+    ok( $app->run, 'publish again run' );
+
+    stdout_like( sub { $app->process_args(qw(publish -f Nonesuch)) }, 
+                 qr/does not exist/, 
+                 'publish error' );
+    ok( $app->run, 'publish error run' );
 }
 

@@ -33,6 +33,9 @@ sub test_init
     $app->init;
     ok( ! $app->run, 'init' );
 
+    ok( -d $app->zapzi_dir, 'Zapzi dir exists' );
+    ok( -d $app->zapzi_ebook_dir, 'Zapzi ebook dir exists' );
+    
     return $app;
 }
 

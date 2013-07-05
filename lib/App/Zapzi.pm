@@ -2,7 +2,7 @@ use utf8;
 use strict;
 use warnings;
 
-binmode(STDOUT, ":utf8"); 
+binmode(STDOUT, ":encoding(UTF-8)"); 
 
 package App::Zapzi;
 use Getopt::Lucid qw( :all );
@@ -12,6 +12,7 @@ use App::Zapzi::Folders;
 use App::Zapzi::Articles;
 use App::Zapzi::FetchArticle;
 use App::Zapzi::Transform;
+use App::Zapzi::Publish;
 use Moo;
 use Carp;
 
@@ -72,6 +73,22 @@ has zapzi_dir =>
     default => sub
     { 
         return $ENV{ZAPZI_DIR} // File::HomeDir->my_home . "/.zapzi";
+    }
+);
+
+=attr zapzi_ebook_dir
+
+The folder where Zapzi published eBook files are stored.
+
+=cut
+
+has zapzi_ebook_dir => 
+(
+    is => 'ro', 
+    default => sub
+    { 
+        my $self = shift;
+        return $self->zapzi_dir . '/ebooks';
     }
 );
 
@@ -143,7 +160,7 @@ sub process_args
     $self->delete_article(@args) if $options->get_delete_article;
     $self->add(@args) if $options->get_add;
     $self->show(@args) if $options->get_show;
-    print "publish...\n" if $options->get_publish;
+    $self->publish if $options->get_publish;
 
     $self->help if $options->get_help || $self->run == -1;
 }
@@ -383,6 +400,9 @@ sub add
             next;
         }
         
+        printf("Got '%s' (%.1fkb)\n", $tx->title,
+               length($tx->readable_text) / 1024);
+
         my $rs = App::Zapzi::Articles::add_article(title => $tx->title,
                                                    text => $tx->readable_text,
                                                    folder => $self->folder);
@@ -422,6 +442,41 @@ sub show
             $self->run = 1;
         }
     }
+}
+
+=method publish
+
+Publish a folder of articles to an eBook
+
+=cut
+
+sub publish
+{
+    my $self = shift;
+    $self->run = 0;
+    
+    my $articles = App::Zapzi::Articles::get_articles($self->folder);
+    my $count  = $articles->count;
+    
+    if ($count == 0)
+    {
+        print "No articles in '", $self->folder, "' to publish\n";
+        $self->run = 1;
+        return;
+    }
+
+    printf("Publishing '%s' - %d articles\n", $self->folder, $count);
+
+    my $pub = App::Zapzi::Publish->new(folder => $self->folder);
+    
+    if (! $pub->publish())
+    {
+        print "Failed to publish ebook\n";
+        $self->run = 1;
+        return;
+    }
+
+    print "Published ", $pub->filename, "\n";
 }
 
 =method help
@@ -464,5 +519,6 @@ sub help
     print "Publishes articles in FOLDER to an eBook.\n\n";
 
 }
+
 
 1;
