@@ -11,3 +11,76 @@ use App::Zapzi;
 my $app = App::Zapzi->new();
 $app->process_args(@ARGV);
 exit $app->run;
+
+__END__
+
+=head1 SYNOPSIS
+
+Zapzi is a command line tool to take articles - from files or from the
+web - and create eBooks for reading later.
+
+=head1 EXAMPLE
+
+  $ zapzi init
+  Created Zapzi directory ~/.zapzi
+
+  $ zapzi add ~/src/foo/README.txt
+  Added article 2 to folder Inbox
+
+  $ zapzi add http://perldoc.perl.org/perlintro.html
+  Added article 3 to folder Inbox
+
+  $ zapzi ls
+  Inbox    1 05-Jul-2013 Welcome to Zapzi                             
+  Inbox    2 05-Jul-2013 README for project foo
+  Inbox    3 05-Jul-2013 perlintro - perldoc.perl.org                 
+
+  $ zapsi publish
+  Published ~/.zapzi/ebooks/Zapzi - Inbox - 05-Jul-2013.mobi
+
+  # You can then copy this file to your eReader.
+
+  # Zapzi will move published articles from Inbox to Archive, so old
+  # articles will not show up when you publish again.
+
+  # You can also create separate folders to add and publish from to
+  # organise your reading.
+
+  # See USAGE below for more details on command line options.
+
+=head1 USAGE
+
+  zapzi help|h
+    Shows this help text
+
+  zapzi init [--force]
+    Initialises new zapzi database. Will not create a new database 
+    if one exists already unless you set --force.
+
+  zapzi add FILE|URL
+    Adds article to database. Accepts a file name or a valid URL.
+
+  zapzi list|ls [-f FOLDER]
+    Lists articles in FOLDER.
+
+  zapzi list-folders|lsf
+    Lists a summary of all folders.
+
+  zapzi make-folder|mkf FOLDER
+    Make a new folder.
+
+  zapzi delete-folder|rmf FOLDER
+    Remove a folder and all articles in it.
+
+  zapzi delete-article|delete|rm ID
+    Removes article ID.
+
+  zapzi show ID
+    Prints content of article to STDOUT
+
+  zapzi publish [-f FOLDER]
+    Publishes articles in FOLDER to an eBook.
+
+=cut
+
+

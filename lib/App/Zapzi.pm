@@ -20,12 +20,13 @@ use Carp;
 
 =attr run
 
-The current state of the application, 0 being OK. Used for exit code
-when the process terminates.
+The current state of the application, -1 means nothing has been done,
+0 OK, otherwise an error code. Used for exit code when the process
+terminates.
 
 =cut
 
-has run => (is => 'rw', default => 0);
+has run => (is => 'rw', default => -1);
 
 =attr force
 
@@ -103,10 +104,9 @@ sub process_args
     my $self = shift;
     my @args = @_;
 
-    $self->run = 0;
-
     my @specs =
     (
+        Switch("help|h"),
         Switch("init"),
         Switch("add"),
         Switch("list|ls"),
@@ -143,8 +143,9 @@ sub process_args
     $self->delete_article(@args) if $options->get_delete_article;
     $self->add(@args) if $options->get_add;
     $self->show(@args) if $options->get_show;
-
     print "publish...\n" if $options->get_publish;
+
+    $self->help if $options->get_help || $self->run == -1;
 }
 
 =method init
@@ -174,6 +175,7 @@ sub init
     {
         $self->database->init;
         print "Created Zapzi directory $dir\n";
+        $self->run = 0;
     }
 }
 
@@ -209,6 +211,7 @@ sub list
 {
     my $self = shift;
     App::Zapzi::Articles::list_articles($self->folder);
+    $self->run = 0;
 }
 
 =method list_folders
@@ -219,7 +222,9 @@ List a summary of folders in the database.
 
 sub list_folders
 {
+    my $self = shift;
     App::Zapzi::Folders::list_folders();
+    $self->run = 0;
 }
 
 =method make_folder
@@ -238,21 +243,21 @@ sub make_folder
     {
         print "Need to provide folder names to create\n";
         $self->run = 1;
+        return;
     }
-    else
+
+    $self->run = 0;
+    for (@args)
     {
-        for (@args)
+        my $folder = $_;
+        if (App::Zapzi::Folders::get_folder($folder))
         {
-            my $folder = $_;
-            if (App::Zapzi::Folders::get_folder($folder))
-            {
-                print "Folder '$folder' already exists\n";
-            }
-            else
-            {
-                App::Zapzi::Folders::add_folder($folder);
-                print "Created folder '$folder'\n";
-            }
+            print "Folder '$folder' already exists\n";
+        }
+        else
+        {
+            App::Zapzi::Folders::add_folder($folder);
+            print "Created folder '$folder'\n";
         }
     }
 }
@@ -274,8 +279,10 @@ sub delete_folder
     {
         print "Need to provide folder names to delete\n";
         $self->run = 1;
+        return;
     }
 
+    $self->run = 0;
     for (@args)
     {
         my $folder = $_;
@@ -313,6 +320,7 @@ sub delete_article
         return;
     }
 
+    $self->run = 0;
     for (@args)
     {
         my $id = $_;
@@ -354,6 +362,7 @@ sub add
         return;
     }
 
+    $self->run = 0;
     for (@args)
     {
         my $source = $_;
@@ -399,6 +408,7 @@ sub show
         return;
     }
 
+    $self->run = 0;
     for (@args)
     {
         my $art_rs = App::Zapzi::Articles::get_article($_);
@@ -412,6 +422,47 @@ sub show
             $self->run = 1;
         }
     }
+}
+
+=method help
+
+Displays help text.
+
+=cut
+
+sub help
+{
+    print "zapzi help|h\n";
+    print "Shows this help text\n\n";
+
+    print "zapzi init [--force]\n";
+    print "Initialises new zapzi database. Will not create a new database if\n".
+          "one exists already unless you set --force\n\n";
+
+    print "zapzi add FILE|URL\n";
+    print "Adds article to database. Accepts a file name or a valid URL.\n\n";
+
+    print "zapzi list|ls [-f FOLDER]\n";
+    print "Lists articles in FOLDER.\n\n";
+
+    print "zapzi list-folders|lsf\n";
+    print "Lists a summary of all folders.\n\n";
+
+    print "zapzi make-folder|mkf FOLDER\n";
+    print "Make a new folder.\n\n";
+
+    print "zapzi delete-folder|rmf FOLDER\n";
+    print "Remove a folder and all articles in it.\n\n";
+
+    print "zapzi delete-article|delete|rm ID\n";
+    print "Removes article ID.\n\n";
+
+    print "zapzi show ID\n";
+    print "Prints content of article to STDOUT\n\n";
+
+    print "zapzi publish [-f FOLDER]\n";
+    print "Publishes articles in FOLDER to an eBook.\n\n";
+
 }
 
 1;
