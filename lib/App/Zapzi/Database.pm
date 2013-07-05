@@ -55,6 +55,7 @@ sub schema
     my $self = shift;
     $_schema //= App::Zapzi::Database::Schema->connect({
         dsn =>$self->dsn, 
+        sqlite_unicode => 1,
         on_connect_do => 'PRAGMA foreign_keys = ON'});
     return $_schema;
 }

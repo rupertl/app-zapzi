@@ -13,6 +13,8 @@ test_list_folders();
 test_make_folder();
 test_delete_folder();
 test_show();
+test_add();
+test_delete_article();
 
 done_testing();
 
@@ -123,5 +125,35 @@ sub test_show
     stdout_like( sub { $app->process_args(qw(show 0)) }, qr/Could not/, 
                  'show error' );
     ok( $app->run, 'make-folder run' );
+}
+
+sub test_add
+{
+    my $app = get_test_app();
+
+    stdout_like( sub { $app->process_args(qw(add t/testfiles/sample.txt)) }, 
+                 qr/Added article/, 
+                 'add' );
+    ok( ! $app->run, 'add run' );
+
+    stdout_like( sub { $app->process_args(qw(add t/testfiles/nonesuch.txt)) }, 
+                 qr/Could not/, 
+                 'add error' );
+    ok( $app->run, 'add run' );
+}
+
+sub test_delete_article
+{
+    my $app = get_test_app();
+
+    stdout_like( sub { $app->process_args(qw(rm 2)) }, 
+                 qr/Deleted article/, 
+                 'delete article' );
+    ok( ! $app->run, 'rm run' );
+
+    stdout_like( sub { $app->process_args(qw(rm 0)) }, 
+                 qr/Could not/, 
+                 'delete article error' );
+    ok( $app->run, 'rm run' );
 }
 

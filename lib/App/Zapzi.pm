@@ -2,6 +2,8 @@ use utf8;
 use strict;
 use warnings;
 
+binmode(STDOUT, ":utf8"); 
+
 package App::Zapzi;
 use Getopt::Lucid qw( :all );
 use File::HomeDir;
@@ -107,10 +109,11 @@ sub process_args
     (
         Switch("init"),
         Switch("add"),
-        Switch("list"),
+        Switch("list|ls"),
         Switch("list-folders|lsf"),
         Switch("make-folder|mkf"),
         Switch("delete-folder|rmf"),
+        Switch("delete-article|delete|rm"),
         Switch("show"),
         Switch("publish"),
 
@@ -137,6 +140,7 @@ sub process_args
     $self->list_folders if $options->get_list_folders;
     $self->make_folder(@args) if $options->get_make_folder;
     $self->delete_folder(@args) if $options->get_delete_folder;
+    $self->delete_article(@args) if $options->get_delete_article;
     $self->add(@args) if $options->get_add;
     $self->show(@args) if $options->get_show;
 
@@ -291,6 +295,47 @@ sub delete_folder
     }
 }
 
+=method delete_article
+
+Remove an article from the database
+
+=cut
+
+sub delete_article
+{
+    my $self = shift;
+    my @args = @_;
+
+    if (! @args)
+    {
+        print "Need to provide article IDs\n";
+        $self->run = 1;
+        return;
+    }
+
+    for (@args)
+    {
+        my $id = $_;
+        my $art_rs = App::Zapzi::Articles::get_article($id);
+        if ($art_rs)
+        {
+            if (App::Zapzi::Articles::delete_article($id))
+            {
+                print "Deleted article $id\n";
+            }
+            else
+            {
+                print "Could not delete article $id\n";
+            }
+        }
+        else
+        {
+            print "Could not get article $id\n";
+            $self->run = 1;
+        }
+    }
+}
+
 =method add
 
 Add an article to the database for later publication. 
@@ -312,24 +357,27 @@ sub add
     for (@args)
     {
         my $source = $_;
-        print "Adding $source\n";
+        print "Working on $source\n";
         my $f = App::Zapzi::FetchArticle->new(source => $source);
         if (! $f->fetch)
         {
-            print "Could not get article: ", $f->error, "\n";
+            print "Could not get article: ", $f->error, "\n\n";
+            $self->run = 1;
             next;
         }
 
-        my $tx = App::Zapzi::Transform->new(source => $f);
+        my $tx = App::Zapzi::Transform->new(raw_article => $f);
         if (! $tx->to_readable)
         {
-            print "Could not transform article\n";
+            print "Could not transform article\n\n";
+            $self->run = 1;
             next;
         }
-
-        App::Zapzi::Articles::add_article(title => "Test $source",
-                                          text => $tx->readable_text,
-                                          folder => $self->folder);
+        
+        my $rs = App::Zapzi::Articles::add_article(title => $tx->title,
+                                                   text => $tx->readable_text,
+                                                   folder => $self->folder);
+        printf("Added article %d to folder '%s'\n\n", $rs->id, $self->folder);
     }
 }
 
