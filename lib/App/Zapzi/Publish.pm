@@ -6,7 +6,7 @@ package App::Zapzi::Publish;
 # VERSION
 # ABSTRACT: create eBooks from Zapzi articles
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
 This class takes a collection of cleaned up HTML articles and creates eBooks.
 

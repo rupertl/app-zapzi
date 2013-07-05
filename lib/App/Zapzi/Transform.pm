@@ -6,7 +6,7 @@ package App::Zapzi::Transform;
 # VERSION
 # ABSTRACT: routines to transform Zapzi articles to readble HTML
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
 This class takes text or HTML and returns readable HTML.
 

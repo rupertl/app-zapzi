@@ -6,7 +6,7 @@ package App::Zapzi::FetchArticle;
 # VERSION
 # ABSTRACT: routines to get articles for Zapzi
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
 These routines get articles, either via HTTP or from the file system
 and returns the raw HTML or text.

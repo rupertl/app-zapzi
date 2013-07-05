@@ -19,6 +19,11 @@ use Carp;
 # VERSION
 # ABSTRACT: store articles and publish them to read later
 
+=head1 DESCRIPTION
+
+This class implements the application functions for Zapzi. See the
+page for the L<zapzi> command for details on how to run it.
+
 =attr run
 
 The current state of the application, -1 means nothing has been done,

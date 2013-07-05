@@ -8,7 +8,7 @@ package App::Zapzi::Database::Schema::ArticleText;
 
 use base 'DBIx::Class::Core';
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
 This module defines the schema for the article_text table in the Zapzi
 database.

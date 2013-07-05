@@ -7,7 +7,7 @@ package App::Zapzi::Database::Schema::Folder;
 
 use base 'DBIx::Class::Core';
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
 This module defines the schema for the folders table in the Zapzi
 database.

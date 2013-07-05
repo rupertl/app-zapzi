@@ -9,7 +9,7 @@ package App::Zapzi::Database::Schema::Article;
 use base 'DBIx::Class::Core';
 __PACKAGE__->load_components(qw/InflateColumn::DateTime/);
 
-=head1 SYNOPSIS
+=head1 DESCRIPTION
 
 This module defines the schema for the articles table in the Zapzi
 database.
