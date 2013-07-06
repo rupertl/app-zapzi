@@ -1,6 +1,8 @@
 #!perl
 use Test::Most;
-use File::Temp ();
+
+use lib qw(t/lib);
+use ZapziTestDatabase;
 
 use App::Zapzi;
 use App::Zapzi::FetchArticle;
@@ -8,32 +10,15 @@ use App::Zapzi::Transform;
 
 test_can();
 
-my $test_dir = get_test_dir();
-my $app = get_test_app($test_dir);
+my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_text();
 test_html();
 done_testing();
 
-sub get_test_dir
-{
-    return File::Temp->newdir("zapzi-XXXXX", TMPDIR => 1);
-}
-
-sub get_test_app
-{
-    my $test_dir = shift;
-    my $dir = "$test_dir/zapzi";
-    
-    my $app = App::Zapzi->new(zapzi_dir => $dir);
-    $app->init();
-
-    return $app;
-}
-
 sub test_can
 {
-    can_ok( 'App::Zapzi::Transform', 
+    can_ok( 'App::Zapzi::Transform',
             qw(raw_article to_readable readable_text) );
 }
 

@@ -1,16 +1,17 @@
 #!perl
 use Test::Most;
-use File::Temp ();
 use Test::Output;
 
+use lib qw(t/lib);
+use ZapziTestDatabase;
+
 use App::Zapzi;
-use App::Zapzi::Articles qw(get_article get_articles add_article move_article 
+use App::Zapzi::Articles qw(get_article get_articles add_article move_article
                             delete_article list_articles);
 
 test_can();
 
-my $test_dir = get_test_dir();
-my $app = get_test_app($test_dir);
+my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_get();
 test_add();
@@ -20,26 +21,10 @@ test_list();
 
 done_testing();
 
-sub get_test_dir
-{
-    return File::Temp->newdir("zapzi-XXXXX", TMPDIR => 1);
-}
-
-sub get_test_app
-{
-    my $test_dir = shift;
-    my $dir = "$test_dir/zapzi";
-    
-    my $app = App::Zapzi->new(zapzi_dir => $dir);
-    $app->init();
-
-    return $app;
-}
-
 sub test_can
 {
-    can_ok( 'App::Zapzi::Articles', qw(get_article get_articles add_article 
-                                       move_article delete_article 
+    can_ok( 'App::Zapzi::Articles', qw(get_article get_articles add_article
+                                       move_article delete_article
                                        list_articles) );
 }
 
@@ -48,16 +33,16 @@ sub test_get
     my $first = get_article(1);
     ok( $first, 'Can read Inbox first article' );
     is( $first->id, 1, 'Inbox first article ID is 1' );
-    is( $first->created->delta_days(DateTime->now)->days, 0, 
+    is( $first->created->delta_days(DateTime->now)->days, 0,
         'Date inflated in articles OK' );
-    
+
     my $false_article = get_article(0);
     ok( ! $false_article, 'Can detect articles that do not exist' );
 }
 
 sub test_add
 {
-    my $art = add_article(title => 'Foo', 
+    my $art = add_article(title => 'Foo',
                           folder => 'Inbox',
                           text => 'This is the text for the Foo article');
     my $foo = get_article($art->id);
@@ -70,13 +55,13 @@ sub test_add
     like( $@, qr/Must provide/, 'Detects missing args to add_article' );
 
     eval { add_article(title => 'Foo2', folder => 'Does not exist'); };
-    like( $@, qr/does not exist/, 
+    like( $@, qr/does not exist/,
           'Detects non-existent folder to add_article' );
 }
 
 sub test_move
 {
-    my $art = add_article(title => 'Baz', 
+    my $art = add_article(title => 'Baz',
                           folder => 'Inbox',
                           text => 'This is the text for the Baz article');
     my $baz = get_article($art->id);
@@ -90,9 +75,9 @@ sub test_move
 
 sub test_delete
 {
-    my $art = add_article(title => 'Bar', 
+    my $art = add_article(title => 'Bar',
                           folder => 'Inbox',
-                          text => 
+                          text =>
                           'This is the text for the Bar article');
     my $bar = get_article($art->id);
     my $bar_id = $bar->id;

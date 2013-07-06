@@ -1,15 +1,16 @@
 #!perl
 use Test::Most;
-use File::Temp ();
 use Test::Output;
+
+use lib qw(t/lib);
+use ZapziTestDatabase;
 
 use App::Zapzi;
 use App::Zapzi::Folders qw(get_folder add_folder delete_folder list_folders);
 
 test_can();
 
-my $test_dir = get_test_dir();
-my $app = get_test_app($test_dir);
+my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_get();
 test_add();
@@ -17,22 +18,6 @@ test_delete();
 test_list();
 
 done_testing();
-
-sub get_test_dir
-{
-    return File::Temp->newdir("zapzi-XXXXX", TMPDIR => 1);
-}
-
-sub get_test_app
-{
-    my $test_dir = shift;
-    my $dir = "$test_dir/zapzi";
-    
-    my $app = App::Zapzi->new(zapzi_dir => $dir);
-    $app->init();
-
-    return $app;
-}
 
 sub test_can
 {
@@ -44,7 +29,7 @@ sub test_get
     my $inbox = get_folder("Inbox");
     ok( $inbox, 'Can read Inbox folder' );
     is( $inbox->id, 100, 'Inbox ID is 100' );
-    
+
     my $false_folder = get_folder('This folder does not exist');
     ok( ! $false_folder, 'Can detect folders that do not exist' );
 }
