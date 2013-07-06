@@ -1,5 +1,4 @@
 package App::Zapzi::Database;
-# VERSION
 # ABSTRACT: database access for Zapzi
 
 =head1 DESCRIPTION
@@ -11,6 +10,8 @@ This class provides access to the Zapzi database.
 use utf8;
 use strict;
 use warnings;
+
+# VERSION
 
 use Moo;
 use SQL::Translator;

@@ -1,5 +1,4 @@
 package App::Zapzi::Publish;
-# VERSION
 # ABSTRACT: create eBooks from Zapzi articles
 
 =head1 DESCRIPTION
@@ -15,6 +14,8 @@ later.
 use utf8;
 use strict;
 use warnings;
+
+# VERSION
 
 use Carp;
 use Encode;

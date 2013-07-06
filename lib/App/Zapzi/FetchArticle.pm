@@ -1,5 +1,4 @@
 package App::Zapzi::FetchArticle;
-# VERSION
 # ABSTRACT: routines to get articles for Zapzi
 
 =head1 DESCRIPTION
@@ -16,6 +15,8 @@ later.
 use utf8;
 use strict;
 use warnings;
+
+# VERSION
 
 use Carp;
 use App::Zapzi;

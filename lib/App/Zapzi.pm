@@ -1,10 +1,11 @@
 package App::Zapzi;
-# VERSION
 # ABSTRACT: store articles and publish them to read later
 
 use utf8;
 use strict;
 use warnings;
+
+# VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 

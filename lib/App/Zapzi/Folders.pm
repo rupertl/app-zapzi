@@ -1,5 +1,4 @@
 package App::Zapzi::Folders;
-# VERSION
 # ABSTRACT: routines to access Zapzi folders
 
 =head1 DESCRIPTION
@@ -11,6 +10,8 @@ These routines allow access to Zapzi folders via the database.
 use utf8;
 use strict;
 use warnings;
+
+# VERSION
 
 require Exporter;
 our @ISA = qw(Exporter);

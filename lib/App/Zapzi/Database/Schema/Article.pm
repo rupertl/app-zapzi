@@ -1,10 +1,11 @@
 package App::Zapzi::Database::Schema::Article;
-# VERSION
 # ABSTRACT: zapzi article table
 
 use utf8;
 use strict;
 use warnings;
+
+# VERSION
 
 use base 'DBIx::Class::Core';
 __PACKAGE__->load_components(qw/InflateColumn::DateTime/);
