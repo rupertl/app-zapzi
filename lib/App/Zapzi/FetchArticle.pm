@@ -1,7 +1,3 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::FetchArticle;
 # VERSION
 # ABSTRACT: routines to get articles for Zapzi
@@ -16,6 +12,10 @@ working and will be replaced with a more flexible role based system
 later.
 
 =cut
+
+use utf8;
+use strict;
+use warnings;
 
 use Carp;
 use App::Zapzi;
@@ -68,27 +68,20 @@ sub fetch
 {
     my $self = shift;
 
-    if (-e $self->source)
-    {
-        return $self->_fetch_file;
-    }
-    else
-    {
-        return $self->_fetch_url;
-    }
+    return -e $self->source ? $self->_fetch_file : $self->_fetch_url;
 }
 
 sub _fetch_file
 {
     my $self = shift;
-    
+
     my $file;
     if (! open $file, '<', $self->source)
     {
         $self->error = "Failed to open " . $self->source . ": $!";
         return;
     }
-    
+
     while (<$file>)
     {
         $self->text .= $_;
@@ -141,12 +134,10 @@ sub _http_request_headers
 
     my $ua = "App::Zapzi";
 
-    no strict 'vars';
+    no strict 'vars'; ## no critic - $VERSION does not exist in dev
     $ua .= "/$VERSION" if defined $VERSION;
 
     return {headers => {'User-agent' => $ua}};
 }
-
-
 
 1;

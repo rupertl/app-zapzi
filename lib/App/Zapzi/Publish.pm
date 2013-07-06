@@ -1,7 +1,3 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::Publish;
 # VERSION
 # ABSTRACT: create eBooks from Zapzi articles
@@ -15,6 +11,10 @@ working and will be replaced with a more flexible role based system
 later.
 
 =cut
+
+use utf8;
+use strict;
+use warnings;
 
 use Carp;
 use Encode;
@@ -61,7 +61,7 @@ sub publish
     $book->add_mhtml_content("<hr>\n");
 
     my $articles = App::Zapzi::Articles::get_articles($self->folder);
-    while (my $article = $articles->next) 
+    while (my $article = $articles->next)
     {
         $book->add_mhtml_content("<h1>" . $article->title . "</h1>\n");
         $book->add_mhtml_content($article->article_text->text);
@@ -94,6 +94,5 @@ sub _make_filename
 
     $self->{filename} = $app->zapzi_ebook_dir . "/" . $base;
 }
-                       
 
 1;

@@ -1,10 +1,10 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::Database::Schema::Article;
 # VERSION
 # ABSTRACT: zapzi article table
+
+use utf8;
+use strict;
+use warnings;
 
 use base 'DBIx::Class::Core';
 __PACKAGE__->load_components(qw/InflateColumn::DateTime/);
@@ -94,10 +94,10 @@ __PACKAGE__->set_primary_key("id");
 
 =cut
 
-__PACKAGE__->belongs_to(folder => 'App::Zapzi::Database::Schema::Folder', 
+__PACKAGE__->belongs_to(folder => 'App::Zapzi::Database::Schema::Folder',
                         'folder');
 
-__PACKAGE__->might_have(article_text => 
-                        'App::Zapzi::Database::Schema::ArticleText', 
+__PACKAGE__->might_have(article_text =>
+                        'App::Zapzi::Database::Schema::ArticleText',
                         'id');
 1;

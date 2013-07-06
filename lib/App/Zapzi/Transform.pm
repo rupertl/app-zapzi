@@ -1,7 +1,3 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::Transform;
 # VERSION
 # ABSTRACT: routines to transform Zapzi articles to readble HTML
@@ -15,6 +11,10 @@ working and will be replaced with a more flexible role based system
 later.
 
 =cut
+
+use utf8;
+use strict;
+use warnings;
 
 use Carp;
 use Encode;
@@ -31,7 +31,7 @@ Object of type App::Zapzi::FetchArticle to get original text from.
 
 =cut
 
-has raw_article => (is => 'ro', isa => sub 
+has raw_article => (is => 'ro', isa => sub
                     {
                         croak 'Source must be an App::Zapzi::FetchArticle'
                             unless ref($_[0]) eq 'App::Zapzi::FetchArticle';
@@ -96,7 +96,7 @@ sub _html_to_readable
         $self->title = $self->raw_article->source;
     }
 
-    my $tree = HTML::ExtractMain::extract_main_html($raw_html, 
+    my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );
 
     return unless $tree;
@@ -106,7 +106,7 @@ sub _html_to_readable
     {
         $element->delete;
     }
-    
+
     $self->readable_text = $tree->as_HTML;
     return 1;
 }
@@ -117,7 +117,7 @@ sub _text_to_readable
 
     my $raw_html = Encode::decode_utf8($self->raw_article->text);
 
-    # We take the first line as the title, or up to 50 bytes
+    # We take the first line as the title, or up to 80 bytes
     $self->title = (split /\n/, $raw_html)[0];
     $self->title = substr($self->title, 0, 80);
 
@@ -127,7 +127,5 @@ sub _text_to_readable
 
     return 1;
 }
-
-
 
 1;

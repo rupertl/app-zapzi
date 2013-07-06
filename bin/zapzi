@@ -28,9 +28,9 @@ __END__
   Added article 3 to folder Inbox
 
   $ zapzi ls
-  Inbox    1 05-Jul-2013 Welcome to Zapzi                             
+  Inbox    1 05-Jul-2013 Welcome to Zapzi
   Inbox    2 05-Jul-2013 README for project foo
-  Inbox    3 05-Jul-2013 perlintro - perldoc.perl.org                 
+  Inbox    3 05-Jul-2013 perlintro - perldoc.perl.org
 
   $ zapzi publish
   Published ~/.zapzi/ebooks/Zapzi - Inbox - 05-Jul-2013.mobi
@@ -46,7 +46,7 @@ web - and create eBooks for reading later.
 
 =over 4
 
-=item * Can pull articles from local files or via HTTP.
+=item * Can read articles from local files or via HTTP.
 
 =item * Understands plain text, HTML and Markdown format articles.
 
@@ -69,8 +69,8 @@ Zapzi needs very little configuration to get running - just type
   $ zapzi init
 
 and it will create a directory (by default ~/.zapzi) to store its
-database. You can override this directory by setting the environment
-variable C<ZAPZI_DIR>.
+database and files. You can override this directory by setting the
+environment variable C<ZAPZI_DIR>.
 
 =head2 ADDING ARTICLES
 
@@ -93,12 +93,12 @@ as menus. Other formats are treated as plain text with Markdown.
 By default, Zapzi will store articles in the 'Inbox' folder. This can
 be changed by using the C<-f> option, eg
 
-  $ zapzi add -f Development project.txt
+  $ zapzi add -f Foo project.txt
 
 In order to use other folders you will need to create them first using
 the C<make-folder> or C<mkf> command, eg
 
-  $ zapzi make-folder Development
+  $ zapzi make-folder Foo
 
 Folders can be deleted with the C<delete-folder> or C<rd> command.
 Note that this will also delete all articles in the folder.
@@ -110,18 +110,18 @@ the C<list-folders> or C<lsf> command.
 
   Inbox        2
   Archive      4
-  Development  1
+  Foo          1
 
 To see a summary of a particular folder, use C<list> or C<ls>:
 
-  $ zapzi ls -f Development
-  Development 1 05-Jul-2013 Project readme
+  $ zapzi ls -f Foo
+  Foo      1 05-Jul-2013 Project readme
 
 =head2 PUBLISHING
 
-To create an eBook, run C<zapzi publish>. By default this will publish
-articles from the Inbox folder; use the C<-f> option to select another
-folder.
+To create an eBook, run C<zapzi publish> or C<zapzi pub>. By default
+this will publish articles from the Inbox folder; use the C<-f> option
+to select another folder.
 
 If everything worked OK, Zapzi will create a new eBook in the ebooks
 sub-directory of your Zapzi directory, eg C<~/.zapzi/ebooks>.
@@ -165,40 +165,40 @@ copy to an eReader.
 
 =head1 NAME
 
-Zapzi comes from the Cantonese word 雜誌, meaning magazine. It is
-pronounced ZAAP-zee.
+Zapzi comes from the Chinese word 雜誌, meaning magazine. It is
+pronounced ZAAP-zi in Cantonese.
 
 =head1 USAGE
 
-  zapzi help|h
+  $ zapzi help|h
     Shows this help text
 
-  zapzi init [--force]
+  $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database 
     if one exists already unless you set --force.
 
-  zapzi add FILE|URL
-    Adds article to database. Accepts a file name or a valid URL.
+  $ zapzi add FILE | URL
+    Adds article to database. Accepts multiple file names or URLs.
 
-  zapzi list|ls [-f FOLDER]
+  $ zapzi list | ls [-f FOLDER]
     Lists articles in FOLDER.
 
-  zapzi list-folders|lsf
+  $ zapzi list-folders | lsf
     Lists a summary of all folders.
 
-  zapzi make-folder|mkf FOLDER
+  $ zapzi make-folder | mkf FOLDER
     Make a new folder.
 
-  zapzi delete-folder|rmf FOLDER
+  $ zapzi delete-folder | rmf FOLDER
     Remove a folder and all articles in it.
 
-  zapzi delete-article|delete|rm ID
+  $ zapzi delete-article | delete | rm ID
     Removes article ID.
 
-  zapzi show ID
+  $ zapzi show ID
     Prints content of article to STDOUT
 
-  zapzi publish [-f FOLDER]
+  $ zapzi publish [-f FOLDER]
     Publishes articles in FOLDER to an eBook.
 
 =cut

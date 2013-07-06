@@ -1,10 +1,16 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::Articles;
 # VERSION
 # ABSTRACT: routines to access Zapzi articles
+
+=head1 DESCRIPTION
+
+These routines allow access to Zapzi articles via the database.
+
+=cut
+
+use utf8;
+use strict;
+use warnings;
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -24,11 +30,11 @@ Returns a resultset of articles that are in C<$folder>.
 sub get_articles
 {
     my ($folder) = @_;
- 
+
     my $folder_rs = get_folder($folder);
     croak "Folder $folder does not exist" if ! $folder_rs;
 
-    my $rs = _articles()->search({folder => $folder_rs->id}, 
+    my $rs = _articles()->search({folder => $folder_rs->id},
                                  {prefetch => [qw(folder article_text)] });
 
     return $rs;
@@ -43,7 +49,7 @@ Returns the resultset for the article identified by C<id>.
 sub get_article
 {
     my ($id) = @_;
-    
+
     my $rs = _articles()->find({id => $id});
     return $rs;
 }
@@ -60,7 +66,7 @@ sub list_articles
 
     my $rs = get_articles($folder);
 
-    while (my $article = $rs->next) 
+    while (my $article = $rs->next)
     {
         printf("%s %4d %s %-45s\n", $article->folder->name,
                $article->id, $article->created->strftime('%d-%b-%Y'),
@@ -97,13 +103,13 @@ sub add_article
     my $folder_rs = get_folder($args{folder});
     croak "Folder $args{folder} does not exist" unless $folder_rs;
 
-    my $new_article = _articles()->create({title => $args{title}, 
+    my $new_article = _articles()->create({title => $args{title},
                                            folder => $folder_rs->id,
-                                           article_text => 
+                                           article_text =>
                                                {text => $args{text}}});
 
     croak "Could not create article" unless $new_article;
-    
+
     return $new_article;
 }
 
@@ -123,7 +129,7 @@ sub move_article
 
     my $new_folder_rs = get_folder($new_folder);
     croak "Folder $new_folder does not exist" unless $new_folder_rs;
-    
+
     if (! $article->update({folder => $new_folder_rs->id}))
     {
         croak 'Could not move article';

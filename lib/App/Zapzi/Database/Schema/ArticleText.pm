@@ -1,10 +1,10 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::Database::Schema::ArticleText;
 # VERSION
 # ABSTRACT: zapzi article_text table
+
+use utf8;
+use strict;
+use warnings;
 
 use base 'DBIx::Class::Core';
 
@@ -66,7 +66,7 @@ __PACKAGE__->set_primary_key("id");
 
 =cut
 
-__PACKAGE__->belongs_to(article => 'App::Zapzi::Database::Schema::Article', 
+__PACKAGE__->belongs_to(article => 'App::Zapzi::Database::Schema::Article',
                         'id');
 
 1;

@@ -1,10 +1,16 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::Database;
 # VERSION
 # ABSTRACT: database access for Zapzi
+
+=head1 DESCRIPTION
+
+This class provides access to the Zapzi database.
+
+=cut
+
+use utf8;
+use strict;
+use warnings;
 
 use Moo;
 use SQL::Translator;
@@ -54,7 +60,7 @@ sub schema
 {
     my $self = shift;
     $_schema //= App::Zapzi::Database::Schema->connect({
-        dsn =>$self->dsn, 
+        dsn =>$self->dsn,
         sqlite_unicode => 1,
         on_connect_do => 'PRAGMA foreign_keys = ON'});
     return $_schema;
@@ -92,6 +98,5 @@ sub init
                          { text => '<p>Welcome to Zapzi! Please run <pre>zapzi -h</pre> to see documentation.</p>'}});
     $self->schema->populate('Article', \@articles);
 }
-
 
 1;

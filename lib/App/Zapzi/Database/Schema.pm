@@ -1,10 +1,10 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::Database::Schema;
 # VERSION
 # ABSTRACT: database schema for zapzi
+
+use utf8;
+use strict;
+use warnings;
 
 use base 'DBIx::Class::Schema';
 

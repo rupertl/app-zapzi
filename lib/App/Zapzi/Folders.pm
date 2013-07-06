@@ -1,14 +1,20 @@
-use utf8;
-use strict;
-use warnings;
-
 package App::Zapzi::Folders;
 # VERSION
 # ABSTRACT: routines to access Zapzi folders
 
+=head1 DESCRIPTION
+
+These routines allow access to Zapzi folders via the database.
+
+=cut
+
+use utf8;
+use strict;
+use warnings;
+
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(is_system_folder get_folder add_folder delete_folder 
+our @EXPORT_OK = qw(is_system_folder get_folder add_folder delete_folder
                     list_folders);
 
 use App::Zapzi;
@@ -52,7 +58,7 @@ sub add_folder
 {
     my ($name) = @_;
     croak 'New folder name not provided' unless $name;
-    
+
     if (get_folder($name) || ! _folders()->create({name => $name}))
     {
         croak("Could not add folder $name");
@@ -86,10 +92,9 @@ of articles.
 
 sub list_folders
 {
-    my $rs = _folders()->search(undef, 
-                                {prefetch => [qw(articles)]});
+    my $rs = _folders()->search(undef, {prefetch => [qw(articles)]});
 
-    while (my $folder = $rs->next) 
+    while (my $folder = $rs->next)
     {
         printf("%-10s %3d\n", $folder->name, $folder->articles->count);
     }

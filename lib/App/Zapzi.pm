@@ -1,10 +1,13 @@
+package App::Zapzi;
+# VERSION
+# ABSTRACT: store articles and publish them to read later
+
 use utf8;
 use strict;
 use warnings;
 
-binmode(STDOUT, ":encoding(UTF-8)"); 
+binmode(STDOUT, ":encoding(UTF-8)");
 
-package App::Zapzi;
 use Getopt::Lucid qw( :all );
 use File::HomeDir;
 use App::Zapzi::Database;
@@ -15,9 +18,6 @@ use App::Zapzi::Transform;
 use App::Zapzi::Publish;
 use Moo;
 use Carp;
-
-# VERSION
-# ABSTRACT: store articles and publish them to read later
 
 =head1 DESCRIPTION
 
@@ -36,7 +36,7 @@ has run => (is => 'rw', default => -1);
 
 =attr force
 
-Option to force processing of the init command. Default is unset. 
+Option to force processing of the init command. Default is unset.
 
 =cut
 
@@ -58,12 +58,12 @@ can be retrieved later via C<get_app>.
 
 =cut
 
-our $the_app;
-sub BUILD { $the_app = shift; }
-sub get_app 
-{ 
-    croak 'Must create an instance of App::Zapzi first' unless $the_app; 
-    return $the_app; 
+our $_the_app;
+sub BUILD { $_the_app = shift; }
+sub get_app
+{
+    croak 'Must create an instance of App::Zapzi first' unless $_the_app;
+    return $_the_app;
 }
 
 =attr zapzi_dir
@@ -72,11 +72,11 @@ The folder where Zapzi files are stored.
 
 =cut
 
-has zapzi_dir => 
+has zapzi_dir =>
 (
-    is => 'ro', 
+    is => 'ro',
     default => sub
-    { 
+    {
         return $ENV{ZAPZI_DIR} // File::HomeDir->my_home . "/.zapzi";
     }
 );
@@ -87,11 +87,11 @@ The folder where Zapzi published eBook files are stored.
 
 =cut
 
-has zapzi_ebook_dir => 
+has zapzi_ebook_dir =>
 (
-    is => 'ro', 
+    is => 'ro',
     default => sub
-    { 
+    {
         my $self = shift;
         return $self->zapzi_dir . '/ebooks';
     }
@@ -105,7 +105,7 @@ The instance of App:Zapzi::Database used by the application.
 
 has database =>
 (
-    is => 'ro', 
+    is => 'ro',
     default => sub
     {
         my $self = shift;
@@ -142,13 +142,24 @@ sub process_args
         Param("folder|f"),
         Switch("force"),
     );
-    
+
     my $options = Getopt::Lucid->getopt(\@specs, \@args)->validate;
-    
+
     $self->force = $options->get_force;
     $self->folder = $options->get_folder // $self->folder;
 
-    unless ($options->get_make_folder || $options->get_init)
+    $self->help if $options->get_help;
+    $self->init if $options->get_init;
+
+    # For any further operations we need a database
+    if (! -r $self->database->database_file)
+    {
+        print "Zapzi database does not exist; did you run 'zapzi init'?\n";
+        $self->run = 1;
+        return;
+    }
+
+    unless ($options->get_make_folder)
     {
         if (! $self->validate_folder($self->folder))
         {
@@ -156,8 +167,7 @@ sub process_args
             return;
         }
     }
-    
-    $self->init if $options->get_init;
+
     $self->list if $options->get_list;
     $self->list_folders if $options->get_list_folders;
     $self->make_folder(@args) if $options->get_make_folder;
@@ -167,7 +177,8 @@ sub process_args
     $self->show(@args) if $options->get_show;
     $self->publish if $options->get_publish;
 
-    $self->help if $options->get_help || $self->run == -1;
+    # Fallthrough if no valid commands given
+    $self->help if $self->run == -1;
 }
 
 =method init
@@ -210,7 +221,7 @@ Determines if the folder specified exists.
 sub validate_folder
 {
     my $self = shift;
-    
+
     if (! App::Zapzi::Articles::get_folder($self->folder))
     {
         printf("Folder '%s' does not exist\n", $self->folder);
@@ -368,7 +379,7 @@ sub delete_article
 
 =method add
 
-Add an article to the database for later publication. 
+Add an article to the database for later publication.
 
 =cut
 
@@ -404,7 +415,7 @@ sub add
             $self->run = 1;
             next;
         }
-        
+
         printf("Got '%s' (%.1fkb)\n", $tx->title,
                length($tx->readable_text) / 1024);
 
@@ -459,10 +470,10 @@ sub publish
 {
     my $self = shift;
     $self->run = 0;
-    
+
     my $articles = App::Zapzi::Articles::get_articles($self->folder);
     my $count  = $articles->count;
-    
+
     if ($count == 0)
     {
         print "No articles in '", $self->folder, "' to publish\n";
@@ -473,7 +484,7 @@ sub publish
     printf("Publishing '%s' - %d articles\n", $self->folder, $count);
 
     my $pub = App::Zapzi::Publish->new(folder => $self->folder);
-    
+
     if (! $pub->publish())
     {
         print "Failed to publish ebook\n";
@@ -492,38 +503,42 @@ Displays help text.
 
 sub help
 {
-    print "zapzi help|h\n";
-    print "Shows this help text\n\n";
+    my $self = shift;
+    
+    print << 'EOF';
+  $ zapzi help|h
+    Shows this help text
 
-    print "zapzi init [--force]\n";
-    print "Initialises new zapzi database. Will not create a new database if\n".
-          "one exists already unless you set --force\n\n";
+  $ zapzi init [--force]
+    Initialises new zapzi database. Will not create a new database 
+    if one exists already unless you set --force.
 
-    print "zapzi add FILE|URL\n";
-    print "Adds article to database. Accepts a file name or a valid URL.\n\n";
+  $ zapzi add FILE | URL
+    Adds article to database. Accepts multiple file names or URLs.
 
-    print "zapzi list|ls [-f FOLDER]\n";
-    print "Lists articles in FOLDER.\n\n";
+  $ zapzi list | ls [-f FOLDER]
+    Lists articles in FOLDER.
 
-    print "zapzi list-folders|lsf\n";
-    print "Lists a summary of all folders.\n\n";
+  $ zapzi list-folders | lsf
+    Lists a summary of all folders.
 
-    print "zapzi make-folder|mkf FOLDER\n";
-    print "Make a new folder.\n\n";
+  $ zapzi make-folder | mkf FOLDER
+    Make a new folder.
 
-    print "zapzi delete-folder|rmf FOLDER\n";
-    print "Remove a folder and all articles in it.\n\n";
+  $ zapzi delete-folder | rmf FOLDER
+    Remove a folder and all articles in it.
 
-    print "zapzi delete-article|delete|rm ID\n";
-    print "Removes article ID.\n\n";
+  $ zapzi delete-article | delete | rm ID
+    Removes article ID.
 
-    print "zapzi show ID\n";
-    print "Prints content of article to STDOUT\n\n";
+  $ zapzi show ID
+    Prints content of article to STDOUT
 
-    print "zapzi publish [-f FOLDER]\n";
-    print "Publishes articles in FOLDER to an eBook.\n\n";
+  $ zapzi publish [-f FOLDER]
+    Publishes articles in FOLDER to an eBook.
+EOF
 
+    $self->run = 0;
 }
-
 
 1;
