@@ -2,6 +2,12 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.003     2013-07-08 23:02:34 Asia/Hong_Kong
+
+  * Update READMEs
+  * Make implicit dependency on DateTime::Format::SQLite
+  * Set error attribute correctly
+
 0.002     2013-07-08 15:40:37 Asia/Hong_Kong
 
   * --version command line option
