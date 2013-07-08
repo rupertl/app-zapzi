@@ -111,18 +111,19 @@ sub _fetch_url
 
     if (! $response->{success} || ! length($response->{content}))
     {
-        $self->_set_error("Failed to fetch $url: ");
+        my $error = "Failed to fetch $url: ";
         if ($response->{status} == 599)
         {
             # Internal exception to HTTP::Tiny
-            $self->error .= $response->{content};
+            $error .= $response->{content};
         }
         else
         {
             # Error details from remote server
-            $self->error .= $response->{status} . " ";
-            $self->error .= $response->{reason};
+            $error .= $response->{status} . " ";
+            $error .= $response->{reason};
         }
+        $self->_set_error($error);
         return;
     }
 
