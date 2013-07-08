@@ -44,7 +44,7 @@ Holds the readable text of the article
 
 =cut
 
-has readable_text => (is => 'ro', default => '');
+has readable_text => (is => 'rwp', default => '');
 
 =attr title
 
@@ -52,7 +52,7 @@ Title extracted from the article
 
 =cut
 
-has title => (is => 'ro', default => '');
+has title => (is => 'rwp', default => '');
 
 =method to_readable
 
@@ -90,11 +90,11 @@ sub _html_to_readable
     # call it twice, once here and once in HTML::ExtractMain.
     if ($raw_html =~ m/<title>(\w[^>]+)<\/title>/si)
     {
-        $self->title = $1;
+        $self->_set_title($1);
     }
     else
     {
-        $self->title = $self->raw_article->source;
+        $self->_set_title($self->raw_article->source);
     }
 
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
@@ -108,7 +108,7 @@ sub _html_to_readable
         $element->delete;
     }
 
-    $self->readable_text = $tree->as_HTML;
+    $self->_set_readable_text($tree->as_HTML);
     return 1;
 }
 
@@ -119,12 +119,12 @@ sub _text_to_readable
     my $raw_html = Encode::decode_utf8($self->raw_article->text);
 
     # We take the first line as the title, or up to 80 bytes
-    $self->title = (split /\n/, $raw_html)[0];
-    $self->title = substr($self->title, 0, 80);
+    $self->_set_title( (split /\n/, $raw_html)[0] );
+    $self->_set_title(substr($self->title, 0, 80));
 
     # We push plain text through Markdown to convert URLs to links etc
     my $md = Text::Markdown->new;
-    $self->readable_text = $md->markdown($raw_html);
+    $self->_set_readable_text($md->markdown($raw_html));
 
     return 1;
 }

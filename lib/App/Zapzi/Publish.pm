@@ -93,7 +93,7 @@ sub _make_filename
 
     my $base = sprintf("Zapzi - %s.mobi", $self->_get_title);
 
-    $self->{filename} = $app->zapzi_ebook_dir . "/" . $base;
+    $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
 }
 
 1;

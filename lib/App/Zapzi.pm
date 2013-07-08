@@ -146,8 +146,8 @@ sub process_args
 
     my $options = Getopt::Lucid->getopt(\@specs, \@args)->validate;
 
-    $self->force = $options->get_force;
-    $self->folder = $options->get_folder // $self->folder;
+    $self->force($options->get_force);
+    $self->folder($options->get_folder // $self->folder);
 
     $self->help if $options->get_help;
     $self->init if $options->get_init;
@@ -156,7 +156,7 @@ sub process_args
     if (! -r $self->database->database_file)
     {
         print "Zapzi database does not exist; did you run 'zapzi init'?\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
@@ -164,7 +164,7 @@ sub process_args
     {
         if (! $self->validate_folder($self->folder))
         {
-            $self->run = 1;
+            $self->run(1);
             return;
         }
     }
@@ -197,19 +197,19 @@ sub init
     if (! $dir || $dir eq '')
     {
         print "Zapzi directory not supplied\n";
-        $self->run = 1;
+        $self->run(1);
     }
     elsif (-d $dir && ! $self->force)
     {
         print "Zapzi directory $dir already exists\n";
         print "To force recreation, run with the --force option\n";
-        $self->run = 1;
+        $self->run(1);
     }
     else
     {
         $self->database->init;
         print "Created Zapzi directory $dir\n";
-        $self->run = 0;
+        $self->run(0);
     }
 }
 
@@ -226,7 +226,7 @@ sub validate_folder
     if (! App::Zapzi::Articles::get_folder($self->folder))
     {
         printf("Folder '%s' does not exist\n", $self->folder);
-        $self->run = 1;
+        $self->run(1);
         return;
     }
     else
@@ -245,7 +245,7 @@ sub list
 {
     my $self = shift;
     App::Zapzi::Articles::list_articles($self->folder);
-    $self->run = 0;
+    $self->run(0);
 }
 
 =method list_folders
@@ -258,7 +258,7 @@ sub list_folders
 {
     my $self = shift;
     App::Zapzi::Folders::list_folders();
-    $self->run = 0;
+    $self->run(0);
 }
 
 =method make_folder
@@ -276,11 +276,11 @@ sub make_folder
     if (! @args)
     {
         print "Need to provide folder names to create\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $folder = $_;
@@ -312,11 +312,11 @@ sub delete_folder
     if (! @args)
     {
         print "Need to provide folder names to delete\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $folder = $_;
@@ -350,11 +350,11 @@ sub delete_article
     if (! @args)
     {
         print "Need to provide article IDs\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $id = $_;
@@ -373,7 +373,7 @@ sub delete_article
         else
         {
             print "Could not get article $id\n";
-            $self->run = 1;
+            $self->run(1);
         }
     }
 }
@@ -392,11 +392,11 @@ sub add
     if (! @args)
     {
         print "Need to provide articles names to add\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $source = $_;
@@ -405,7 +405,7 @@ sub add
         if (! $f->fetch)
         {
             print "Could not get article: ", $f->error, "\n\n";
-            $self->run = 1;
+            $self->run(1);
             next;
         }
 
@@ -413,7 +413,7 @@ sub add
         if (! $tx->to_readable)
         {
             print "Could not transform article\n\n";
-            $self->run = 1;
+            $self->run(1);
             next;
         }
 
@@ -441,11 +441,11 @@ sub show
     if (! @args)
     {
         print "Need to provide article IDs\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $art_rs = App::Zapzi::Articles::get_article($_);
@@ -456,7 +456,7 @@ sub show
         else
         {
             print "Could not get article $_\n\n";
-            $self->run = 1;
+            $self->run(1);
         }
     }
 }
@@ -470,7 +470,7 @@ Publish a folder of articles to an eBook
 sub publish
 {
     my $self = shift;
-    $self->run = 0;
+    $self->run(0);
 
     my $articles = App::Zapzi::Articles::get_articles($self->folder);
     my $count  = $articles->count;
@@ -478,7 +478,7 @@ sub publish
     if ($count == 0)
     {
         print "No articles in '", $self->folder, "' to publish\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
@@ -489,7 +489,7 @@ sub publish
     if (! $pub->publish())
     {
         print "Failed to publish ebook\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
@@ -539,7 +539,7 @@ sub help
     Publishes articles in FOLDER to an eBook.
 EOF
 
-    $self->run = 0;
+    $self->run(0);
 }
 
 1;
