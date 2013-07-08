@@ -19,6 +19,7 @@ test_show();
 test_add();
 test_delete_article();
 test_publish();
+test_help_version();
 
 done_testing();
 
@@ -168,4 +169,17 @@ sub test_publish
                  qr/does not exist/,
                  'publish error' );
     ok( $app->run, 'publish error run' );
+}
+
+sub test_help_version
+{
+    my $app = get_test_app();
+
+    stdout_like( sub { $app->process_args(qw(help)) },
+                 qr/Shows this help text/s,
+                 'help' );
+
+    stdout_like( sub { $app->process_args(qw(version)) },
+                 qr/App::Zapzi .* and Perl/s,
+                 'version' );
 }

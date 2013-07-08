@@ -142,6 +142,7 @@ sub process_args
     my @specs =
     (
         Switch("help|h"),
+        Switch("version|v"),
         Switch("init"),
         Switch("add"),
         Switch("list|ls"),
@@ -162,6 +163,7 @@ sub process_args
     $self->folder($options->get_folder // $self->folder);
 
     $self->help if $options->get_help;
+    $self->version if $options->get_version;
     $self->init if $options->get_init;
 
     # For any further operations we need a database
@@ -522,6 +524,9 @@ sub help
   $ zapzi help|h
     Shows this help text
 
+  $ zapzi version|v
+    Show version information
+
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database 
     if one exists already unless you set --force.
@@ -551,6 +556,24 @@ sub help
     Publishes articles in FOLDER to an eBook.
 EOF
 
+    $self->run(0);
+}
+
+=method version
+
+Displays version information.
+
+=cut
+
+sub version
+{
+    my $self = shift;
+
+    my $v = "dev";
+    no strict 'vars'; ## no critic - $VERSION does not exist in dev
+    $v = "$VERSION" if defined $VERSION;
+
+    print "App::Zapzi $v and Perl $]\n";
     $self->run(0);
 }
 

@@ -170,8 +170,11 @@ pronounced ZAAP-zi in Cantonese.
 
 =head1 USAGE
 
-  $ zapzi help|h
+  $ zapzi help | h
     Shows this help text
+
+  $ zapzi version | v
+    Show version information
 
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database 
