@@ -1,184 +1,188 @@
-NAME
-    zapzi - a tool to store articles and publish them as eBooks to read
-    later
+# zapzi
 
-VERSION
-    version 0.001
+### A tool to store articles and publish them as eBooks to read later
 
-SYNOPSIS
-      $ zapzi init
-      Created Zapzi directory ~/.zapzi
+# Synopsis
 
-      $ zapzi add ~/src/foo/README.txt
-      Added article 2 to folder Inbox
+    $ zapzi init
+    Created Zapzi directory ~/.zapzi
 
-      $ zapzi add http://perldoc.perl.org/perlintro.html
-      Added article 3 to folder Inbox
+    $ zapzi add ~/src/foo/README.txt
+    Added article 2 to folder Inbox
 
-      $ zapzi ls
-      Inbox    1 05-Jul-2013 Welcome to Zapzi
-      Inbox    2 05-Jul-2013 README for project foo
-      Inbox    3 05-Jul-2013 perlintro - perldoc.perl.org
+    $ zapzi add http://perldoc.perl.org/perlintro.html
+    Added article 3 to folder Inbox
 
-      $ zapzi publish
-      Published ~/.zapzi/ebooks/Zapzi - Inbox - 05-Jul-2013.mobi
+    $ zapzi ls
+    Inbox    1 05-Jul-2013 Welcome to Zapzi
+    Inbox    2 05-Jul-2013 README for project foo
+    Inbox    3 05-Jul-2013 perlintro - perldoc.perl.org
 
-      # See USAGE below for more details on command line options.
+    $ zapzi publish
+    Published ~/.zapzi/ebooks/Zapzi - Inbox - 05-Jul-2013.mobi
 
-DESCRIPTION
-    Zapzi is a command line tool to take articles - from files or from the
-    web - and create eBooks for reading later.
+    # See Usage below for more details on command line options.
 
-  FEATURES
-    *   Can read articles from local files or via HTTP.
+# Installation
 
-    *   Understands plain text, HTML and Markdown format articles.
+    cpan App::Zapzi
 
-    *   HTML is converted to a more readable form (eg no menus or footers)
-        to make the article easier to view on an eReader.
+You will also need libGD - on Debian/Ubuntu install package
+`libgd2-xpm-dev`.
 
-    *   Articles can be stored in different folders to organise your
-        reading.
+# Description
 
-    *   eBooks are created in MOBI format (other formats should be added
-        later).
+Zapzi is a command line tool to take articles - from files or from the
+web - and create eBooks for reading later.
 
-    *   Once you publish a folder of articles to an eBook file, the articles
-        are archived so you can retrieve them later if needed.
+## Features
 
-  CONFIGURATION
-    Zapzi needs very little configuration to get running - just type
+- Can read articles from local files or via HTTP.
+- Understands plain text, HTML and Markdown format articles.
+- HTML is converted to a more readable form (eg no menus or
+footers) to make the article easier to view on an eReader.
+- Articles can be stored in different folders to organise your reading.
+- eBooks are created in MOBI format (other formats should be added later).
+- Once you publish a folder of articles to an eBook file, the
+articles are archived so you can retrieve them later if needed.
 
-      $ zapzi init
+## Configuration
 
-    and it will create a directory (by default ~/.zapzi) to store its
-    database and files. You can override this directory by setting the
-    environment variable "ZAPZI_DIR".
+Zapzi needs very little configuration to get running - just type 
 
-  ADDING ARTICLES
-    To add an article, use "zapzi add" with a filename on your computer or
-    an HTTP URL. Remember to quote URLs if they include space or shell
-    special characters, eg
+    $ zapzi init
 
-      $ zapzi add 'http://example.com/article?id=4'
+and it will create a directory (by default ~/.zapzi) to store its
+database and files. You can override this directory by setting the
+environment variable `ZAPZI_DIR`.
 
-    Zapzi will download a copy and store it in its database. Note that if
-    you need to log into a site this will not work - save a copy of the page
-    locally using your browser and then point Zapzi at the file.
+## Adding Articles
 
-    Zapzi will detect the file type and if it is HTML it will use
-    HTML::ExtractMain to strip out non-essential parts of the page such as
-    menus. Other formats are treated as plain text with Markdown.
+To add an article, use `zapzi add` with a filename on your computer
+or an HTTP URL. Remember to quote URLs if they include space or shell
+special characters, eg
 
-  FOLDERS
-    By default, Zapzi will store articles in the 'Inbox' folder. This can be
-    changed by using the "-f" option, eg
+    $ zapzi add 'http://example.com/article?id=4'
 
-      $ zapzi add -f Foo project.txt
+Zapzi will download a copy and store it in its database. Note that if
+you need to log into a site this will not work - save a copy of the
+page locally using your browser and then point Zapzi at the file.
 
-    In order to use other folders you will need to create them first using
-    the "make-folder" or "mkf" command, eg
+Zapzi will detect the file type and if it is HTML it will use
+[HTML::ExtractMain](http://search.cpan.org/perldoc?HTML::ExtractMain) to strip out non-essential parts of the page such
+as menus. Other formats are treated as plain text with Markdown.
 
-      $ zapzi make-folder Foo
+## Folders
 
-    Folders can be deleted with the "delete-folder" or "rd" command. Note
-    that this will also delete all articles in the folder.
+By default, Zapzi will store articles in the 'Inbox' folder. This can
+be changed by using the `-f` option, eg
 
-    To see a summary of your folders and how many articles are in them use
-    the "list-folders" or "lsf" command.
+    $ zapzi add -f Foo project.txt
 
-      $ zapzi lsf
+In order to use other folders you will need to create them first using
+the `make-folder` or `mkf` command, eg
 
-      Inbox        2
-      Archive      4
-      Foo          1
+    $ zapzi make-folder Foo
 
-    To see a summary of a particular folder, use "list" or "ls":
+Folders can be deleted with the `delete-folder` or `rd` command.
+Note that this will also delete all articles in the folder.
 
-      $ zapzi ls -f Foo
-      Foo      1 05-Jul-2013 Project readme
+To see a summary of your folders and how many articles are in them use
+the `list-folders` or `lsf` command.
 
-  PUBLISHING
-    To create an eBook, run "zapzi publish" or "zapzi pub". By default this
-    will publish articles from the Inbox folder; use the "-f" option to
-    select another folder.
+    $ zapzi lsf
 
-    If everything worked OK, Zapzi will create a new eBook in the ebooks
-    sub-directory of your Zapzi directory, eg "~/.zapzi/ebooks".
+    Inbox        2
+    Archive      4
+    Foo          1
 
-    When you publish a folder, the articles are moved to the Archive folder.
+To see a summary of a particular folder, use `list` or `ls`:
 
-    Instead of publishing, if you want to see a copy of an article use
-    "zapzi show". This will send a copy to the standard output. It will not
-    archive the article.
+    $ zapzi ls -f Foo
+    Foo      1 05-Jul-2013 Project readme
 
-SUPPORT AND DEVELOPMENT
-    Bugs and requested issues can be reported at Github. Pull requests are
-    also very welcome; please try to follow the existing style and
-    organisation of the module.
+## Publishing
 
-      https://github.com/rupertl/app-zapzi/
+To create an eBook, run `zapzi publish` or `zapzi pub`. By default
+this will publish articles from the Inbox folder; use the `-f` option
+to select another folder.
 
-FUTURE PLANS
-    This is an early version of Zapzi and although the basic functionality
-    is there I plan to improve it further. If you have any suggestions
-    please add them to the issue tracker at Github.
+If everything worked OK, Zapzi will create a new eBook in the ebooks
+sub-directory of your Zapzi directory, eg `~/.zapzi/ebooks`.
 
-    *   Support other ways to fetch articles, eg FTP or IMAP for email.
+When you publish a folder, the articles are moved to the Archive folder.
 
-    *   Support other article formats, eg mbox/maildir.
+Instead of publishing, if you want to see a copy of an article use
+`zapzi show`. This will send a copy to the standard output. It will
+not archive the article.
 
-    *   Add the ability to read sources with state, eg RSS feeds.
+# Support and Development
 
-    *   Improve text extraction and formatting.
+Bugs and requested issues can be reported at Github. Pull requests are
+also very welcome; please try to follow the existing style and
+organisation of the module.
 
-    *   Publish to other eBook formats such as EPUB or PDF.
+    https://github.com/rupertl/app-zapzi/
 
-    *   Add options to distribute published eBooks, eg by email or copy to
-        an eReader.
+# Future Plans
 
-NAME
-    Zapzi comes from the Chinese word 雜誌, meaning magazine. It is pronounced
-    ZAAP-zi in Cantonese.
+This is an early version of Zapzi and although the basic functionality
+is there I plan to improve it further. If you have any suggestions
+please add them to the issue tracker at Github.
 
-USAGE
-      $ zapzi help|h
-        Shows this help text
+- Support other ways to fetch articles, eg FTP or IMAP for email.
+- Support other article formats, eg mbox/maildir.
+- Add the ability to read sources with state, eg RSS feeds.
+- Improve text extraction and formatting.
+- Publish to other eBook formats such as EPUB or PDF.
+- Add options to distribute published eBooks, eg by email or
+copy to an eReader.
 
-      $ zapzi init [--force]
-        Initialises new zapzi database. Will not create a new database 
-        if one exists already unless you set --force.
+# Usage
 
-      $ zapzi add FILE | URL
-        Adds article to database. Accepts multiple file names or URLs.
+    $ zapzi help | h
+      Shows this help text
 
-      $ zapzi list | ls [-f FOLDER]
-        Lists articles in FOLDER.
+    $ zapzi init [--force]
+      Initialises new zapzi database. Will not create a new database 
+      if one exists already unless you set --force.
 
-      $ zapzi list-folders | lsf
-        Lists a summary of all folders.
+    $ zapzi add FILE | URL
+      Adds article to database. Accepts multiple file names or URLs.
 
-      $ zapzi make-folder | mkf FOLDER
-        Make a new folder.
+    $ zapzi list | ls [-f FOLDER]
+      Lists articles in FOLDER.
 
-      $ zapzi delete-folder | rmf FOLDER
-        Remove a folder and all articles in it.
+    $ zapzi list-folders | lsf
+      Lists a summary of all folders.
 
-      $ zapzi delete-article | delete | rm ID
-        Removes article ID.
+    $ zapzi make-folder | mkf FOLDER
+      Make a new folder.
 
-      $ zapzi show ID
-        Prints content of article to STDOUT
+    $ zapzi delete-folder | rmf FOLDER
+      Remove a folder and all articles in it.
 
-      $ zapzi publish [-f FOLDER]
-        Publishes articles in FOLDER to an eBook.
+    $ zapzi delete-article | delete | rm ID
+      Removes article ID.
 
-AUTHOR
-    Rupert Lane <rupert@rupert-lane.org>
+    $ zapzi show ID
+      Prints content of article to STDOUT
 
-COPYRIGHT AND LICENSE
-    This software is copyright (c) 2013 by Rupert Lane.
+    $ zapzi publish [-f FOLDER]
+      Publishes articles in FOLDER to an eBook.
 
-    This is free software; you can redistribute it and/or modify it under
-    the same terms as the Perl 5 programming language system itself.
+# Name
 
+Zapzi comes from the Chinese word 雜誌, meaning magazine. It is
+pronounced ZAAP-zi in Cantonese.
+
+# Author
+
+Rupert Lane <rupert@rupert-lane.org>
+
+# Copyright and License
+
+This software is copyright (c) 2013 by Rupert Lane.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.

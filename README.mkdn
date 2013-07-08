@@ -1,12 +1,8 @@
-# NAME
+# zapzi
 
-zapzi - a tool to store articles and publish them as eBooks to read later
+### A tool to store articles and publish them as eBooks to read later
 
-# VERSION
-
-version 0.001
-
-# SYNOPSIS
+# Synopsis
 
     $ zapzi init
     Created Zapzi directory ~/.zapzi
@@ -25,14 +21,21 @@ version 0.001
     $ zapzi publish
     Published ~/.zapzi/ebooks/Zapzi - Inbox - 05-Jul-2013.mobi
 
-    # See USAGE below for more details on command line options.
+    # See Usage below for more details on command line options.
 
-# DESCRIPTION
+# Installation
+
+    cpan App::Zapzi
+
+You will also need libGD - on Debian/Ubuntu install package
+`libgd2-xpm-dev`.
+
+# Description
 
 Zapzi is a command line tool to take articles - from files or from the
 web - and create eBooks for reading later.
 
-## FEATURES
+## Features
 
 - Can read articles from local files or via HTTP.
 - Understands plain text, HTML and Markdown format articles.
@@ -43,7 +46,7 @@ footers) to make the article easier to view on an eReader.
 - Once you publish a folder of articles to an eBook file, the
 articles are archived so you can retrieve them later if needed.
 
-## CONFIGURATION
+## Configuration
 
 Zapzi needs very little configuration to get running - just type 
 
@@ -53,7 +56,7 @@ and it will create a directory (by default ~/.zapzi) to store its
 database and files. You can override this directory by setting the
 environment variable `ZAPZI_DIR`.
 
-## ADDING ARTICLES
+## Adding Articles
 
 To add an article, use `zapzi add` with a filename on your computer
 or an HTTP URL. Remember to quote URLs if they include space or shell
@@ -69,7 +72,7 @@ Zapzi will detect the file type and if it is HTML it will use
 [HTML::ExtractMain](http://search.cpan.org/perldoc?HTML::ExtractMain) to strip out non-essential parts of the page such
 as menus. Other formats are treated as plain text with Markdown.
 
-## FOLDERS
+## Folders
 
 By default, Zapzi will store articles in the 'Inbox' folder. This can
 be changed by using the `-f` option, eg
@@ -98,7 +101,7 @@ To see a summary of a particular folder, use `list` or `ls`:
     $ zapzi ls -f Foo
     Foo      1 05-Jul-2013 Project readme
 
-## PUBLISHING
+## Publishing
 
 To create an eBook, run `zapzi publish` or `zapzi pub`. By default
 this will publish articles from the Inbox folder; use the `-f` option
@@ -113,7 +116,7 @@ Instead of publishing, if you want to see a copy of an article use
 `zapzi show`. This will send a copy to the standard output. It will
 not archive the article.
 
-# SUPPORT AND DEVELOPMENT
+# Support and Development
 
 Bugs and requested issues can be reported at Github. Pull requests are
 also very welcome; please try to follow the existing style and
@@ -121,7 +124,7 @@ organisation of the module.
 
     https://github.com/rupertl/app-zapzi/
 
-# FUTURE PLANS
+# Future Plans
 
 This is an early version of Zapzi and although the basic functionality
 is there I plan to improve it further. If you have any suggestions
@@ -135,14 +138,9 @@ please add them to the issue tracker at Github.
 - Add options to distribute published eBooks, eg by email or
 copy to an eReader.
 
-# NAME
+# Usage
 
-Zapzi comes from the Chinese word 雜誌, meaning magazine. It is
-pronounced ZAAP-zi in Cantonese.
-
-# USAGE
-
-    $ zapzi help|h
+    $ zapzi help | h
       Shows this help text
 
     $ zapzi init [--force]
@@ -173,11 +171,16 @@ pronounced ZAAP-zi in Cantonese.
     $ zapzi publish [-f FOLDER]
       Publishes articles in FOLDER to an eBook.
 
-# AUTHOR
+# Name
+
+Zapzi comes from the Chinese word 雜誌, meaning magazine. It is
+pronounced ZAAP-zi in Cantonese.
+
+# Author
 
 Rupert Lane <rupert@rupert-lane.org>
 
-# COPYRIGHT AND LICENSE
+# Copyright and License
 
 This software is copyright (c) 2013 by Rupert Lane.
 
