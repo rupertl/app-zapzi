@@ -8,6 +8,7 @@ use warnings;
 # VERSION
 
 use base 'DBIx::Class::Core';
+use DateTime::Format::SQLite;
 __PACKAGE__->load_components(qw/InflateColumn::DateTime/);
 
 =head1 DESCRIPTION
