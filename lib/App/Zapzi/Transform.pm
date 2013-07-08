@@ -21,6 +21,7 @@ use Carp;
 use Encode;
 use HTML::ExtractMain;
 use HTML::Element;
+use HTML::Entities ();
 use Text::Markdown;
 use App::Zapzi;
 use App::Zapzi::FetchArticle;
@@ -88,14 +89,17 @@ sub _html_to_readable
     # Get the title from the HTML raw text - a regexp is not ideal and
     # we'd be better off using HTML::Tree but that means we'd have to
     # call it twice, once here and once in HTML::ExtractMain.
+    my $title;
     if ($raw_html =~ m/<title>(\w[^>]+)<\/title>/si)
     {
-        $self->_set_title($1);
+        $title = HTML::Entities::decode($1);
     }
     else
     {
-        $self->_set_title($self->raw_article->source);
+        $title = $self->raw_article->source;
     }
+
+    $self->_set_title($title);
 
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );

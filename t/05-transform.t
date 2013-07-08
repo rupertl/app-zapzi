@@ -1,5 +1,6 @@
 #!perl
 use Test::Most;
+use utf8;
 
 use lib qw(t/lib);
 use ZapziTestDatabase;
@@ -29,7 +30,9 @@ sub test_text
     my $tx = App::Zapzi::Transform->new(raw_article => $f);
     isa_ok( $tx, 'App::Zapzi::Transform' );
     ok( $tx->to_readable, 'Transform sample text file' );
-    like( $tx->readable_text, qr/<p>This is a/, 'Contents of text file OK' );
+    like( $tx->readable_text, qr/<p>No special formatting/, 
+          'Contents of text file OK' );
+    like( $tx->title, qr/This is a sample text file/, 'Title of text file OK' );
 }
 
 sub test_html
@@ -40,4 +43,6 @@ sub test_html
     isa_ok( $tx, 'App::Zapzi::Transform' );
     ok( $tx->to_readable, 'Transform sample HTML file' );
     like( $tx->readable_text, qr/<h1>Lorem/, 'Contents of HTML file OK' );
+    is( $tx->title, 'Sample “HTML” Document', 
+        'Title of HTML file OK with entity decoding' );
 }
