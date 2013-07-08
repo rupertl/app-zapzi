@@ -2,6 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.002     2013-07-08 15:40:37 Asia/Hong_Kong
+
+  * --version command line option
+  * Handle HTML entities in article titles correctly
+  * Use an in-memory SQLite database to speed up testing
+  * Tidy up class access
+
 0.001     2013-07-07 22:18:51 Asia/Hong_Kong
 
   * Initial version
