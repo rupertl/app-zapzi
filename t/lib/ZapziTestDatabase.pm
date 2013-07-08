@@ -7,12 +7,13 @@ use App::Zapzi;
 
 sub get_test_app
 {
-    # Get a temporary database in a temp directory
+    # Get a temporary directory for output of eBooks and an in-memory
+    # database to speed up testing
 
     my $test_dir = _get_test_dir();
     my $dir = "$test_dir/zapzi";
 
-    my $app = App::Zapzi->new(zapzi_dir => $dir);
+    my $app = App::Zapzi->new(test_database => 1, zapzi_dir => $dir);
     $app->init();
     ok( ! $app->run, 'Created test Zapzi instance' );
 
@@ -21,8 +22,15 @@ sub get_test_app
 
 sub test_init
 {
-    my ($test_dir, $app) = @_;
+    # For init we need a database disk file to show that dropping the
+    # database and recreating it works.
+
+    my $test_dir = _get_test_dir();
     my $dir = "$test_dir/zapzi";
+
+    my $app = App::Zapzi->new(test_database => 0, zapzi_dir => $dir);
+    $app->init();
+    ok( ! $app->run, 'Created test Zapzi instance 2' );
 
     $app->process_args('init');
     ok( $app->run, 'init cannot be run twice' );

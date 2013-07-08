@@ -114,6 +114,18 @@ has database =>
     }
 );
 
+=attr test_database
+
+If set, use an in-memory database. Used to speed up testing only.
+
+=cut
+
+has test_database =>
+(
+    is => 'ro',
+    default => 0
+);
+
 =method process_args(@args)
 
 Read the arguments C<@args> (normally you'd pass in C<@ARGV> and
@@ -153,7 +165,7 @@ sub process_args
     $self->init if $options->get_init;
 
     # For any further operations we need a database
-    if (! -r $self->database->database_file)
+    if (! -r $self->database->database_file && ! $self->test_database)
     {
         print "Zapzi database does not exist; did you run 'zapzi init'?\n";
         $self->run(1);

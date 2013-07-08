@@ -7,9 +7,10 @@ use ZapziTestDatabase;
 
 use App::Zapzi;
 
+test_init();
+
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
-test_init();
 test_list();
 test_list_folders();
 test_make_folder();
@@ -25,13 +26,13 @@ sub get_test_app
 {
     my $dir = $app->zapzi_dir;
 
-    my $clean_app = App::Zapzi->new(zapzi_dir => $dir);
+    my $clean_app = App::Zapzi->new(zapzi_dir => $dir, test_database => 1);
     return $clean_app;
 }
 
 sub test_init
 {
-    ZapziTestDatabase::test_init($test_dir, $app);
+    ZapziTestDatabase::test_init();
 }
 
 sub test_list

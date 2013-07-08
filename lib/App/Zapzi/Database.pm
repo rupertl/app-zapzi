@@ -34,7 +34,14 @@ The SQLite file where the database is stored.
 sub database_file
 {
     my $self = shift;
-    return $self->app->zapzi_dir . "/zapzi.db";
+    if ($self->app->test_database)
+    {
+        return ':memory:';
+    }
+    else
+    {
+        return $self->app->zapzi_dir . "/zapzi.db";
+    }
 }
 
 =method dsn
@@ -82,7 +89,8 @@ sub init
     mkdir $self->app->zapzi_ebook_dir;
 
     $self->schema->storage->disconnect if $self->app->force;
-    unlink $self->database_file;
+    unlink $self->database_file unless $self->app->test_database;
+    $_schema = undef;
 
     # Adjust the page size to match the expected blob size for articles
     # http://www.sqlite.org/intern-v-extern-blob.html
