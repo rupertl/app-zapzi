@@ -71,7 +71,11 @@ sub test_make_folder
 
     stdout_like( sub { $app->process_args(qw(mkf Bar Baz)) },
                  qr/Baz/, 'mkf two args' );
-    ok( ! $app->run, 'make-folder run' );
+    ok( ! $app->run, 'mkf run' );
+
+    stdout_like( sub { $app->process_args(qw(md Qux)) },
+                 qr/Qux/, 'md' );
+    ok( ! $app->run, 'md run' );
 
     stdout_like( sub { $app->process_args(qw(make-folder Inbox)) },
                  qr/already exists/, 'make-folder for existing folder' );
@@ -92,11 +96,15 @@ sub test_delete_folder
 
     stdout_like( sub { $app->process_args(qw(rmf Bar Baz)) },
                  qr/Baz/, 'rmf two args' );
-    ok( ! $app->run, 'delete-folder run' );
+    ok( ! $app->run, 'rmf run' );
+
+    stdout_like( sub { $app->process_args(qw(rd Qux)) },
+                 qr/Qux/, 'rd' );
+    ok( ! $app->run, 'rd run' );
 
     stdout_like( sub { $app->process_args(qw(delete-folder Inbox)) },
                  qr/by the system/, 'delete-folder for system folder' );
-    ok( ! $app->run, 'make-folder run' );
+    ok( ! $app->run, 'delete-folder run' );
 
     stdout_like( sub { $app->process_args(qw(delete-folder Nonesuch)) },
                  qr/does not exist/, 'delete-folder for non-existent folder' );
@@ -110,6 +118,10 @@ sub test_show
     stdout_like( sub { $app->process_args(qw(show 1)) }, qr/Welcome to/,
                  'show' );
     ok( ! $app->run, 'show run' );
+
+    stdout_like( sub { $app->process_args(qw(cat 1)) }, qr/Welcome to/,
+                 'cat' );
+    ok( ! $app->run, 'cat run' );
 
     stdout_like( sub { $app->process_args(qw(show 0)) }, qr/Could not/,
                  'show error' );
