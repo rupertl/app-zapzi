@@ -25,7 +25,13 @@
 
 # Installation
 
+You will need Perl 5.10.1 or later. Use your favourite CPAN client to
+get the package and its dependencies, eg:
+
     cpan App::Zapzi
+
+Zapzi depends on a large number of Perl modules so this may take some
+time to download and install.
 
 You will also need libGD - on Debian/Ubuntu install package
 `libgd2-xpm-dev`.
