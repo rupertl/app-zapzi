@@ -2,6 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.004     2013-07-09 15:10:08 Asia/Hong_Kong
+
+  * Added command aliases md, rd and cat
+  * Update installation instructions
+  * Set explicit version dependencies for modules
+  * Use roles and plugins in Transform module
+
 0.003     2013-07-08 23:02:34 Asia/Hong_Kong
 
   * Update READMEs
