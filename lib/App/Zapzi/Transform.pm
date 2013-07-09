@@ -5,10 +5,6 @@ package App::Zapzi::Transform;
 
 This class takes text or HTML and returns readable HTML.
 
-This interface is temporary to get the initial version of Zapzi
-working and will be replaced with a more flexible role based system
-later.
-
 =cut
 
 use utf8;
@@ -17,15 +13,15 @@ use warnings;
 
 # VERSION
 
+use Module::Find 0.11;
+our @_plugins;
+BEGIN { @_plugins = sort(Module::Find::useall('App::Zapzi::Transformers')); }
+
 use Carp;
-use Encode;
-use HTML::ExtractMain 0.63;
-use HTML::Element;
-use HTML::Entities ();
-use Text::Markdown;
 use App::Zapzi;
 use App::Zapzi::FetchArticle;
 use Moo;
+
 
 =attr raw_article
 
@@ -65,72 +61,27 @@ sub to_readable
 {
     my $self = shift;
 
-    if ($self->raw_article->content_type =~ m|text/html|)
+    my $module;
+    for (@_plugins)
     {
-        return $self->_html_to_readable;
-    }
-    else
-    {
-        return $self->_text_to_readable;
-    }
-}
-
-sub _html_to_readable
-{
-    my $self = shift;
-
-    my $encoding = 'utf8';
-    if ($self->raw_article->content_type =~ m/charset=([\w-]+)/)
-    {
-        $encoding = $1;
-    }
-    my $raw_html = Encode::decode($encoding, $self->raw_article->text);
-
-    # Get the title from the HTML raw text - a regexp is not ideal and
-    # we'd be better off using HTML::Tree but that means we'd have to
-    # call it twice, once here and once in HTML::ExtractMain.
-    my $title;
-    if ($raw_html =~ m/<title>(\w[^>]+)<\/title>/si)
-    {
-        $title = HTML::Entities::decode($1);
-    }
-    else
-    {
-        $title = $self->raw_article->source;
+        my $plugin = $_;
+        if ($plugin->handles($self->raw_article->content_type))
+        {
+            $module = $plugin->new(input => $self->raw_article);
+            last;
+        }
     }
 
-    $self->_set_title($title);
+    return unless defined $module;
 
-    my $tree = HTML::ExtractMain::extract_main_html($raw_html,
-                                                    output_type => 'tree' );
-
-    return unless $tree;
-
-    # Delete some elements we don't need
-    for my $element ($tree->find_by_tag_name(qw{img script noscript object}))
+    my $rc = $module->transform;
+    if ($rc)
     {
-        $element->delete;
+        $self->_set_title($module->title);
+        $self->_set_readable_text($module->readable_text);
     }
 
-    $self->_set_readable_text($tree->as_HTML);
-    return 1;
-}
-
-sub _text_to_readable
-{
-    my $self = shift;
-
-    my $raw_html = Encode::decode_utf8($self->raw_article->text);
-
-    # We take the first line as the title, or up to 80 bytes
-    $self->_set_title( (split /\n/, $raw_html)[0] );
-    $self->_set_title(substr($self->title, 0, 80));
-
-    # We push plain text through Markdown to convert URLs to links etc
-    my $md = Text::Markdown->new;
-    $self->_set_readable_text($md->markdown($raw_html));
-
-    return 1;
+    return $rc;
 }
 
 1;
