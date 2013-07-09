@@ -9,7 +9,7 @@ use warnings;
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
-use Getopt::Lucid qw( :all );
+use Getopt::Lucid 1.05 qw( :all );
 use File::HomeDir;
 use App::Zapzi::Database;
 use App::Zapzi::Folders;

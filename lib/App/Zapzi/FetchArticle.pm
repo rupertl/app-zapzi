@@ -23,7 +23,7 @@ use App::Zapzi;
 use Moo;
 use HTTP::Tiny;
 use HTTP::CookieJar;
-use File::MMagic;
+use File::MMagic 1.30;
 
 =attr source
 

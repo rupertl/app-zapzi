@@ -19,7 +19,7 @@ use warnings;
 
 use Carp;
 use Encode;
-use HTML::ExtractMain;
+use HTML::ExtractMain 0.63;
 use HTML::Element;
 use HTML::Entities ();
 use Text::Markdown;
