@@ -28,7 +28,16 @@ sub test_init
     my $test_dir = _get_test_dir();
     my $dir = "$test_dir/zapzi";
 
-    my $app = App::Zapzi->new(test_database => 0, zapzi_dir => $dir);
+    my $app = App::Zapzi->new(test_database => 0, 
+                              zapzi_dir => '');
+    $app->process_args('init');
+    ok( $app->run, 'Detect empty directory on init' );
+
+    $app = App::Zapzi->new(test_database => 0, zapzi_dir => $dir);
+
+    $app->process_args('ls');
+    ok( $app->run, 'Commands cannot be run before init' );
+
     $app->init();
     ok( ! $app->run, 'Created test Zapzi instance 2' );
 
