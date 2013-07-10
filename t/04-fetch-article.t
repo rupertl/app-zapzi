@@ -59,4 +59,16 @@ sub test_get_url
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( ! $f->fetch, 'Detects host that does not exist' );
     like( $f->error, qr/Failed/, 'Error reported' );
+
+    $f = App::Zapzi::FetchArticle->new(source =>
+                                       'http://999.999.999.999/foo');
+    isa_ok( $f, 'App::Zapzi::FetchArticle' );
+    ok( ! $f->fetch, 'Detects invalid host' );
+    like( $f->error, qr/Failed/, 'Error reported' );
+
+    $f = App::Zapzi::FetchArticle->new(source =>
+                                       'httpX://google.com/');
+    isa_ok( $f, 'App::Zapzi::FetchArticle' );
+    ok( ! $f->fetch, 'Detects invalid URI type' );
+    like( $f->error, qr/Failed/, 'Error reported' );
 }

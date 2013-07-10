@@ -6,10 +6,6 @@ package App::Zapzi::FetchArticle;
 These routines get articles, either via HTTP or from the file system
 and returns the raw HTML or text.
 
-This interface is temporary to get the initial version of Zapzi
-working and will be replaced with a more flexible role based system
-later.
-
 =cut
 
 use utf8;
@@ -18,12 +14,13 @@ use warnings;
 
 # VERSION
 
+use Module::Find 0.11;
+our @_plugins;
+BEGIN { @_plugins = sort(Module::Find::useall('App::Zapzi::Fetchers')); }
+
 use Carp;
 use App::Zapzi;
 use Moo;
-use HTTP::Tiny;
-use HTTP::CookieJar;
-use File::MMagic 1.30;
 
 =attr source
 
@@ -69,80 +66,36 @@ sub fetch
 {
     my $self = shift;
 
-    return -e $self->source ? $self->_fetch_file : $self->_fetch_url;
-}
-
-sub _fetch_file
-{
-    my $self = shift;
-
-    my $file;
-    if (! open $file, '<', $self->source)
+    my $module;
+    for (@_plugins)
     {
-        $self->_set_error("Failed to open " . $self->source . ": $!");
+        my $plugin = $_;
+        my $valid_source = $plugin->handles($self->source);
+        if (defined $valid_source)
+        {
+            $module = $plugin->new(source => $valid_source);
+            last;
+        }
+    }
+
+    if (!defined $module)
+    {
+        $self->_set_error("Failed to fetch article - can't find or handle");
         return;
     }
 
-    my $file_text;
-    while (<$file>)
+    my $rc = $module->fetch;
+    if ($rc)
     {
-        $file_text .= $_;
+        $self->_set_text($module->text);
+        $self->_set_content_type($module->content_type);
     }
-    $self->_set_text($file_text);
-
-    close $file;
-
-    my $mm = new File::MMagic;
-    $self->_set_content_type($mm->checktype_contents($self->text) 
-                             // 'text/plain');
-
-    return 1;
-}
-
-sub _fetch_url
-{
-    my $self = shift;
-
-    my $jar = HTTP::CookieJar->new;
-    my $http = HTTP::Tiny->new(cookie_jar => $jar);
-
-    my $url = $self->source;
-    my $response = $http->get($url, $self->_http_request_headers());
-
-    if (! $response->{success} || ! length($response->{content}))
+    else
     {
-        my $error = "Failed to fetch $url: ";
-        if ($response->{status} == 599)
-        {
-            # Internal exception to HTTP::Tiny
-            $error .= $response->{content};
-        }
-        else
-        {
-            # Error details from remote server
-            $error .= $response->{status} . " ";
-            $error .= $response->{reason};
-        }
-        $self->_set_error($error);
-        return;
+        $self->_set_error($module->error);
     }
 
-    $self->_set_text($response->{content});
-    $self->_set_content_type($response->{headers}->{'content-type'});
-
-    return 1;
-}
-
-sub _http_request_headers
-{
-    my $self = shift;
-
-    my $ua = "App::Zapzi";
-
-    no strict 'vars'; ## no critic - $VERSION does not exist in dev
-    $ua .= "/$VERSION" if defined $VERSION;
-
-    return {headers => {'User-agent' => $ua}};
+    return $rc;
 }
 
 1;
