@@ -475,7 +475,11 @@ sub show
         my $art_rs = App::Zapzi::Articles::get_article($_);
         if ($art_rs)
         {
-            print $art_rs->article_text->text, "\n\n";
+            print "<html><head><meta charset=\"utf-8\">\n";
+            printf("<title>%s</title>\n", $art_rs->title);
+            print("</head><body>\n");
+            print $art_rs->article_text->text, "\n";
+            print("</body></html>\n\b");
         }
         else
         {

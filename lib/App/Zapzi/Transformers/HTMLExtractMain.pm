@@ -90,7 +90,13 @@ sub transform
         $element->delete;
     }
 
-    $self->_set_readable_text($tree->as_HTML);
+    # Set up options to extract the HTML from the tree
+    my $entities_to_encode = '';
+    my $indent = ' ' x 4;
+    my $optional_end_tags = {};
+
+    $self->_set_readable_text($tree->as_HTML($entities_to_encode, $indent,
+                                             $optional_end_tags));
     return 1;
 }
 

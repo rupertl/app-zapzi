@@ -116,7 +116,8 @@ sub test_show
 {
     my $app = get_test_app();
 
-    stdout_like( sub { $app->process_args(qw(show 1)) }, qr/Welcome to/,
+    stdout_like( sub { $app->process_args(qw(show 1)) },
+                 qr/<html>.*Welcome to/s,
                  'show' );
     ok( ! $app->run, 'show run' );
 
