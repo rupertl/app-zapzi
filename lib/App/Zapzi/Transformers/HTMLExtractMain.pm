@@ -91,7 +91,7 @@ sub transform
     }
 
     # Set up options to extract the HTML from the tree
-    my $entities_to_encode = '';
+    my $entities_to_encode = undef; # ie encode all entities
     my $indent = ' ' x 4;
     my $optional_end_tags = {};
 
