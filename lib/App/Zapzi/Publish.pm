@@ -22,6 +22,7 @@ use Encode;
 use App::Zapzi;
 use DateTime;
 use EBook::MOBI;
+use HTML::Entities;
 use Moo;
 
 =attr folder
@@ -72,7 +73,9 @@ sub publish
     my $articles = App::Zapzi::Articles::get_articles($self->folder);
     while (my $article = $articles->next)
     {
-        $book->add_mhtml_content("<h1>" . $article->title . "</h1>\n");
+        $book->add_mhtml_content("<h1>" .
+                                 HTML::Entities::encode($article->title) .
+                                 "</h1>\n");
         $book->add_mhtml_content($article->article_text->text);
         $book->add_pagebreak();
 
