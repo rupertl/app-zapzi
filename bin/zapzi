@@ -126,7 +126,8 @@ to select another folder.
 If everything worked OK, Zapzi will create a new eBook in the ebooks
 sub-directory of your Zapzi directory, eg C<~/.zapzi/ebooks>.
 
-When you publish a folder, the articles are moved to the Archive folder.
+When you publish a folder, the articles are moved to the Archive
+folder unless you set the C<--noarchive> option.
 
 Instead of publishing, if you want to see a copy of an article use
 C<zapzi show>. This will send a copy to the standard output. It will
@@ -201,8 +202,9 @@ pronounced ZAAP-zi in Cantonese.
   $ zapzi show | cat ID
     Prints content of article to STDOUT
 
-  $ zapzi publish [-f FOLDER]
-    Publishes articles in FOLDER to an eBook.
+  $ zapzi publish | pub [-f FOLDER] [--noarchive]
+    Publishes articles in FOLDER to an eBook. Will archive articles unless
+    --noarchive is set.
 
 =cut
 

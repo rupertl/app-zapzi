@@ -19,6 +19,7 @@ test_show();
 test_add();
 test_delete_article();
 test_publish();
+test_publish_archive();
 test_help_version();
 
 done_testing();
@@ -186,15 +187,35 @@ sub test_publish
                  'publish' );
     ok( ! $app->run, 'publish run' );
 
-    stdout_like( sub { $app->process_args(qw(publish)) },
+    stdout_like( sub { $app->process_args(qw(pub)) },
                  qr/No articles/,
-                 'publish archives OK and rerun gives 0 articles' );
-    ok( $app->run, 'publish again run' );
+                 'pub archives OK and rerun gives 0 articles' );
+    ok( $app->run, 'pub again run' );
 
     stdout_like( sub { $app->process_args(qw(publish -f Nonesuch)) },
                  qr/does not exist/,
                  'publish error' );
     ok( $app->run, 'publish error run' );
+}
+
+sub test_publish_archive
+{
+    my $app = get_test_app();
+
+    $app->process_args(qw(mkf frob));
+    $app->process_args(qw(add -f frob t/testfiles/sample.txt));
+    $app->process_args(qw(add -f frob t/testfiles/sample.html));
+    stdout_like( sub { $app->process_args('lsf') }, qr/frob\s+2/,
+                 'added 2 docs to new folder' );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(pub -f frob --noarchive)) },
+                 qr/2 articles.*Published/s,
+                 'pub' );
+    ok( ! $app->run, 'pub run' );
+
+    stdout_like( sub { $app->process_args('lsf') }, qr/frob\s+2/,
+                 'Articles not archived with --noarchive' );
 }
 
 sub test_help_version

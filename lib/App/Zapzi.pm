@@ -43,6 +43,14 @@ Option to force processing of the init command. Default is unset.
 
 has force => (is => 'rw', default => 0);
 
+=attr noarchive
+
+Option to not archive articles on publication
+
+=cut
+
+has noarchive => (is => 'rw', default => 0);
+
 =attr folder
 
 Folder to work on. Default is 'Inbox'
@@ -151,15 +159,17 @@ sub process_args
         Switch("delete-folder|rmf|rd"),
         Switch("delete-article|delete|rm"),
         Switch("show|cat"),
-        Switch("publish"),
+        Switch("publish|pub"),
 
         Param("folder|f"),
         Switch("force"),
+        Switch("noarchive"),
     );
 
     my $options = Getopt::Lucid->getopt(\@specs, \@args)->validate;
 
     $self->force($options->get_force);
+    $self->noarchive($options->get_noarchive);
     $self->folder($options->get_folder // $self->folder);
 
     $self->help if $options->get_help;
@@ -498,7 +508,9 @@ sub publish
 
     printf("Publishing '%s' - %d articles\n", $self->folder, $count);
 
-    my $pub = App::Zapzi::Publish->new(folder => $self->folder);
+    my $pub = App::Zapzi::Publish->
+        new(folder => $self->folder,
+            archive_folder => $self->noarchive ? undef : 'Archive');
 
     if (! $pub->publish())
     {
@@ -552,8 +564,9 @@ sub help
   $ zapzi show | cat ID
     Prints content of article to STDOUT
 
-  $ zapzi publish [-f FOLDER]
-    Publishes articles in FOLDER to an eBook.
+  $ zapzi publish | pub [-f FOLDER] [--noarchive]
+    Publishes articles in FOLDER to an eBook. Will archive articles unless
+    --noarchive is set.
 EOF
 
     $self->run(0);

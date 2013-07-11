@@ -32,6 +32,14 @@ Folder of articles to publish
 
 has folder => (is => 'ro', required => 1);
 
+=attr archive_folder
+
+Folder to move articles to after publication - undef means don't move.
+
+=cut
+
+has archive_folder => (is => 'ro', required => 0, default => 'Archive');
+
 =attr filename
 
 File that the published ebook is stored in.
@@ -67,8 +75,8 @@ sub publish
         $book->add_mhtml_content("<h1>" . $article->title . "</h1>\n");
         $book->add_mhtml_content($article->article_text->text);
         $book->add_pagebreak();
-        App::Zapzi::Articles::move_article($article->id, 'Archive')
-            unless $self->folder eq 'Archive';
+
+        $self->_archive_article($article);
     }
 
     $book->make();
@@ -94,6 +102,17 @@ sub _make_filename
     my $base = sprintf("Zapzi - %s.mobi", $self->_get_title);
 
     $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
+}
+
+sub _archive_article
+{
+    my $self = shift;
+    my ($article) = @_;
+
+    if (defined($self->archive_folder) &&  $self->folder ne 'Archive')
+    {
+        App::Zapzi::Articles::move_article($article->id, $self->archive_folder);
+    }
 }
 
 1;
