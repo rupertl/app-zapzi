@@ -131,16 +131,17 @@ organisation of the module.
 
     https://github.com/rupertl/app-zapzi/
 
-# Future Plans
+# Bugs and Future Plans
 
 This is an early version of Zapzi and although the basic functionality
 is there I plan to improve it further. If you have any suggestions
 please add them to the issue tracker at Github.
 
+- Improve text extraction and formatting - complex pages may not
+render correctly or may miss sections at present
 - Support other ways to fetch articles, eg FTP or IMAP for email.
 - Support other article formats, eg mbox/maildir.
 - Add the ability to read sources with state, eg RSS feeds.
-- Improve text extraction and formatting.
 - Publish to other eBook formats such as EPUB or PDF.
 - Add options to distribute published eBooks, eg by email or
 copy to an eReader.
