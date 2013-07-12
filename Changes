@@ -2,6 +2,15 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.005     2013-07-12 22:42:11 Asia/Hong_Kong
+
+  * Better validation of URLs
+  * Handle UTF-8 text correctly
+  * --noarchive option to publish command
+  * Correct HTML when using show command
+  * Use plugins for FetchArticle
+  * Improve test coverage
+
 0.004     2013-07-09 15:10:08 Asia/Hong_Kong
 
   * Added command aliases md, rd and cat
