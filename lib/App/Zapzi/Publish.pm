@@ -21,7 +21,7 @@ use Carp;
 use Encode;
 use App::Zapzi;
 use DateTime;
-use EBook::MOBI;
+use EBook::MOBI 0.65;
 use HTML::Entities;
 use Moo;
 
@@ -76,7 +76,7 @@ sub publish
         $book->add_mhtml_content("<h1>" .
                                  HTML::Entities::encode($article->title) .
                                  "</h1>\n");
-        $book->add_mhtml_content($article->article_text->text);
+        $book->add_mhtml_content(encode_utf8($article->article_text->text));
         $book->add_pagebreak();
 
         $self->_archive_article($article);
