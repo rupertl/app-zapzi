@@ -42,10 +42,19 @@ sub test_html
     my $tx = App::Zapzi::Transform->new(raw_article => $f);
     isa_ok( $tx, 'App::Zapzi::Transform' );
     ok( $tx->to_readable, 'Transform sample HTML file' );
-
     like( $tx->readable_text, qr/<h1>Lorem/, 'Contents of HTML file OK' );
     unlike( $tx->readable_text, qr/<script>/,
             'Javascript stripped from HTML file' );
     is( $tx->title, 'Sample “HTML” Document', 
         'Title of HTML file OK with entity decoding' );
+
+    $f = App::Zapzi::FetchArticle->new(
+        source => 't/testfiles/html-no-title.html');
+    ok( $f->fetch, 'Fetch HTML' );
+    $tx = App::Zapzi::Transform->new(raw_article => $f);
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( $tx->to_readable, 'Transform sample HTML file' );
+    like( $tx->title, qr/html-no-title/, 
+          'Title set for HTML file without <title>' );
+
 }

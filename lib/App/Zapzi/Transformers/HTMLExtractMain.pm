@@ -74,7 +74,7 @@ sub transform
     }
     else
     {
-        $title = $self->raw_article->source;
+        $title = $self->input->source;
     }
 
     $self->_set_title($title);
