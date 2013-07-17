@@ -17,7 +17,7 @@ use App::Zapzi::Articles;
 use App::Zapzi::FetchArticle;
 use App::Zapzi::Transform;
 use App::Zapzi::Publish;
-use Moo;
+use Moo 1.003000;
 use Carp;
 
 =head1 DESCRIPTION
