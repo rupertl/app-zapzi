@@ -38,6 +38,14 @@ sub test_get_file
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( ! $f->fetch, 'Detects file that does not exist' );
     like( $f->error, qr/Failed/, 'Error reported' );
+
+    $f = App::Zapzi::FetchArticle->new(source =>
+                                       't/testfiles/html-fragment.html');
+    isa_ok( $f, 'App::Zapzi::FetchArticle' );
+    ok( $f->fetch, 'Fetch sample html fragment file from disk' );
+    like( $f->text, qr/This should still be treated as/,
+          'Contents of HTML fragment file OK' );
+    is( $f->content_type, 'text/html', 'Contents of fragment are HTML' );
 }
 
 sub test_get_url

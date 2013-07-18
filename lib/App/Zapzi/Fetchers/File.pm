@@ -70,9 +70,19 @@ sub fetch
 
     close $file;
 
-    my $mm = File::MMagic->new();
-    $self->_set_content_type($mm->checktype_contents($self->text)
-                             // 'text/plain');
+    my $content_type;
+
+    # Try extension first
+    $content_type = 'text/plain' if $self->source =~ /\.(text|md|mkdn)$/;
+    $content_type = 'text/html' if $self->source =~ /\.(html)$/;
+
+    # Try file magic
+    $content_type //= File::MMagic->new()->checktype_contents($self->text);
+
+    # Default to plain text
+    $content_type //= 'text/plain';
+
+    $self->_set_content_type($content_type);
 
     return 1;
 }
