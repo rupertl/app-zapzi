@@ -64,20 +64,7 @@ sub transform
     }
     my $raw_html = Encode::decode($encoding, $self->input->text);
 
-    # Get the title from the HTML raw text - a regexp is not ideal and
-    # we'd be better off using HTML::Tree but that means we'd have to
-    # call it twice, once here and once in HTML::ExtractMain.
-    my $title;
-    if ($raw_html =~ m/<title>(\w[^>]+)<\/title>/si)
-    {
-        $title = HTML::Entities::decode($1);
-    }
-    else
-    {
-        $title = $self->input->source;
-    }
-
-    $self->_set_title($title);
+    $self->_extract_title($raw_html);
 
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );
@@ -98,6 +85,35 @@ sub transform
     $self->_set_readable_text($tree->as_HTML($entities_to_encode, $indent,
                                              $optional_end_tags));
     return 1;
+}
+
+sub _extract_title
+{
+    my $self = shift;
+    my ($raw_html) = @_;
+    my $title;
+
+    # Try finding the <title> tag first
+    my $tree = eval { HTML::TreeBuilder->new_from_content($raw_html) };
+    if ($tree)
+    {
+        my $tag = $tree->find_by_tag_name('title');
+        my $content; 
+        $content = ($tag->content_list)[0] if $tag;
+
+        # Strip surrounding whitespace and decode HTML entities
+        $content =~ s/^\s+|\s+$//g if $content;
+        $title = HTML::Entities::decode($content) if $content;
+    }
+
+    # Use the URL/filename if no title could be found or parsed from
+    # the HTML
+    if (! $title)
+    {
+        $title = $self->input->source;
+    }
+
+    $self->_set_title($title);
 }
 
 1;
