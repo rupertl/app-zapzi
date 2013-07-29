@@ -85,7 +85,7 @@ sub to_readable
         if ($selected)
         {
             $module = $selected->new(input => $self->raw_article);
-            $self->transformer = $selected->name;
+            $self->transformer($selected->name);
             last;
         }
     }
