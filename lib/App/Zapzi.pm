@@ -59,6 +59,16 @@ Folder to work on. Default is 'Inbox'
 
 has folder => (is => 'rw', default => 'Inbox');
 
+=attr transformer
+
+Transformer to extract text from the article. Default is '', which
+means Zapzi will automatically the best option based on the content
+type of the text.
+
+=cut
+
+has transformer => (is => 'rw', default => '');
+
 =method get_app
 =method BUILD
 
@@ -162,6 +172,7 @@ sub process_args
         Switch("publish|pub"),
 
         Param("folder|f"),
+        Param("transformer|t"),
         Switch("force"),
         Switch("noarchive"),
     );
@@ -171,6 +182,7 @@ sub process_args
     $self->force($options->get_force);
     $self->noarchive($options->get_noarchive);
     $self->folder($options->get_folder // $self->folder);
+    $self->transformer($options->get_transformer // $self->transformer);
 
     $self->help if $options->get_help;
     $self->version if $options->get_version;
@@ -433,7 +445,8 @@ sub add
             next;
         }
 
-        my $tx = App::Zapzi::Transform->new(raw_article => $f);
+        my $tx = App::Zapzi::Transform->new(raw_article => $f,
+                                            transformer => $self->transformer);
         if (! $tx->to_readable)
         {
             print "Could not transform article\n\n";
@@ -547,8 +560,12 @@ sub help
     Initialises new zapzi database. Will not create a new database 
     if one exists already unless you set --force.
 
-  $ zapzi add FILE | URL
+  $ zapzi add [-t TRANSFORMER] FILE | URL
     Adds article to database. Accepts multiple file names or URLs.
+    TRANSFORMER determines how to extract the text from the article
+    and can be HTML, HTMLExtractMain or TextMarkdown
+    If not specified, Zapzi will choose the best option based on the
+    content type of the article.
 
   $ zapzi list | ls [-f FOLDER]
     Lists articles in FOLDER.

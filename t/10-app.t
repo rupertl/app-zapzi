@@ -148,14 +148,28 @@ sub test_add
                  'add html' );
     ok( ! $app->run, 'add html run' );
 
+    stdout_like( sub { $app->process_args(
+                          qw(add --transformer HTML t/testfiles/sample.html)) },
+                 qr/Added article/,
+                 'add html with transformer' );
+    ok( ! $app->run, 'add html with transformer run' );
+
+    $app = get_test_app();
     stdout_like( sub { $app->process_args(qw(add)) },
                  qr/Need to provide/,
                  'add missing article' );
     ok( $app->run, 'add run' );
 
     stdout_like( sub { $app->process_args(qw(add t/testfiles/nonesuch.txt)) },
-                 qr/Could not/,
-                 'add error' );
+                 qr/Could not get/,
+                 'get error' );
+    ok( $app->run, 'add run' );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(
+                           qw(add -t Nonesuch t/testfiles/sample.txt)) },
+                 qr/Could not transform/,
+                 'transform error' );
     ok( $app->run, 'add run' );
 }
 
@@ -184,7 +198,7 @@ sub test_publish
     my $app = get_test_app();
 
     stdout_like( sub { $app->process_args(qw(publish)) },
-                 qr/2 articles.*Published/s,
+                 qr/3 articles.*Published/s,
                  'publish' );
     ok( ! $app->run, 'publish run' );
 

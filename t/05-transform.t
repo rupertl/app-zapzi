@@ -15,6 +15,8 @@ my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_text();
 test_html();
+test_html_em();
+test_missing_transformer();
 done_testing();
 
 sub test_can
@@ -39,12 +41,31 @@ sub test_html
 {
     my $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.html');
     ok( $f->fetch, 'Fetch HTML' );
+    my $tx = App::Zapzi::Transform->new(raw_article => $f,
+                                        transformer => 'HTML');
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( $tx->to_readable, 'Transform sample HTML file' );
+    like( $tx->readable_text, qr/<h1>Lorem/, 'Contents of HTML file OK' );
+    unlike( $tx->readable_text, qr/<script>/,
+            'Javascript stripped from HTML file' );
+    like( $tx->readable_text, qr/Header!/,
+          'Full HTML preserved with plain HTML transformer' );
+    is( $tx->title, 'Sample “HTML” Document',
+        'Title of HTML file OK with entity decoding' );
+}
+
+sub test_html_em
+{
+    my $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.html');
+    ok( $f->fetch, 'Fetch HTML' );
     my $tx = App::Zapzi::Transform->new(raw_article => $f);
     isa_ok( $tx, 'App::Zapzi::Transform' );
     ok( $tx->to_readable, 'Transform sample HTML file' );
     like( $tx->readable_text, qr/<h1>Lorem/, 'Contents of HTML file OK' );
     unlike( $tx->readable_text, qr/<script>/,
             'Javascript stripped from HTML file' );
+    unlike( $tx->readable_text, qr/Header!/,
+            'Non-essential text stripped from HTML file' );
     is( $tx->title, 'Sample “HTML” Document',
         'Title of HTML file OK with entity decoding' );
 
@@ -67,4 +88,14 @@ sub test_html
     ok( $tx->to_readable, 'Transform sample HTML file' );
     is( $tx->title, 'Title 1',
         'Title selected from HTML extract with two title tags');
+}
+
+sub test_missing_transformer
+{
+    my $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.html');
+    ok( $f->fetch, 'Fetch HTML' );
+    my $tx = App::Zapzi::Transform->new(raw_article => $f,
+                                        transformer => 'Nonesuch');
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( ! $tx->to_readable, 'Detected missing transformer' );
 }

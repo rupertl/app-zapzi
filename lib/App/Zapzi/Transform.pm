@@ -35,6 +35,16 @@ has raw_article => (is => 'ro', isa => sub
                             unless ref($_[0]) eq 'App::Zapzi::FetchArticle';
                     });
 
+=attr transformer
+
+Name of the transformer to use. If not specified it will choose the
+best option based on the content type of the raw article and set this
+field.
+
+=cut
+
+has transformer => (is => 'rw', default => '');
+
 =attr readable_text
 
 Holds the readable text of the article
@@ -64,10 +74,18 @@ sub to_readable
     my $module;
     for (@_plugins)
     {
-        my $plugin = $_;
-        if ($plugin->handles($self->raw_article->content_type))
+        my $selected;
+
+        $selected = $_ if $self->transformer &&
+                       lc($self->transformer) eq lc($_->name);
+
+        $selected = $_ if !$self->transformer &&
+                          ($_->handles($self->raw_article->content_type));
+
+        if ($selected)
         {
-            $module = $plugin->new(input => $self->raw_article);
+            $module = $selected->new(input => $self->raw_article);
+            $self->transformer = $selected->name;
             last;
         }
     }

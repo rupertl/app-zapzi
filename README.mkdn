@@ -54,7 +54,7 @@ articles are archived so you can retrieve them later if needed.
 
 ## Configuration
 
-Zapzi needs very little configuration to get running - just type 
+Zapzi needs very little configuration to get running - just type
 
     $ zapzi init
 
@@ -74,9 +74,19 @@ Zapzi will download a copy and store it in its database. Note that if
 you need to log into a site this will not work - save a copy of the
 page locally using your browser and then point Zapzi at the file.
 
-Zapzi will detect the file type and if it is HTML it will use
-[HTML::ExtractMain](http://search.cpan.org/perldoc?HTML::ExtractMain) to strip out non-essential parts of the page such
-as menus. Other formats are treated as plain text with Markdown.
+## Transformers
+
+By default, Zapzi will detect the file type and if it is HTML it will
+use [HTML::ExtractMain](http://search.cpan.org/perldoc?HTML::ExtractMain)
+to strip out non-essential parts of the page such as menus. Other
+formats are treated as plain text with Markdown.
+
+You can override this by setting the `-t` option to `add`. For
+example, if HTMLExtractMain does not correctly determine which parts
+of the article are readable you can get the complete HTML text
+instead:
+
+    $ zapzi add -t HTML 'http://example.com/article?id=4'
 
 ## Folders
 
@@ -152,11 +162,15 @@ copy to an eReader.
       Shows this help text
 
     $ zapzi init [--force]
-      Initialises new zapzi database. Will not create a new database 
+      Initialises new zapzi database. Will not create a new database
       if one exists already unless you set --force.
 
-    $ zapzi add FILE | URL
+    $ zapzi add [-t TRANSFORMER] FILE | URL
       Adds article to database. Accepts multiple file names or URLs.
+      TRANSFORMER determines how to extract the text from the article
+      and can be HTML, HTMLExtractMain or TextMarkdown
+      If not specified, Zapzi will choose the best option based on the
+      content type of the article.
 
     $ zapzi list | ls [-f FOLDER]
       Lists articles in FOLDER.
