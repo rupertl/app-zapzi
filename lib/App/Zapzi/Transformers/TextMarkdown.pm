@@ -57,6 +57,9 @@ sub transform
 
     my $raw = Encode::decode_utf8($self->input->text);
 
+    # Chop off any blank lines at the top
+    $raw =~ s/^\n+//s;
+
     # We take the first line as the title, or up to 80 bytes
     $self->_set_title( (split /\n/, $raw)[0] );
     $self->_set_title(substr($self->title, 0, 80));

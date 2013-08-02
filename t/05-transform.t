@@ -14,8 +14,9 @@ test_can();
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_text();
+test_text_ws_long_lines();
 test_html();
-test_html_em();
+test_html_extractmain();
 test_missing_transformer();
 done_testing();
 
@@ -37,6 +38,19 @@ sub test_text
     like( $tx->title, qr/This is a sample text file/, 'Title of text file OK' );
 }
 
+sub test_text_ws_long_lines
+{
+    my $f = App::Zapzi::FetchArticle->new(source =>
+                                          't/testfiles/ws-and-long-lines.txt');
+    ok( $f->fetch, 'Fetch text' );
+    my $tx = App::Zapzi::Transform->new(raw_article => $f);
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( $tx->to_readable, 'Transform ws-and-long-lines.txt' );
+
+    ok( length($tx->title) <= 80, 'Length of title OK' );
+    like( $tx->title, qr/^This is an example/, 'Title without whitespace' );
+}
+
 sub test_html
 {
     my $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.html');
@@ -54,7 +68,7 @@ sub test_html
         'Title of HTML file OK with entity decoding' );
 }
 
-sub test_html_em
+sub test_html_extractmain
 {
     my $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.html');
     ok( $f->fetch, 'Fetch HTML' );
