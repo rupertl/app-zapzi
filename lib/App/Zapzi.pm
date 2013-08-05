@@ -196,6 +196,10 @@ sub process_args
         return;
     }
 
+    # Upgrade the DB, if needed
+    $self->database->upgrade
+        unless $self->database->check_version || $self->run == 0;
+
     unless ($options->get_make_folder)
     {
         if (! $self->validate_folder($self->folder))
@@ -548,7 +552,7 @@ Displays help text.
 sub help
 {
     my $self = shift;
-    
+
     print << 'EOF';
   $ zapzi help|h
     Shows this help text
@@ -557,7 +561,7 @@ sub help
     Show version information
 
   $ zapzi init [--force]
-    Initialises new zapzi database. Will not create a new database 
+    Initialises new zapzi database. Will not create a new database
     if one exists already unless you set --force.
 
   $ zapzi add [-t TRANSFORMER] FILE | URL
@@ -608,6 +612,7 @@ sub version
     $v = "$VERSION" if defined $VERSION;
 
     print "App::Zapzi $v and Perl $]\n";
+    print "Database schema version ", $self->database->get_version, "\n";
     $self->run(0);
 }
 

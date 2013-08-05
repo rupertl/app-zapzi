@@ -6,10 +6,12 @@ use lib qw(t/lib);
 use ZapziTestDatabase;
 use ZapziTestSchema;
 use App::Zapzi;
+use File::Slurp;
 
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_schema($app);
+test_upgrade();
 
 done_testing();
 
@@ -41,4 +43,26 @@ sub test_schema
                               [ qw(id name) ],
                               [ qw(articles) ]);
     };
+
+    subtest 'Config' => sub
+    {
+        ZapziTestSchema->test($schema, 'Config',
+                              [ qw(name value) ],
+                              [ ]);
+    };
+}
+
+sub test_upgrade
+{
+    my $ddl = read_file('t/ddl/create-version-0-db.sql');
+    ok( length($ddl) > 100, 'Read pre-upgrade DDL OK' );
+
+    my ($test_dir, $app) = ZapziTestDatabase::get_test_app($ddl);
+    is( $app->database->get_version, 0, 'Create version 0 database' );
+    ok( ! $app->database->check_version(), 'Version 0 is not up to date' );
+
+    $app->database->upgrade();
+
+    is( $app->database->get_version, $app->database->schema->schema_version,
+        'Upgraded database to latest version' );
 }

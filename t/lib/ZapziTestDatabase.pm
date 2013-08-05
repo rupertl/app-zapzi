@@ -10,12 +10,19 @@ sub get_test_app
     # Get a temporary directory for output of eBooks and an in-memory
     # database to speed up testing
 
+    # Set ddl for test upgrades
+    my $ddl = shift;
+
     my $test_dir = _get_test_dir();
     my $dir = "$test_dir/zapzi";
 
     my $app = App::Zapzi->new(test_database => 1, zapzi_dir => $dir);
-    $app->init();
-    ok( ! $app->run, 'Created test Zapzi instance' );
+    $app->database->init($ddl);
+
+    # Check to see if the DB was created by seeing if a table exists
+    eval { $app->database->schema->resultset('Folder')->count };
+    ok( ! $@, 'Created test Zapzi instance' );
+    diag($@) if $@;
 
     return ($test_dir, $app);
 }
@@ -28,7 +35,7 @@ sub test_init
     my $test_dir = _get_test_dir();
     my $dir = "$test_dir/zapzi";
 
-    my $app = App::Zapzi->new(test_database => 0, 
+    my $app = App::Zapzi->new(test_database => 0,
                               zapzi_dir => '');
     $app->process_args('init');
     ok( $app->run, 'Detect empty directory on init' );

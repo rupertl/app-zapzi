@@ -10,6 +10,17 @@ use warnings;
 use base 'DBIx::Class::Schema';
 
 # Load Result classes under this schema
-__PACKAGE__->load_classes(qw/Article ArticleText Folder/);
+__PACKAGE__->load_classes(qw/Article ArticleText Config Folder/);
+
+=method schema_version
+
+The version of the database schema that the code expects
+
+=cut
+
+sub schema_version
+{
+    return 1;
+}
 
 1;
