@@ -2,6 +2,20 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.006     2013-08-06 15:30:06 Asia/Hong_Kong
+
+  * Added HTML transformer for use when HTMLExtractMain does not give
+    desired output
+  * Added -t command line switch to allow selection of transformers
+  * Use UTF-8 to encode MOBI files
+  * Bugfix for article test
+  * Set Moo version dependency
+  * Handle HTML fragments as HTML in files
+  * Bugfix for HTML articles with no title
+  * Handle HTML pages with two title tags and extra whitespace
+  * Format title for text with leading whitespace and long lines
+  * Added config table plus support for schema versioning and upgrades
+
 0.005     2013-07-12 22:42:11 Asia/Hong_Kong
 
   * Better validation of URLs
