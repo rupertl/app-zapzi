@@ -16,6 +16,7 @@ use warnings;
 use Moo;
 use SQL::Translator;
 use App::Zapzi::Database::Schema;
+use App::Zapzi::Config;
 
 =attr app
 
@@ -140,9 +141,9 @@ sub get_version
 
     my $version;
 
-    # A database without a config table is version 0
-    eval { $version = $schema->resultset('Config')
-               ->find({name => 'schema_version'})->value };
+    # If the eval fails, there's no config table, so this must be
+    # schema version 0.
+    eval { $version = App::Zapzi::Config::get('schema_version') };
     return $@ ? 0 : $version;
 }
 
@@ -184,8 +185,7 @@ sub upgrade
                                         "   value text NOT NULL DEFAULT '', " .
                                         "   PRIMARY KEY (name) ".
                                         ")");
-        $schema->resultset('Config')->create({name => 'schema_version',
-                                              value => '1'});
+        App::Zapzi::Config::set('schema_version', 1);
     }
 }
 
