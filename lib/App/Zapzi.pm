@@ -284,20 +284,32 @@ Lists out the articles in L<folder>.
 sub list
 {
     my $self = shift;
-    App::Zapzi::Articles::list_articles($self->folder);
+    my $summary = App::Zapzi::Articles::articles_summary($self->folder);
+    foreach (@$summary)
+    {
+        my $article = $_;
+        printf("%s %4d %s %-45s\n", $self->folder,
+               $article->{id}, $article->{created}->strftime('%d-%b-%Y'),
+               $article->{title});
+    }
     $self->run(0);
 }
 
 =method list_folders
 
-List a summary of folders in the database.
+List folder names and article counts.
 
 =cut
 
 sub list_folders
 {
     my $self = shift;
-    App::Zapzi::Folders::list_folders();
+    my $summary = App::Zapzi::Folders::folders_summary();
+    foreach (sort keys %$summary)
+    {
+        printf("%-10s %3d\n", $_, $summary->{$_});
+    }
+
     $self->run(0);
 }
 

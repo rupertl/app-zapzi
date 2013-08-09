@@ -1,6 +1,5 @@
 #!perl
 use Test::Most;
-use Test::Output;
 
 use lib qw(t/lib);
 use ZapziTestDatabase;

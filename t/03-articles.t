@@ -1,13 +1,12 @@
 #!perl
 use Test::Most;
-use Test::Output;
 
 use lib qw(t/lib);
 use ZapziTestDatabase;
 
 use App::Zapzi;
 use App::Zapzi::Articles qw(get_article get_articles add_article move_article
-                            delete_article list_articles);
+                            delete_article articles_summary);
 
 test_can();
 
@@ -17,7 +16,7 @@ test_get();
 test_add();
 test_move();
 test_delete();
-test_list();
+test_summary();
 
 done_testing();
 
@@ -25,7 +24,7 @@ sub test_can
 {
     can_ok( 'App::Zapzi::Articles', qw(get_article get_articles add_article
                                        move_article delete_article
-                                       list_articles) );
+                                       articles_summary) );
 }
 
 sub test_get
@@ -91,11 +90,15 @@ sub test_delete
     ok( delete_article(0), 'Will skip delete for articles that do not exist' );
 }
 
-sub test_list
+sub test_summary
 {
-    stdout_like( sub { list_articles('Inbox') },
-                 qr/Foo/, 'Can list articles' );
+    my $summary = articles_summary('Inbox');
 
-    eval { list_articles('No such folder'); };
+    ok( $summary, 'Can get articles summary' );
+    is( scalar(@$summary), 2, 'Two articles found in summary');
+    my @foo = grep { $_->{title} eq 'Foo' } @$summary;
+    is( scalar(@foo), 1, 'One foo article found in summary' );
+
+    eval { articles_summary('No such folder'); };
     like( $@, qr/does not exist/, 'Can detect non-existent folders' );
 }

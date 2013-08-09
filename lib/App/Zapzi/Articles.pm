@@ -15,7 +15,7 @@ use warnings;
 
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(get_articles get_article list_articles add_article
+our @EXPORT_OK = qw(get_articles get_article articles_summary add_article
                     move_article delete_article);
 
 use Carp;
@@ -55,24 +55,28 @@ sub get_article
     return $rs;
 }
 
-=method list_articles(folder)
+=method articles_summary(folder)
 
-Prints to STDOUT a summary of articles in C<folder>.
+Return a summary of articles in C<folder> as a list of articles, each
+item being a hash ref with keys id, created and title.
 
 =cut
 
-sub list_articles
+sub articles_summary
 {
     my ($folder) = @_;
 
     my $rs = get_articles($folder);
+    my $summary = [];
 
     while (my $article = $rs->next)
     {
-        printf("%s %4d %s %-45s\n", $article->folder->name,
-               $article->id, $article->created->strftime('%d-%b-%Y'),
-               $article->title);
+        push $summary, {id => $article->id,
+                        created => $article->created,
+                        title => $article->title};
     }
+
+    return $summary;
 }
 
 =method add_article(args)
