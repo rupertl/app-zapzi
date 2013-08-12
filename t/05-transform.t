@@ -113,7 +113,7 @@ sub test_pod
     isa_ok( $tx, 'App::Zapzi::Transform' );
     ok( $tx->to_readable, 'Transform sample file containing POD' );
 
-    like( $tx->readable_text, qr/<h1[^>]+>TESTING/s,
+    like( $tx->readable_text, qr/TESTING/s,
           'Headings in POD file OK' );
     like( $tx->readable_text, qr/<p>POD is transformed/s,
           'Text in POD file OK' );
