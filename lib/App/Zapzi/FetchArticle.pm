@@ -30,6 +30,14 @@ Pass in the source of the article - either a filename or a URL.
 
 has source => (is => 'ro', default => '');
 
+=attr fetcher
+
+Name of the module that was used to fetch the article.
+
+=cut
+
+has fetcher => (is => 'rwp', default => '');
+
 =attr text
 
 Holds the raw text of the article
@@ -89,6 +97,7 @@ sub fetch
     {
         $self->_set_text($module->text);
         $self->_set_content_type($module->content_type);
+        $self->_set_fetcher($module->name);
     }
     else
     {

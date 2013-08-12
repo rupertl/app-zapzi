@@ -26,6 +26,7 @@ sub test_get_file
     my $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.txt');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( $f->fetch, 'Fetch sample text file' );
+    is( $f->fetcher, 'File', 'Text file was handled by File fetcher' );
     like( $f->text, qr/sample text file/, 'Contents of text file OK' );
     is( $f->content_type, 'text/plain', 'Contents are plain text' );
 
@@ -54,6 +55,7 @@ sub test_get_url
     my $f = App::Zapzi::FetchArticle->new(source => 'http://example.com/');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( $f->fetch, 'Fetch sample URL' );
+    is( $f->fetcher, 'URL', 'Text file was handled by URL fetcher' );
     like( $f->text, qr/Example Domain/, 'Contents of test URL OK' );
     like( $f->content_type, qr(text/html), 'Contents are HTML' );
 
@@ -82,6 +84,7 @@ sub test_get_pod
     my $f = App::Zapzi::FetchArticle->new(source => 'File::Basename');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( $f->fetch, 'Fetch sample text file' );
+    is( $f->fetcher, 'POD', 'POD file was handled by POD fetcher' );
     like( $f->text, qr/SYNOPSIS/, 'Contents of POD file OK' );
     is( $f->content_type, 'text/pod', 'Contents are POD' );
 }
