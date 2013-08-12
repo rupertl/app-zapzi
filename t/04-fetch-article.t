@@ -13,6 +13,7 @@ my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_get_file();
 test_get_url();
+test_get_pod();
 done_testing();
 
 sub test_can
@@ -74,3 +75,14 @@ sub test_get_url
     ok( ! $f->fetch, 'Detects invalid URI type' );
     like( $f->error, qr/Failed/, 'Error reported' );
 }
+
+sub test_get_pod
+{
+    # File::Basename should be available in all perls we support
+    my $f = App::Zapzi::FetchArticle->new(source => 'File::Basename');
+    isa_ok( $f, 'App::Zapzi::FetchArticle' );
+    ok( $f->fetch, 'Fetch sample text file' );
+    like( $f->text, qr/SYNOPSIS/, 'Contents of POD file OK' );
+    is( $f->content_type, 'text/pod', 'Contents are POD' );
+}
+

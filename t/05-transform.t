@@ -120,6 +120,19 @@ sub test_pod
 
     is( $tx->title, 'sample.pm',
         'Basename of file is used for POD title' );
+
+    # Try a named module
+    $f = App::Zapzi::FetchArticle->new(source => 'File::Basename');
+    ok( $f->fetch, 'Fetch POD from module' );
+    $tx = App::Zapzi::Transform->new(raw_article => $f);
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( $tx->to_readable, 'Transform module containing POD' );
+
+    like( $tx->readable_text, qr/DESCRIPTION/s,
+          'Headings in POD module OK' );
+
+    is( $tx->title, 'File::Basename',
+        'Module name is used for POD title' );
 }
 
 sub test_missing_transformer

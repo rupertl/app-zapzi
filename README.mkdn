@@ -64,9 +64,10 @@ environment variable `ZAPZI_DIR`.
 
 ## Adding Articles
 
-To add an article, use `zapzi add` with a filename on your computer
-or an HTTP URL. Remember to quote URLs if they include space or shell
-special characters, eg
+To add an article, use `zapzi add` with a filename on your computer,
+the name of a module containing POD (eg File::Basename) or an HTTP
+URL. Remember to quote URLs if they include space or shell special
+characters, eg
 
     $ zapzi add 'http://example.com/article?id=4'
 
@@ -165,7 +166,7 @@ copy to an eReader.
       Initialises new zapzi database. Will not create a new database
       if one exists already unless you set --force.
 
-    $ zapzi add [-t TRANSFORMER] FILE | URL
+    $ zapzi add [-t TRANSFORMER] FILE | URL | POD
       Adds article to database. Accepts multiple file names or URLs.
       TRANSFORMER determines how to extract the text from the article
       and can be HTML, HTMLExtractMain, POD or TextMarkdown

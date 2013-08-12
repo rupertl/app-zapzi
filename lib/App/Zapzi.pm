@@ -576,7 +576,7 @@ sub help
     Initialises new zapzi database. Will not create a new database
     if one exists already unless you set --force.
 
-  $ zapzi add [-t TRANSFORMER] FILE | URL
+  $ zapzi add [-t TRANSFORMER] FILE | URL | POD
     Adds article to database. Accepts multiple file names or URLs.
     TRANSFORMER determines how to extract the text from the article
     and can be HTML, HTMLExtractMain, POD or TextMarkdown

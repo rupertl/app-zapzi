@@ -154,6 +154,12 @@ sub test_add
                  'add html with transformer' );
     ok( ! $app->run, 'add html with transformer run' );
 
+    stdout_like( sub { $app->process_args(
+                          qw(add File::Basename)) },
+                 qr/Added article/,
+                 'add POD' );
+    ok( ! $app->run, 'add POD with transformer run' );
+
     $app = get_test_app();
     stdout_like( sub { $app->process_args(qw(add)) },
                  qr/Need to provide/,
@@ -198,7 +204,7 @@ sub test_publish
     my $app = get_test_app();
 
     stdout_like( sub { $app->process_args(qw(publish)) },
-                 qr/3 articles.*Published/s,
+                 qr/4 articles.*Published/s,
                  'publish' );
     ok( ! $app->run, 'publish run' );
 
