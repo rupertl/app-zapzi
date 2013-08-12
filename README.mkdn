@@ -44,7 +44,7 @@ web - and create eBooks for reading later.
 ## Features
 
 - Can read articles from local files or via HTTP.
-- Understands plain text, HTML and Markdown format articles.
+- Understands plain text, POD, HTML and Markdown format articles.
 - HTML is converted to a more readable form (eg no menus or
 footers) to make the article easier to view on an eReader.
 - Articles can be stored in different folders to organise your reading.
@@ -168,7 +168,7 @@ copy to an eReader.
     $ zapzi add [-t TRANSFORMER] FILE | URL
       Adds article to database. Accepts multiple file names or URLs.
       TRANSFORMER determines how to extract the text from the article
-      and can be HTML, HTMLExtractMain or TextMarkdown
+      and can be HTML, HTMLExtractMain, POD or TextMarkdown
       If not specified, Zapzi will choose the best option based on the
       content type of the article.
 

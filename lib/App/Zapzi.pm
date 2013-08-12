@@ -579,7 +579,7 @@ sub help
   $ zapzi add [-t TRANSFORMER] FILE | URL
     Adds article to database. Accepts multiple file names or URLs.
     TRANSFORMER determines how to extract the text from the article
-    and can be HTML, HTMLExtractMain or TextMarkdown
+    and can be HTML, HTMLExtractMain, POD or TextMarkdown
     If not specified, Zapzi will choose the best option based on the
     content type of the article.
 

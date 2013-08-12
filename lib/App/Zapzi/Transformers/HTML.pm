@@ -45,7 +45,7 @@ sub handles
     return 0;
 }
 
-=method transform
+=method transform(input)
 
 Converts L<input> to readable text. Returns true if converted OK.
 
@@ -55,12 +55,18 @@ sub transform
 {
     my $self = shift;
 
+    # Use the passed in text if explicity set, else get it from the
+    # fetched article object. This is used by derived classes that
+    # transform text into HTML then call this method.
+    my ($input) = @_;
+    $input //= $self->input->text;
+
     my $encoding = 'utf8';
     if ($self->input->content_type =~ m/charset=([\w-]+)/)
     {
         $encoding = $1;
     }
-    my $raw_html = Encode::decode($encoding, $self->input->text);
+    my $raw_html = Encode::decode($encoding, $input);
 
     $self->_extract_title($raw_html);
 

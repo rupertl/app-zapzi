@@ -48,7 +48,7 @@ web - and create eBooks for reading later.
 
 =item * Can read articles from local files or via HTTP.
 
-=item * Understands plain text, HTML and Markdown format articles.
+=item * Understands plain text, POD, HTML and Markdown format articles.
 
 =item * HTML is converted to a more readable form (eg no menus or
 footers) to make the article easier to view on an eReader.
@@ -194,7 +194,7 @@ pronounced ZAAP-zi in Cantonese.
   $ zapzi add [-t TRANSFORMER] FILE | URL
     Adds article to database. Accepts multiple file names or URLs.
     TRANSFORMER determines how to extract the text from the article
-    and can be HTML, HTMLExtractMain or TextMarkdown
+    and can be HTML, HTMLExtractMain, POD or TextMarkdown
     If not specified, Zapzi will choose the best option based on the
     content type of the article.
 

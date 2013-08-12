@@ -17,6 +17,7 @@ test_text();
 test_text_ws_long_lines();
 test_html();
 test_html_extractmain();
+test_pod();
 test_missing_transformer();
 done_testing();
 
@@ -102,6 +103,23 @@ sub test_html_extractmain
     ok( $tx->to_readable, 'Transform sample HTML file' );
     is( $tx->title, 'Title 1',
         'Title selected from HTML extract with two title tags');
+}
+
+sub test_pod
+{
+    my $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.pm');
+    ok( $f->fetch, 'Fetch POD' );
+    my $tx = App::Zapzi::Transform->new(raw_article => $f);
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( $tx->to_readable, 'Transform sample file containing POD' );
+
+    like( $tx->readable_text, qr/<h1[^>]+>TESTING/s,
+          'Headings in POD file OK' );
+    like( $tx->readable_text, qr/<p>POD is transformed/s,
+          'Text in POD file OK' );
+
+    is( $tx->title, 'sample.pm',
+        'Basename of file is used for POD title' );
 }
 
 sub test_missing_transformer
