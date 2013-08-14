@@ -175,7 +175,7 @@ sub export_article
     my $rs = get_article($id);
     return unless $rs;
 
-    my $html = sprintf("<<html><head><meta charset=\"utf-8\">\n" .
+    my $html = sprintf("<html><head><meta charset=\"utf-8\">\n" .
                        "<title>%s</title></head><body>%s</body></html>\n",
                        $rs->title, $rs->article_text->text);
 
