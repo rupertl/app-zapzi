@@ -64,7 +64,7 @@ articles are archived so you can retrieve them later if needed.
 
 =head2 CONFIGURATION
 
-Zapzi needs very little configuration to get running - just type 
+Zapzi needs very little configuration to get running - just type
 
   $ zapzi init
 
@@ -140,8 +140,9 @@ When you publish a folder, the articles are moved to the Archive
 folder unless you set the C<--noarchive> option.
 
 Instead of publishing, if you want to see a copy of an article use
-C<zapzi show>. This will send a copy to the standard output. It will
-not archive the article.
+C<zapzi show> to view the article in a browser or C<zapzi export> to
+send a copyof the readable article to the standard output. Both these
+commands will not archive the article.
 
 =head1 SUPPORT AND DEVELOPMENT
 
@@ -189,7 +190,7 @@ pronounced ZAAP-zi in Cantonese.
     Show version information
 
   $ zapzi init [--force]
-    Initialises new zapzi database. Will not create a new database 
+    Initialises new zapzi database. Will not create a new database
     if one exists already unless you set --force.
 
   $ zapzi add [-t TRANSFORMER] FILE | URL | POD
@@ -214,13 +215,14 @@ pronounced ZAAP-zi in Cantonese.
   $ zapzi delete-article | delete | rm ID
     Removes article ID.
 
-  $ zapzi show | cat ID
-    Prints content of article to STDOUT
+  $ zapzi export | cat ID
+    Prints content of readable article to STDOUT
+
+  $ zapzi show | view ID
+    Opens a browser to view the readable text of article ID
 
   $ zapzi publish | pub [-f FOLDER] [--noarchive]
     Publishes articles in FOLDER to an eBook. Will archive articles unless
     --noarchive is set.
 
 =cut
-
-

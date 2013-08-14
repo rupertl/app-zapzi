@@ -131,8 +131,9 @@ When you publish a folder, the articles are moved to the Archive
 folder unless you set the --noarchive option.
 
 Instead of publishing, if you want to see a copy of an article use
-`zapzi show`. This will send a copy to the standard output. It will
-not archive the article.
+`zapzi show` to view the article in a browser or `zapzi export` to
+send a copyof the readable article to the standard output. Both these
+commands will not archive the article.
 
 # Support and Development
 
@@ -188,8 +189,11 @@ copy to an eReader.
     $ zapzi delete-article | delete | rm ID
       Removes article ID.
 
-    $ zapzi show | cat ID
-      Prints content of article to STDOUT
+    $ zapzi export | cat ID
+      Prints content of readable article to STDOUT
+
+    $ zapzi show | view ID
+      Opens a browser to view the readable text of article ID
 
     $ zapzi publish | pub [-f FOLDER] [--noarchive]
       Publishes articles in FOLDER to an eBook. Will archive articles unless

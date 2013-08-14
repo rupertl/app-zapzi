@@ -9,8 +9,10 @@ use warnings;
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
+use Browser::Open;
 use Getopt::Lucid 1.05 qw( :all );
 use File::HomeDir;
+use File::Temp;
 use App::Zapzi::Database;
 use App::Zapzi::Folders;
 use App::Zapzi::Articles;
@@ -168,7 +170,8 @@ sub process_args
         Switch("make-folder|mkf|md"),
         Switch("delete-folder|rmf|rd"),
         Switch("delete-article|delete|rm"),
-        Switch("show|cat"),
+        Switch("show|view"),
+        Switch("export|cat"),
         Switch("publish|pub"),
 
         Param("folder|f"),
@@ -215,7 +218,8 @@ sub process_args
     $self->delete_folder(@args) if $options->get_delete_folder;
     $self->delete_article(@args) if $options->get_delete_article;
     $self->add(@args) if $options->get_add;
-    $self->show(@args) if $options->get_show;
+    $self->show('browser', @args) if $options->get_show;
+    $self->show('stdout', @args) if $options->get_export;
     $self->publish if $options->get_publish;
 
     # Fallthrough if no valid commands given
@@ -480,15 +484,17 @@ sub add
     }
 }
 
-=method show
+=method show(output, articles)
 
-Outputs text of an article
+Exports article text. If C<output> is 'browser' then will start a
+browser to view the article, otherwise it will print to STDOUT.
 
 =cut
 
 sub show
 {
     my $self = shift;
+    my $output = shift;
     my @args = @_;
 
     if (! @args)
@@ -499,21 +505,40 @@ sub show
     }
 
     $self->run(0);
+    my $tempdir;
+
+    $tempdir = File::Temp->newdir("zapzi-article-XXXXX", TMPDIR => 1)
+        if $output eq 'browser';
+
     for (@args)
     {
-        my $art_rs = App::Zapzi::Articles::get_article($_);
-        if ($art_rs)
-        {
-            print "<html><head><meta charset=\"utf-8\">\n";
-            printf("<title>%s</title>\n", $art_rs->title);
-            print("</head><body>\n");
-            print $art_rs->article_text->text, "\n";
-            print("</body></html>\n\b");
-        }
-        else
+        my $article_text = App::Zapzi::Articles::export_article($_);
+        if (! $article_text)
         {
             print "Could not get article $_\n\n";
             $self->run(1);
+            next;
+        }
+
+        if ($output ne 'browser')
+        {
+            print $article_text, "\n\n";
+            next;
+        }
+
+        # Send the article to a temp file and view in a browser
+        my $tempfile = "$tempdir/$_.html";
+        open my $fh, '>:encoding(UTF-8)', $tempfile
+            or die "Can't open temporary file: $!\n";
+        print {$fh} $article_text;
+        close $fh;
+
+        my $rc = Browser::Open::open_browser($tempfile);
+        if (!defined($rc))
+        {
+            print "Could not open browser";
+            $self->run(1);
+            next;
         }
     }
 }
@@ -598,8 +623,11 @@ sub help
   $ zapzi delete-article | delete | rm ID
     Removes article ID.
 
-  $ zapzi show | cat ID
-    Prints content of article to STDOUT
+  $ zapzi export | cat ID
+    Prints content of readable article to STDOUT
+
+  $ zapzi show | view ID
+    Opens a browser to view the readable text of article ID
 
   $ zapzi publish | pub [-f FOLDER] [--noarchive]
     Publishes articles in FOLDER to an eBook. Will archive articles unless

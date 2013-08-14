@@ -6,7 +6,7 @@ use ZapziTestDatabase;
 
 use App::Zapzi;
 use App::Zapzi::Articles qw(get_article get_articles add_article move_article
-                            delete_article articles_summary);
+                            delete_article articles_summary export_article);
 
 test_can();
 
@@ -15,6 +15,7 @@ my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 test_get();
 test_add();
 test_move();
+test_export();
 test_delete();
 test_summary();
 
@@ -24,7 +25,7 @@ sub test_can
 {
     can_ok( 'App::Zapzi::Articles', qw(get_article get_articles add_article
                                        move_article delete_article
-                                       articles_summary) );
+                                       articles_summary export_article) );
 }
 
 sub test_get
@@ -58,6 +59,15 @@ sub test_add
     eval { add_article(title => 'Foo2', folder => 'Does not exist'); };
     like( $@, qr/does not exist/,
           'Detects non-existent folder to add_article' );
+}
+
+sub test_export
+{
+    my $art = export_article(1);
+    like( $art, qr/<html><head>/, 'Export article OK' );
+
+    $art = export_article(0);
+    is( $art, undef, 'Detects missing args to export_article' );
 }
 
 sub test_move

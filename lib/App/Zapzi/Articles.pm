@@ -16,7 +16,7 @@ use warnings;
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(get_articles get_article articles_summary add_article
-                    move_article delete_article);
+                    move_article delete_article export_article);
 
 use Carp;
 use App::Zapzi;
@@ -159,6 +159,27 @@ sub delete_article
     return 1 unless $article;
 
     return $article->delete;
+}
+
+=method export_article(id)
+
+Returns the text of article C<id> if it exists, else undef. Text will
+be wrapped in a HTML header so it can be viewed separately.
+
+=cut
+
+sub export_article
+{
+    my $id = shift;
+
+    my $rs = get_article($id);
+    return unless $rs;
+
+    my $html = sprintf("<<html><head><meta charset=\"utf-8\">\n" .
+                       "<title>%s</title></head><body>%s</body></html>\n",
+                       $rs->title, $rs->article_text->text);
+
+    return $html;
 }
 
 # Convenience function to get the DBIx::Class::ResultSet object for
