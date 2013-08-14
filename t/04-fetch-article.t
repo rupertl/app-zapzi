@@ -60,7 +60,7 @@ sub test_get_url
     like( $f->content_type, qr(text/html), 'Contents are HTML' );
 
     $f = App::Zapzi::FetchArticle->new(source =>
-                                       'http://example.iana.org/nonesuch');
+                                       'http://www.perl.com/nonesuch');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( ! $f->fetch, 'Detects URL 404' );
     like( $f->error, qr/404/, 'Error reported' );
