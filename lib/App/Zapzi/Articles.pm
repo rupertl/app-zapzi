@@ -71,7 +71,7 @@ sub articles_summary
 
     while (my $article = $rs->next)
     {
-        push $summary, {id => $article->id,
+        push @$summary, {id => $article->id,
                         created => $article->created,
                         title => $article->title};
     }
