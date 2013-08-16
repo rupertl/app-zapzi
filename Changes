@@ -2,6 +2,14 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.007     2013-08-16 16:43:31 Asia/Hong_Kong
+
+  * Added POD format (by file or module name) for input articles
+  * View captured articles in broswer using 'zapzi show'
+  * The command to send captured articles to stdout is now 'zapzi export'
+  * Updated article fetch tests
+  * Added Config helper module
+
 0.006     2013-08-06 15:30:06 Asia/Hong_Kong
 
   * Added HTML transformer for use when HTMLExtractMain does not give
