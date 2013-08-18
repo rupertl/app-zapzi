@@ -1,5 +1,6 @@
 #!perl
 use Test::Most;
+use HTTP::Tiny;
 
 use lib qw(t/lib);
 use ZapziTestDatabase;
@@ -12,7 +13,12 @@ test_can();
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_get_file();
-test_get_url();
+SKIP:
+{
+    skip('No internet connection so no URL tests', 14)
+        unless HTTP::Tiny->new->get('http://example.com/')->{success};
+    test_get_url();
+}
 test_get_pod();
 done_testing();
 
