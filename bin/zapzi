@@ -139,10 +139,19 @@ sub-directory of your Zapzi directory, eg C<~/.zapzi/ebooks>.
 When you publish a folder, the articles are moved to the Archive
 folder unless you set the C<--noarchive> option.
 
+=head2 SHOWING AND EXPORTING
+
 Instead of publishing, if you want to see a copy of an article use
 C<zapzi show> to view the article in a browser or C<zapzi export> to
-send a copyof the readable article to the standard output. Both these
+send a copy of the readable article to the standard output. Both these
 commands will not archive the article.
+
+You can chain together adding and showing, eg
+
+  $ zapzi add show README.md
+
+will add a copy of README.md to the database and then open a browser
+to show how it looks in readable format.
 
 =head1 SUPPORT AND DEVELOPMENT
 

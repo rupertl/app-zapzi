@@ -160,6 +160,13 @@ sub test_add
                  'add POD' );
     ok( ! $app->run, 'add POD with transformer run' );
 
+    # Try adding an article and immediately exporting it
+    stdout_like( sub { $app->process_args(
+                           qw(add --cat t/testfiles/sample.txt)) },
+                 qr/This is a sample text file/,
+                 'add+cat' );
+    ok( ! $app->run, 'add+cat run' );
+
     $app = get_test_app();
     stdout_like( sub { $app->process_args(qw(add)) },
                  qr/Need to provide/,
@@ -204,7 +211,7 @@ sub test_publish
     my $app = get_test_app();
 
     stdout_like( sub { $app->process_args(qw(publish)) },
-                 qr/4 articles.*Published/s,
+                 qr/5 articles.*Published/s,
                  'publish' );
     ok( ! $app->run, 'publish run' );
 

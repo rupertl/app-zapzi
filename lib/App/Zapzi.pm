@@ -217,7 +217,7 @@ sub process_args
     $self->make_folder(@args) if $options->get_make_folder;
     $self->delete_folder(@args) if $options->get_delete_folder;
     $self->delete_article(@args) if $options->get_delete_article;
-    $self->add(@args) if $options->get_add;
+    @args = $self->add(@args) if $options->get_add;
     $self->show('browser', @args) if $options->get_show;
     $self->show('stdout', @args) if $options->get_export;
     $self->publish if $options->get_publish;
@@ -453,6 +453,7 @@ sub add
     }
 
     $self->run(0);
+    my @article_ids;
     for (@args)
     {
         my $source = $_;
@@ -481,7 +482,12 @@ sub add
                                                    text => $tx->readable_text,
                                                    folder => $self->folder);
         printf("Added article %d to folder '%s'\n\n", $rs->id, $self->folder);
+        push @article_ids, $rs->id;
     }
+
+    # Allow other commands in the command line to operate on the list of
+    # articles added.
+    return @article_ids;
 }
 
 =method show(output, articles)
