@@ -49,6 +49,13 @@ __PACKAGE__->table("articles");
   default_value: datetime('now','localtime')
   is_nullable: 0
 
+=head2 source
+
+  Source of the article, eg filename or URL
+  data_type: 'text'
+  default_value: ''
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns
@@ -61,7 +68,9 @@ __PACKAGE__->add_columns
     { data_type => "integer", is_nullable => 0 },
     "created",
     { data_type => 'datetime', is_nullable => 0,
-      default_value => \"(datetime('now', 'localtime'))" }
+      default_value => \"(datetime('now', 'localtime'))" },
+    "source",
+    { data_type => "text", default_value => "", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY

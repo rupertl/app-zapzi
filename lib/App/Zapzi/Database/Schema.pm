@@ -20,7 +20,7 @@ The version of the database schema that the code expects
 
 sub schema_version
 {
-    return 1;
+    return 2;
 }
 
 1;

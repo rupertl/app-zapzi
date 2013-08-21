@@ -178,7 +178,7 @@ sub upgrade
 
     print "Upgrading database from version $from to $to\n";
 
-    if ($from == 0)
+    if ($from < 1)
     {
         $self->schema->storage->dbh->do("CREATE TABLE config ( " .
                                         "   name text NOT NULL, " .
@@ -186,6 +186,14 @@ sub upgrade
                                         "   PRIMARY KEY (name) ".
                                         ")");
         App::Zapzi::Config::set('schema_version', 1);
+    }
+
+    if ($from < 2)
+    {
+        $self->schema->storage->dbh->do("ALTER TABLE articles " .
+                                        "ADD COLUMN " .
+                                        "   source NOT NULL DEFAULT '' ");
+        App::Zapzi::Config::set('schema_version', 2);
     }
 }
 
