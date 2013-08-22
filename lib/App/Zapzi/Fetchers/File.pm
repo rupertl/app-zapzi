@@ -15,6 +15,7 @@ use warnings;
 
 use Carp;
 use File::MMagic 1.30;
+use Cwd;
 use Moo;
 
 with 'App::Zapzi::Roles::Fetcher';
@@ -41,7 +42,7 @@ sub handles
     my $self = shift;
     my $source = shift;
 
-    return -r $source ? $source : undef;
+    return (-r $source && -s $source) ? Cwd::realpath($source) : undef;
 }
 
 =method fetch

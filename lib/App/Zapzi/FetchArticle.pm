@@ -30,6 +30,15 @@ Pass in the source of the article - either a filename or a URL.
 
 has source => (is => 'ro', default => '');
 
+=attr validated_source
+
+The actual source used to fetch the article, eg the full filename
+derived from the partial filename passed in to source.
+
+=cut
+
+has validated_source => (is => 'rwp', default => '');
+
 =attr fetcher
 
 Name of the module that was used to fetch the article.
@@ -82,6 +91,7 @@ sub fetch
         if (defined $valid_source)
         {
             $module = $plugin->new(source => $valid_source);
+            $self->_set_validated_source($valid_source);
             last;
         }
     }

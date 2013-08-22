@@ -46,6 +46,7 @@ sub test_add
 {
     my $art = add_article(title => 'Foo',
                           folder => 'Inbox',
+                          source => '/path/to/foo',
                           text => 'This is the text for the Foo article');
     my $foo = get_article($art->id);
     ok( $foo, 'Can add articles' );
@@ -56,7 +57,8 @@ sub test_add
     eval { add_article(); };
     like( $@, qr/Must provide/, 'Detects missing args to add_article' );
 
-    eval { add_article(title => 'Foo2', folder => 'Does not exist'); };
+    eval { add_article(title => 'Foo2', source => 'src',
+                       folder => 'Does not exist'); };
     like( $@, qr/does not exist/,
           'Detects non-existent folder to add_article' );
 }
@@ -74,6 +76,7 @@ sub test_move
 {
     my $art = add_article(title => 'Baz',
                           folder => 'Inbox',
+                          source => '/path/to/baz',
                           text => 'This is the text for the Baz article');
     my $baz = get_article($art->id);
     ok( move_article($baz->id, 'Archive'), 'Move article' );
@@ -88,6 +91,7 @@ sub test_delete
 {
     my $art = add_article(title => 'Bar',
                           folder => 'Inbox',
+                          source => '/path/to/bat',
                           text =>
                           'This is the text for the Bar article');
     my $bar = get_article($art->id);

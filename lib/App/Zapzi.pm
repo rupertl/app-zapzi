@@ -479,6 +479,8 @@ sub add
                length($tx->readable_text) / 1024);
 
         my $rs = App::Zapzi::Articles::add_article(title => $tx->title,
+                                                   source =>
+                                                       $f->validated_source,
                                                    text => $tx->readable_text,
                                                    folder => $self->folder);
         printf("Added article %d to folder '%s'\n\n", $rs->id, $self->folder);
