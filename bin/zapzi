@@ -127,6 +127,8 @@ To see a summary of a particular folder, use C<list> or C<ls>:
   $ zapzi ls -f Foo
   Foo      1 05-Jul-2013 Project readme
 
+Use the C<-l> option to C<ls> to get a more detailed listing.
+
 =head2 PUBLISHING
 
 To create an eBook, run C<zapzi publish> or C<zapzi pub>. By default
@@ -209,8 +211,9 @@ pronounced ZAAP-zi in Cantonese.
     If not specified, Zapzi will choose the best option based on the
     content type of the article.
 
-  $ zapzi list | ls [-f FOLDER]
-    Lists articles in FOLDER.
+  $ zapzi list | ls [-f FOLDER] [-l | --long]
+    Lists articles in FOLDER, one line per article. The -l option shows
+    a more detailed listing.
 
   $ zapzi list-folders | lsf
     Lists a summary of all folders.

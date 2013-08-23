@@ -53,6 +53,14 @@ Option to not archive articles on publication
 
 has noarchive => (is => 'rw', default => 0);
 
+=attr long
+
+Option to present a detailed listing
+
+=cut
+
+has long => (is => 'rw', default => 0);
+
 =attr folder
 
 Folder to work on. Default is 'Inbox'
@@ -178,12 +186,14 @@ sub process_args
         Param("transformer|t"),
         Switch("force"),
         Switch("noarchive"),
+        Switch("long|l"),
     );
 
     my $options = Getopt::Lucid->getopt(\@specs, \@args)->validate;
 
     $self->force($options->get_force);
     $self->noarchive($options->get_noarchive);
+    $self->long($options->get_long);
     $self->folder($options->get_folder // $self->folder);
     $self->transformer($options->get_transformer // $self->transformer);
 
@@ -292,9 +302,23 @@ sub list
     foreach (@$summary)
     {
         my $article = $_;
-        printf("%s %4d %s %-45s\n", $self->folder,
-               $article->{id}, $article->{created}->strftime('%d-%b-%Y'),
-               $article->{title});
+        if ($self->long)
+        {
+            print "Folder:  ", $self->folder, "\n";
+            print "ID:      ", $article->{id}, "\n";
+            print "Title:   ", $article->{title}, "\n";
+            print "Source:  ", $article->{source}, "\n";
+            print "Created: ",
+                  $article->{created}->strftime('%d-%b-%Y %H:%M:%S'), "\n";
+            printf("Size:    %.1fkb\n", length($article->{text}) / 1024);
+            print "\n";
+        }
+        else
+        {
+            printf("%s %4d %s %-45s\n", $self->folder,
+                   $article->{id}, $article->{created}->strftime('%d-%b-%Y'),
+                   $article->{title});
+        }
     }
     $self->run(0);
 }
@@ -616,8 +640,9 @@ sub help
     If not specified, Zapzi will choose the best option based on the
     content type of the article.
 
-  $ zapzi list | ls [-f FOLDER]
-    Lists articles in FOLDER.
+  $ zapzi list | ls [-f FOLDER] [-l | --long]
+    Lists articles in FOLDER, one line per article. The -l option shows
+    a more detailed listing.
 
   $ zapzi list-folders | lsf
     Lists a summary of all folders.

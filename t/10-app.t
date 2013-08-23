@@ -44,6 +44,11 @@ sub test_list
     stdout_like( sub { $app->process_args('list') }, qr/Inbox/, 'list' );
     ok( ! $app->run, 'list run' );
 
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(ls -l)) },
+                 qr/Folder:\s+Inbox/, 'ls -l' );
+    ok( ! $app->run, 'ls -l run' );
+
     stdout_like( sub { $app->process_args(qw(list -f Nonesuch)) },
                  qr/does not exist/, 'list for non-existent folder' );
     ok( $app->run, 'list error run' );

@@ -118,6 +118,8 @@ To see a summary of a particular folder, use `list` or `ls`:
     $ zapzi ls -f Foo
     Foo      1 05-Jul-2013 Project readme
 
+Use the `l` option to `ls` to get a more detailed listing.
+
 ## Publishing
 
 To create an eBook, run `zapzi publish` or `zapzi pub`. By default
@@ -183,8 +185,9 @@ copy to an eReader.
       If not specified, Zapzi will choose the best option based on the
       content type of the article.
 
-    $ zapzi list | ls [-f FOLDER]
-      Lists articles in FOLDER.
+    $ zapzi list | ls [-f FOLDER] [-l | --long]
+      Lists articles in FOLDER, one line per article. The -l option shows
+      a more detailed listing.
 
     $ zapzi list-folders | lsf
       Lists a summary of all folders.

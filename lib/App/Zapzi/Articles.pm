@@ -74,7 +74,7 @@ sub articles_summary
         push @$summary, {id => $article->id,
                         created => $article->created,
                         source => $article->source,
-                        text => $article->article_text,
+                        text => $article->article_text->text,
                         title => $article->title};
     }
 
