@@ -2,6 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.009     2013-08-24 19:46:48 Asia/Hong_Kong
+
+  * Save source of article when capturing it
+  * Show a more detailed listing of articles with 'zapzi ls -l'
+  * Allow 'zapzi add show' to add an article and immediately show it
+  * Skip URL tests if no internet connection
+
 0.008     2013-08-16 18:35:49 Asia/Hong_Kong
 
   * Bugfix for perl < 5.14
