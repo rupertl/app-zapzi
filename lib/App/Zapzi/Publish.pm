@@ -33,6 +33,17 @@ Folder of articles to publish
 
 has folder => (is => 'ro', required => 1);
 
+=attr encoding
+
+Encoding to use when publishing. Options are ISO-8859-1 and UTF-8,
+with the first being the default as early Kindles have issues with
+UTF-8. Characters that cannot be encoded will be replaced with their
+HTML entity equivalents.
+
+=cut
+
+has encoding => (is => 'ro', required => 0, default => 'ISO-8859-1');
+
 =attr archive_folder
 
 Folder to move articles to after publication - undef means don't move.
@@ -48,6 +59,14 @@ File that the published ebook is stored in.
 =cut
 
 has filename => (is => 'rwp');
+
+=attr mhtml
+
+MobiHTML produced by EBook::MOBI from collection - used for testing.
+
+=cut
+
+has mhtml => (is => 'rwp');
 
 =method publish
 
@@ -66,7 +85,7 @@ sub publish
     $book->set_filename($self->filename);
     $book->set_title($self->_get_title);
     $book->set_author('Zapzi');
-    $book->set_encoding(':encoding(UTF-8)');
+    $book->set_encoding(':encoding(' . $self->encoding . ')');
     $book->add_toc_once();
     $book->add_mhtml_content("<hr>\n");
 
@@ -76,15 +95,19 @@ sub publish
         $book->add_mhtml_content("<h1>" .
                                  HTML::Entities::encode($article->title) .
                                  "</h1>\n");
-        $book->add_mhtml_content(encode_utf8($article->article_text->text));
+
+        my $encoded = _encode_text($self, $article);
+
+        $book->add_mhtml_content($encoded);
         $book->add_pagebreak();
 
         $self->_archive_article($article);
     }
 
     $book->make();
-    $book->save();
+    $self->_set_mhtml($book->print_mhtml('noprint'));
 
+    $book->save();
     return -s $self->filename;
 }
 
@@ -115,6 +138,28 @@ sub _archive_article
     if (defined($self->archive_folder) &&  $self->folder ne 'Archive')
     {
         App::Zapzi::Articles::move_article($article->id, $self->archive_folder);
+    }
+}
+
+sub _encode_text
+{
+    my $self = shift;
+    my ($article) = @_;
+
+    if ($self->encoding =~ /utf-8/i)
+    {
+        return encode_utf8($article->article_text->text);
+    }
+    elsif ($self->encoding =~ /iso-8859-1/i)
+    {
+        # Transform chars outsides the ISO-8859 range into HTML entities
+        my $encode_high = encode_entities($article->article_text->text,
+                                          "[\x{FF}-\x{FFFFFFFF}]");
+        return encode("iso-8859-1", $encode_high);
+    }
+    else
+    {
+        croak("Unsupported encoding");
     }
 }
 
