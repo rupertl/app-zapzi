@@ -13,6 +13,7 @@ test_can();
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_publish();
+test_pagebreak();
 test_encoding();
 done_testing();
 
@@ -27,6 +28,29 @@ sub test_publish
 
     ok( $pub->publish(), 'publish' );
     ok( -s $pub->filename, 'file created' );
+}
+
+sub test_pagebreak
+{
+    # Test UTF-8
+    stdout_like( sub { $app->process_args(qw(add t/testfiles/sample.txt)) },
+                 qr/Added article/,
+                 'add sample text' );
+
+    my $pub = App::Zapzi::Publish->new(folder => 'Inbox',
+                                       archive_folder => undef);
+    $pub->publish();
+    unlike( $pub->mhtml, qr/<mbp:pagebreak/,
+          'No pagebreak in single article collection' );
+
+    stdout_like( sub { $app->process_args(qw(add t/testfiles/sample.txt)) },
+                 qr/Added article/,
+                 'add second sample text' );
+    $pub = App::Zapzi::Publish->new(folder => 'Inbox',
+                                    archive_folder => undef);
+    $pub->publish();
+    like( $pub->mhtml, qr/<mbp:pagebreak/,
+          'Pagebreak in two article collection' );
 }
 
 sub test_encoding

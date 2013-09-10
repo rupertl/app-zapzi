@@ -89,17 +89,18 @@ sub publish
     $book->add_toc_once();
     $book->add_mhtml_content("<hr>\n");
 
-    my $articles = App::Zapzi::Articles::get_articles($self->folder);
-    while (my $article = $articles->next)
+    my $article_count = 0;
+    for (@{App::Zapzi::Articles::articles_summary($self->folder)})
     {
+        my $article = $_;
+        $book->add_pagebreak() unless $article_count++ == 0;
         $book->add_mhtml_content("<h1>" .
-                                 HTML::Entities::encode($article->title) .
+                                 HTML::Entities::encode($article->{title}) .
                                  "</h1>\n");
 
         my $encoded = _encode_text($self, $article);
 
         $book->add_mhtml_content($encoded);
-        $book->add_pagebreak();
 
         $self->_archive_article($article);
     }
@@ -137,7 +138,8 @@ sub _archive_article
 
     if (defined($self->archive_folder) &&  $self->folder ne 'Archive')
     {
-        App::Zapzi::Articles::move_article($article->id, $self->archive_folder);
+        App::Zapzi::Articles::move_article($article->{id},
+                                           $self->archive_folder);
     }
 }
 
@@ -148,12 +150,12 @@ sub _encode_text
 
     if ($self->encoding =~ /utf-8/i)
     {
-        return encode_utf8($article->article_text->text);
+        return encode_utf8($article->{text});
     }
     elsif ($self->encoding =~ /iso-8859-1/i)
     {
         # Transform chars outsides the ISO-8859 range into HTML entities
-        my $encode_high = encode_entities($article->article_text->text,
+        my $encode_high = encode_entities($article->{text},
                                           "[\x{FF}-\x{FFFFFFFF}]");
         return encode("iso-8859-1", $encode_high);
     }
