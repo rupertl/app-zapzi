@@ -3,11 +3,12 @@ package App::Zapzi::Publish;
 
 =head1 DESCRIPTION
 
-This class takes a collection of cleaned up HTML articles and creates eBooks.
+This class takes a collection of cleaned up HTML articles and creates
+MOBI format eBooks.
 
 This interface is temporary to get the initial version of Zapzi
 working and will be replaced with a more flexible role based system
-later.
+later that will support multiple eBook formats.
 
 =cut
 
@@ -27,7 +28,7 @@ use Moo;
 
 =attr folder
 
-Folder of articles to publish
+Folder of articles to publish.
 
 =cut
 
@@ -54,7 +55,7 @@ has archive_folder => (is => 'ro', required => 0, default => 'Archive');
 
 =attr filename
 
-File that the published ebook is stored in.
+Returns the file that the published ebook is stored in.
 
 =cut
 
@@ -62,7 +63,8 @@ has filename => (is => 'rwp');
 
 =attr mhtml
 
-MobiHTML produced by EBook::MOBI from collection - used for testing.
+Returns the MobiHTML produced by EBook::MOBI from collection - used
+for testing.
 
 =cut
 
@@ -70,7 +72,8 @@ has mhtml => (is => 'rwp');
 
 =method publish
 
-Publish an eBook in MOBI format to the ebook directory.
+Publish an eBook in MOBI format to the ebook directory. Returns the
+size of the eBook or 0 on failure.
 
 =cut
 
@@ -98,8 +101,7 @@ sub publish
                                  HTML::Entities::encode($article->{title}) .
                                  "</h1>\n");
 
-        my $encoded = _encode_text($self, $article);
-
+        my $encoded = $self->_encode_text($article->{text});
         $book->add_mhtml_content($encoded);
 
         $self->_archive_article($article);
@@ -146,16 +148,16 @@ sub _archive_article
 sub _encode_text
 {
     my $self = shift;
-    my ($article) = @_;
+    my ($text) = @_;
 
     if ($self->encoding =~ /utf-8/i)
     {
-        return encode_utf8($article->{text});
+        return encode_utf8($text);
     }
     elsif ($self->encoding =~ /iso-8859-1/i)
     {
-        # Transform chars outsides the ISO-8859 range into HTML entities
-        my $encode_high = encode_entities($article->{text},
+        # Transform chars outside the ISO-8859 range into HTML entities
+        my $encode_high = encode_entities($text,
                                           "[\x{FF}-\x{FFFFFFFF}]");
         return encode("iso-8859-1", $encode_high);
     }

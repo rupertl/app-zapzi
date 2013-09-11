@@ -32,7 +32,7 @@ sub test_publish
 
 sub test_pagebreak
 {
-    # Test UTF-8
+    # Test for pagebreaks after last article
     stdout_like( sub { $app->process_args(qw(add t/testfiles/sample.txt)) },
                  qr/Added article/,
                  'add sample text' );
@@ -50,7 +50,7 @@ sub test_pagebreak
                                     archive_folder => undef);
     $pub->publish();
     like( $pub->mhtml, qr/<mbp:pagebreak/,
-          'Pagebreak in two article collection' );
+          'Single pagebreak in two article collection' );
 }
 
 sub test_encoding
