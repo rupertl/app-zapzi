@@ -4,11 +4,8 @@ package App::Zapzi::Publish;
 =head1 DESCRIPTION
 
 This class takes a collection of cleaned up HTML articles and creates
-MOBI format eBooks.
-
-This interface is temporary to get the initial version of Zapzi
-working and will be replaced with a more flexible role based system
-later that will support multiple eBook formats.
+eBooks. It will find the best publisher module that matches the
+required publication type.
 
 =cut
 
@@ -18,13 +15,24 @@ use warnings;
 
 # VERSION
 
-use Carp;
-use Encode;
+use Module::Find 0.11;
+our @_plugins;
+BEGIN { @_plugins = sort(Module::Find::useall('App::Zapzi::Publishers')); }
+
 use App::Zapzi;
+use Carp;
 use DateTime;
-use EBook::MOBI 0.65;
+use Encode;
 use HTML::Entities;
 use Moo;
+
+=attr format
+
+Format to publish eBook in.
+
+=cut
+
+has format => (is => 'ro', default => 'MOBI');
 
 =attr folder
 
@@ -37,13 +45,11 @@ has folder => (is => 'ro', required => 1);
 =attr encoding
 
 Encoding to use when publishing. Options are ISO-8859-1 and UTF-8,
-with the first being the default as early Kindles have issues with
-UTF-8. Characters that cannot be encoded will be replaced with their
-HTML entity equivalents.
+default depends on the publisher.
 
 =cut
 
-has encoding => (is => 'ro', required => 0, default => 'ISO-8859-1');
+has encoding => (is => 'ro', required => 0);
 
 =attr archive_folder
 
@@ -61,14 +67,14 @@ Returns the file that the published ebook is stored in.
 
 has filename => (is => 'rwp');
 
-=attr mhtml
+=attr collection_data
 
-Returns the MobiHTML produced by EBook::MOBI from collection - used
+Returns the raw data (eg combined HTML) produced by the publisher -
 for testing.
 
 =cut
 
-has mhtml => (is => 'rwp');
+has collection_data => (is => 'rwp');
 
 =method publish
 
@@ -81,37 +87,38 @@ sub publish
 {
     my $self = shift;
 
-    $self->_make_filename();
-    unlink($self->filename);
+    my $module = $self->_find_module();
+    return unless defined $module;
 
-    my $book = EBook::MOBI->new();
-    $book->set_filename($self->filename);
-    $book->set_title($self->_get_title);
-    $book->set_author('Zapzi');
-    $book->set_encoding(':encoding(' . $self->encoding . ')');
-    $book->add_toc_once();
-    $book->add_mhtml_content("<hr>\n");
+    $module->start_publication($self->folder, $self->encoding);
 
-    my $article_count = 0;
-    for (@{App::Zapzi::Articles::articles_summary($self->folder)})
+    for my $article (@{App::Zapzi::Articles::articles_summary($self->folder)})
     {
-        my $article = $_;
-        $book->add_pagebreak() unless $article_count++ == 0;
-        $book->add_mhtml_content("<h1>" .
-                                 HTML::Entities::encode($article->{title}) .
-                                 "</h1>\n");
-
-        my $encoded = $self->_encode_text($article->{text});
-        $book->add_mhtml_content($encoded);
-
+        $article->{encoded_text} =
+            $self->_encode_text($article->{text}, $module->encoding);
+        $module->add_article($article);
         $self->_archive_article($article);
     }
 
-    $book->make();
-    $self->_set_mhtml($book->print_mhtml('noprint'));
+    $self->_set_filename($module->finish_publication());
+    $self->_set_collection_data($module->collection_data);
 
-    $book->save();
     return -s $self->filename;
+}
+
+sub _find_module
+{
+    my $self = shift;
+
+    for (@_plugins)
+    {
+        if (lc($self->format) eq lc($_->name))
+        {
+            return $_->new(folder => $self->folder,
+                           encoding => $self->encoding,
+                           collection_title => $self->_get_title);
+        }
+    }
 }
 
 sub _get_title
@@ -123,38 +130,16 @@ sub _get_title
 }
 
 
-sub _make_filename
-{
-    my $self = shift;
-    my $app = App::Zapzi::get_app();
-
-    my $base = sprintf("Zapzi - %s.mobi", $self->_get_title);
-
-    $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
-}
-
-sub _archive_article
-{
-    my $self = shift;
-    my ($article) = @_;
-
-    if (defined($self->archive_folder) &&  $self->folder ne 'Archive')
-    {
-        App::Zapzi::Articles::move_article($article->{id},
-                                           $self->archive_folder);
-    }
-}
-
 sub _encode_text
 {
     my $self = shift;
-    my ($text) = @_;
+    my ($text, $encoding) = @_;
 
-    if ($self->encoding =~ /utf-8/i)
+    if ($encoding =~ /utf-8/i)
     {
         return encode_utf8($text);
     }
-    elsif ($self->encoding =~ /iso-8859-1/i)
+    elsif ($encoding =~ /iso-8859-1/i)
     {
         # Transform chars outside the ISO-8859 range into HTML entities
         my $encode_high = encode_entities($text,
@@ -164,6 +149,18 @@ sub _encode_text
     else
     {
         croak("Unsupported encoding");
+    }
+}
+
+sub _archive_article
+{
+    my $self = shift;
+    my ($article) = @_;
+
+    if (defined($self->archive_folder) && $self->folder ne 'Archive')
+    {
+        App::Zapzi::Articles::move_article($article->{id},
+                                           $self->archive_folder);
     }
 }
 

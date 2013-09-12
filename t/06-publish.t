@@ -40,7 +40,7 @@ sub test_pagebreak
     my $pub = App::Zapzi::Publish->new(folder => 'Inbox',
                                        archive_folder => undef);
     $pub->publish();
-    unlike( $pub->mhtml, qr/<mbp:pagebreak/,
+    unlike( $pub->collection_data, qr/<mbp:pagebreak/,
           'No pagebreak in single article collection' );
 
     stdout_like( sub { $app->process_args(qw(add t/testfiles/sample.txt)) },
@@ -49,7 +49,7 @@ sub test_pagebreak
     $pub = App::Zapzi::Publish->new(folder => 'Inbox',
                                     archive_folder => undef);
     $pub->publish();
-    like( $pub->mhtml, qr/<mbp:pagebreak/,
+    like( $pub->collection_data, qr/<mbp:pagebreak/,
           'Single pagebreak in two article collection' );
 }
 
@@ -64,7 +64,8 @@ sub test_encoding
                                        encoding => 'UTF-8',
                                        archive_folder => undef);
     $pub->publish();
-    like( $pub->mhtml, qr/This is a test of 雜誌 encoding. Viele Grüße!/,
+    like( $pub->collection_data,
+          qr/This is a test of 雜誌 encoding. Viele Grüße!/,
           'Encoded as UTF8 OK' );
 
     # Test ISO-8859-1
@@ -72,8 +73,10 @@ sub test_encoding
                                     encoding => 'ISO-8859-1',
                                     archive_folder => undef);
     $pub->publish();
-    like( $pub->mhtml, qr/This is a test of &#x96DC;&#x8A8C; encoding/,
+    like( $pub->collection_data,
+          qr/This is a test of &#x96DC;&#x8A8C; encoding/,
           'Encoded UTF-8 high chars as HTML entities in ISO-8859-1 OK' );
-    like( $pub->mhtml, qr/Viele Gr\x{FC}\x{DF}e!/,
+    like( $pub->collection_data,
+          qr/Viele Gr\x{FC}\x{DF}e!/,
           'Encoded as ISO-8859-1 OK' );
 }
