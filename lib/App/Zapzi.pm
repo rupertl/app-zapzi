@@ -600,6 +600,7 @@ sub publish
 
     my $pub = App::Zapzi::Publish->
         new(folder => $self->folder,
+            format => 'MOBI',
             archive_folder => $self->noarchive ? undef : 'Archive');
 
     if (! $pub->publish())

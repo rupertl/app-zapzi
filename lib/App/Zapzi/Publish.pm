@@ -119,6 +119,8 @@ sub _find_module
                            collection_title => $self->_get_title);
         }
     }
+
+    return undef;
 }
 
 sub _get_title
