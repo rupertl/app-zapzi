@@ -120,7 +120,7 @@ sub _find_module
         }
     }
 
-    return undef;
+    return;
 }
 
 sub _get_title
