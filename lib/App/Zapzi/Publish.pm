@@ -87,6 +87,10 @@ sub publish
 {
     my $self = shift;
 
+    return unless ! $self->encoding
+        || $self->encoding =~ /utf-8/i
+        || $self->encoding =~ /iso-8859-1/i;
+
     my $module = $self->_find_module();
     return unless defined $module;
 

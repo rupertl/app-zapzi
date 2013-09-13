@@ -79,6 +79,25 @@ type of the text.
 
 has transformer => (is => 'rw', default => '');
 
+=attr format
+
+Format to publish a collection of folder articles in. Default is MOBI
+at present.
+
+=cut
+
+has format => (is => 'rw', default => 'MOBI');
+
+=attr encoding
+
+Encoding to publish a collection of folder articles in. Zapzi will
+select the best encoding for the content and publication format if not
+specified.
+
+=cut
+
+has encoding => (is => 'rw');
+
 =method get_app
 =method BUILD
 
@@ -184,6 +203,8 @@ sub process_args
 
         Param("folder|f"),
         Param("transformer|t"),
+        Param("format|fmt"),
+        Param("encoding|enc"),
         Switch("force"),
         Switch("noarchive"),
         Switch("long|l"),
@@ -196,6 +217,8 @@ sub process_args
     $self->long($options->get_long);
     $self->folder($options->get_folder // $self->folder);
     $self->transformer($options->get_transformer // $self->transformer);
+    $self->format($options->get_format // $self->format);
+    $self->encoding($options->get_encoding // $self->encoding);
 
     $self->help if $options->get_help;
     $self->version if $options->get_version;
@@ -600,7 +623,8 @@ sub publish
 
     my $pub = App::Zapzi::Publish->
         new(folder => $self->folder,
-            format => 'MOBI',
+            format => $self->format,
+            encoding => $self->encoding,
             archive_folder => $self->noarchive ? undef : 'Archive');
 
     if (! $pub->publish())
@@ -663,9 +687,11 @@ sub help
   $ zapzi show | view ID
     Opens a browser to view the readable text of article ID
 
-  $ zapzi publish | pub [-f FOLDER] [--noarchive]
-    Publishes articles in FOLDER to an eBook. Will archive articles unless
-    --noarchive is set.
+  $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
+                        [--encoding ENC] [--noarchive]
+    Publishes articles in FOLDER to an eBook.
+    Format can be specified as MOBI or HTML.
+    Will archive articles unless --noarchive is set.
 EOF
 
     $self->run(0);

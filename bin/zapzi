@@ -135,6 +135,12 @@ To create an eBook, run C<zapzi publish> or C<zapzi pub>. By default
 this will publish articles from the Inbox folder; use the C<-f> option
 to select another folder.
 
+You can specify the format of the eBook with the C<--format> switch.
+Default is MOBI; another option is HTML which will produce a single
+HTML file from the collection. You can also set the encoding with
+C<--encoding> but Zapzi will normally set this correctly based on the
+content and publication format.
+
 If everything worked OK, Zapzi will create a new eBook in the ebooks
 sub-directory of your Zapzi directory, eg C<~/.zapzi/ebooks>.
 
@@ -233,8 +239,10 @@ pronounced ZAAP-zi in Cantonese.
   $ zapzi show | view ID
     Opens a browser to view the readable text of article ID
 
-  $ zapzi publish | pub [-f FOLDER] [--noarchive]
-    Publishes articles in FOLDER to an eBook. Will archive articles unless
-    --noarchive is set.
+  $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
+                        [--encoding ENC] [--noarchive]
+    Publishes articles in FOLDER to an eBook.
+    Format can be specified as MOBI or HTML.
+    Will archive articles unless --noarchive is set.
 
 =cut

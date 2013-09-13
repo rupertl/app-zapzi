@@ -225,10 +225,39 @@ sub test_publish
                  'pub archives OK and rerun gives 0 articles' );
     ok( $app->run, 'pub again run' );
 
+    $app = get_test_app();
+    $app->process_args(qw(add t/testfiles/sample.txt));
+    stdout_like( sub { $app->process_args(qw(publish --format HTML)) },
+                 qr/Published .*\.html$/,
+                 'publish as different format' );
+    ok( ! $app->run, 'pub format run' );
+
+    $app = get_test_app();
+    $app->process_args(qw(add t/testfiles/sample.txt));
+    stdout_like( sub { $app->process_args(qw(publish --encoding UTF-8)) },
+                 qr/Published /,
+                 'publish in different encoding' );
+    ok( ! $app->run, 'pub encoding run' );
+
+    $app->process_args(qw(add t/testfiles/sample.txt));
+
+    $app = get_test_app();
     stdout_like( sub { $app->process_args(qw(publish -f Nonesuch)) },
                  qr/does not exist/,
                  'publish error' );
     ok( $app->run, 'publish error run' );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(publish --format XXXX)) },
+                 qr/Failed to publish/,
+                 'publish format error' );
+    ok( $app->run, 'publish format error run' );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(publish --encoding XXXX)) },
+                 qr/Failed to publish/,
+                 'publish encoding error' );
+    ok( $app->run, 'publish encoding error run' );
 }
 
 sub test_publish_archive
