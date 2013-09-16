@@ -48,7 +48,7 @@ web - and create eBooks for reading later.
 - HTML is converted to a more readable form (eg no menus or
 footers) to make the article easier to view on an eReader.
 - Articles can be stored in different folders to organise your reading.
-- eBooks are created in MOBI format (other formats should be added later).
+- eBooks can be created in MOBI, EPUB or HTML format.
 - Once you publish a folder of articles to an eBook file, the
 articles are archived so you can retrieve them later if needed.
 
@@ -127,6 +127,16 @@ this will publish articles from the Inbox folder; use the `-f` option
 to select another folder.
 
 You can specify the format of the eBook with the `--format` switch.
+Options are:
+
+- MOBI (the default)
+- EPUB
+- HTML (a single HTML file containing all the articles)
+
+You can also set the encoding with C<--encoding> but Zapzi will
+normally set this correctly based on the content and publication
+format.
+
 Default is MOBI; another option is HTML which will produce a single
 HTML file from the collection. You can also set the encoding with
 `--encoding` but Zapzi will normally set this correctly based on the
@@ -216,7 +226,7 @@ copy to an eReader.
     $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
                           [--encoding ENC] [--noarchive]
       Publishes articles in FOLDER to an eBook.
-      Format can be specified as MOBI or HTML.
+      Format can be specified as MOBI, EPUB or HTML.
       Will archive articles unless --noarchive is set.
 
 # Name

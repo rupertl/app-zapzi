@@ -78,7 +78,7 @@ has collection_data => (is => 'rwp');
 
 =method publish
 
-Publish an eBook in MOBI format to the ebook directory. Returns the
+Publish an eBook in the specified format to the ebook directory. Returns the
 size of the eBook or 0 on failure.
 
 =cut

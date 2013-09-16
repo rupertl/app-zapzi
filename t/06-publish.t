@@ -13,7 +13,8 @@ test_can();
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 my %formats = ('HTML' => {pagebreak => '<hr>'},
-               'MOBI' => {pagebreak => '<mbp:pagebreak'});
+               'MOBI' => {pagebreak => '<mbp:pagebreak'},
+               'EPUB' => {pagebreak => undef});
 
 for (sort keys %formats)
 {
@@ -44,6 +45,9 @@ sub test_pagebreak
 {
     my ($format, $pagebreak) = @_;
 
+    # Don't test if there is no pagebreak support
+    return unless $pagebreak;
+
     # Test for pagebreaks after last article
     stdout_like( sub { $app->process_args(qw(add t/testfiles/sample.txt)) },
                  qr/Added article/,
@@ -68,6 +72,9 @@ sub test_pagebreak
 sub test_encoding
 {
     my $format = shift;
+
+    # EPUB does not support different encodings
+    return if $format eq 'EPUB';
 
     # Test UTF-8
     stdout_like( sub { $app->process_args(qw(add t/testfiles/html-utf8.html)) },

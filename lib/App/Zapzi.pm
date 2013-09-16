@@ -81,8 +81,8 @@ has transformer => (is => 'rw', default => '');
 
 =attr format
 
-Format to publish a collection of folder articles in. Default is MOBI
-at present.
+Format to publish a collection of folder articles in. Default is MOBI;
+EPUB and HTML are other valid options.
 
 =cut
 
@@ -690,7 +690,7 @@ sub help
   $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
                         [--encoding ENC] [--noarchive]
     Publishes articles in FOLDER to an eBook.
-    Format can be specified as MOBI or HTML.
+    Format can be specified as MOBI, EPUB or HTML.
     Will archive articles unless --noarchive is set.
 EOF
 
