@@ -28,14 +28,6 @@ Returns the EBook::MOBI object created.
 
 has mobi => (is => 'rwp');
 
-=attr article_count
-
-Number of articles added to the collection.
-
-=cut
-
-has article_count => (is => 'rwp', default => 0);
-
 =method name
 
 Name of publisher visible to user.
@@ -57,9 +49,6 @@ sub start_publication
 {
     my $self = shift;
 
-    $self->_make_filename($self->folder);
-    unlink($self->filename);
-
     # Default encoding is ISO-8859-1 as early Kindles have issues with
     # UTF-8. Characters that cannot be encoded will be replaced with
     # their HTML entity equivalents.
@@ -76,35 +65,20 @@ sub start_publication
     $self->_set_mobi($book);
 }
 
-sub _make_filename
-{
-    my $self = shift;
-    my ($folder) = @_;
-    my $app = App::Zapzi::get_app();
+=head2 add_article($article, $index)
 
-    my $base = sprintf("Zapzi - %s.mobi", $self->collection_title);
-
-    $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
-}
-
-=head2 add_article($article)
-
-Adds an article to the publication.
+Adds an article, sequence number index,  to the publication.
 
 =cut
 
 sub add_article
 {
     my $self = shift;
-    my ($article) = @_;
+    my ($article, $index) = @_;
 
-    $self->mobi->add_pagebreak() unless $self->article_count == 0;
-    $self->mobi->add_mhtml_content("<h1>" .
-                             HTML::Entities::encode($article->{title}) .
-                             "</h1>\n");
-
+    $self->mobi->add_pagebreak() unless $index == 0;
+    $self->mobi->add_mhtml_content($article->{encoded_title});
     $self->mobi->add_mhtml_content($article->{encoded_text});
-    $self->_set_article_count($self->article_count + 1);
 }
 
 =head2 finish_publication()

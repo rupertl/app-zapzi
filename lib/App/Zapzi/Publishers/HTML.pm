@@ -20,14 +20,6 @@ use App::Zapzi;
 
 with 'App::Zapzi::Roles::Publisher';
 
-=attr article_count
-
-Number of articles added to the collection.
-
-=cut
-
-has article_count => (is => 'rwp', default => 0);
-
 =attr file
 
 Returns the output file handle created.
@@ -57,9 +49,6 @@ sub start_publication
 {
     my $self = shift;
 
-    $self->_make_filename($self->folder);
-    unlink($self->filename);
-
     $self->_set_encoding('UTF-8') unless $self->encoding;
 
     open my $file, '>', $self->filename
@@ -73,34 +62,20 @@ sub start_publication
     $self->_set_file($file);
 }
 
-sub _make_filename
-{
-    my $self = shift;
-    my ($folder) = @_;
-    my $app = App::Zapzi::get_app();
+=head2 add_article($article, $index)
 
-    my $base = sprintf("Zapzi - %s.html", $self->collection_title);
-
-    $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
-}
-
-=head2 add_article($article)
-
-Adds an article to the publication.
+Adds an article, sequence number index,  to the publication.
 
 =cut
 
 sub add_article
 {
     my $self = shift;
-    my ($article) = @_;
+    my ($article, $index) = @_;
 
-    print {$self->file} "\n<hr>\n" unless $self->article_count == 0;
-    print {$self->file} "<h1>" .
-        HTML::Entities::encode($article->{title}) .
-        "</h1>\n";
+    print {$self->file} "\n<hr>\n" unless $index == 0;
+    print {$self->file} $article->{encoded_title};
     print {$self->file} $article->{encoded_text};
-    $self->_set_article_count($self->article_count + 1);
 }
 
 =head2 finish_publication()

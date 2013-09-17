@@ -46,11 +46,11 @@ has collection_title => (is => 'ro', required => 1);
 
 =attr filename
 
-Returns the file that the published ebook is stored in.
+File that the published ebook is stored in.
 
 =cut
 
-has filename => (is => 'rwp');
+has filename => (is => 'ro', required => 1);
 
 =attr collection_data
 

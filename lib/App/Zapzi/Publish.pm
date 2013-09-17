@@ -96,11 +96,15 @@ sub publish
 
     $module->start_publication($self->folder, $self->encoding);
 
+    my $index = 0;
     for my $article (@{App::Zapzi::Articles::articles_summary($self->folder)})
     {
         $article->{encoded_text} =
             $self->_encode_text($article->{text}, $module->encoding);
-        $module->add_article($article);
+        $article->{encoded_title} =
+            "<h1>" . HTML::Entities::encode($article->{title}) . "</h1>\n";
+
+        $module->add_article($article, $index++);
         $self->_archive_article($article);
     }
 
@@ -118,9 +122,13 @@ sub _find_module
     {
         if (lc($self->format) eq lc($_->name))
         {
+            my $title = $self->_get_title();
+            $self->_make_filename($title, lc($_->name));
+
             return $_->new(folder => $self->folder,
                            encoding => $self->encoding,
-                           collection_title => $self->_get_title);
+                           collection_title => $title,
+                           filename => $self->filename);
         }
     }
 
@@ -133,6 +141,17 @@ sub _get_title
 
     my $dt = DateTime->now;
     return sprintf("%s - %s", $self->folder, $dt->strftime('%d-%b-%Y'));
+}
+
+sub _make_filename
+{
+    my $self = shift;
+    my ($title, $extension) = @_;
+    my $app = App::Zapzi::get_app();
+
+    my $base = sprintf("Zapzi - %s.%s", $title, $extension);
+
+    $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
 }
 
 

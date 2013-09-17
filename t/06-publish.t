@@ -39,6 +39,7 @@ sub test_publish
 
     ok( $pub->publish(), "$format publish" );
     ok( -s $pub->filename, 'file created' );
+    like( $pub->filename, qr/\.$format$/i, 'file has correct extension' );
 }
 
 sub test_pagebreak

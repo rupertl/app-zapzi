@@ -30,14 +30,6 @@ Returns the EBook::EPUB object created.
 
 has epub => (is => 'rwp');
 
-=attr article_count
-
-Number of articles added to the collection.
-
-=cut
-
-has article_count => (is => 'rwp', default => 0);
-
 =method name
 
 Name of publisher visible to user.
@@ -59,9 +51,6 @@ sub start_publication
 {
     my $self = shift;
 
-    $self->_make_filename($self->folder);
-    unlink($self->filename);
-
     # add_xhtml seems to use UTF-8 internally
     $self->_set_encoding('UTF-8');
 
@@ -69,36 +58,23 @@ sub start_publication
     $book->add_title($self->collection_title);
     $book->add_author('Zapzi');
 
+    $self->_set_collection_data("");
     $self->_set_epub($book);
 }
 
-sub _make_filename
-{
-    my $self = shift;
-    my ($folder) = @_;
-    my $app = App::Zapzi::get_app();
+=head2 add_article($article, $index)
 
-    my $base = sprintf("Zapzi - %s.epub", $self->collection_title);
-
-    $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
-    $self->_set_collection_data("");
-}
-
-=head2 add_article($article)
-
-Adds an article to the publication.
+Adds an article, sequence number index,  to the publication.
 
 =cut
 
 sub add_article
 {
     my $self = shift;
-    my ($article) = @_;
+    my ($article, $index) = @_;
 
-    my $article_filename = "Article-" . $self->article_count;
-    my $article_title = "<h1>" . HTML::Entities::encode($article->{title}) .
-                        "</h1>\n";
-    my $article_xhtml = $self->_extract_xhtml($article_title .
+    my $article_filename = "Article-$index";
+    my $article_xhtml = $self->_extract_xhtml($article->{encoded_title} .
                                               $article->{text});
     my $id = $self->epub->add_xhtml($article_filename,
                                     $article_xhtml);
@@ -108,9 +84,8 @@ sub add_article
         label       => $article->{title},
         id          => $id,
         content     => $article_filename,
-        play_order  => $self->article_count+1); # start at 1
+        play_order  => $index+1); # start at 1
 
-    $self->_set_article_count($self->article_count + 1);
     $self->_set_collection_data($self->collection_data . $article_xhtml);
 }
 
