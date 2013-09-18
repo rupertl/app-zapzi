@@ -2,6 +2,12 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.010     2013-09-18 15:13:25 Asia/Hong_Kong
+
+  * Support for creating EPUB and HTML format eBooks
+  * Encoding options for publishing to each format
+  * Don't add a page break to MOBI publications after the last article
+
 0.009     2013-08-24 19:46:48 Asia/Hong_Kong
 
   * Save source of article when capturing it
