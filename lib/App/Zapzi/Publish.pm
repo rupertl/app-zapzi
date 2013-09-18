@@ -167,8 +167,9 @@ sub _encode_text
     elsif ($encoding =~ /iso-8859-1/i)
     {
         # Transform chars outside the ISO-8859 range into HTML entities
+        no warnings 'utf8';     # for warning on range below in perl 5.10
         my $encode_high = encode_entities($text,
-                                          "[\x{FF}-\x{FFFFFFFF}]");
+                                          "[\x{FF}-\x{10FFFF}]");
         return encode("iso-8859-1", $encode_high);
     }
     else
