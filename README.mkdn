@@ -137,11 +137,6 @@ You can also set the encoding with C<--encoding> but Zapzi will
 normally set this correctly based on the content and publication
 format.
 
-Default is MOBI; another option is HTML which will produce a single
-HTML file from the collection. You can also set the encoding with
-`--encoding` but Zapzi will normally set this correctly based on the
-content and publication format.
-
 If everything worked OK, Zapzi will create a new eBook in the ebooks
 sub-directory of your Zapzi directory, eg `~/.zapzi/ebooks`.
 
@@ -181,7 +176,7 @@ render correctly or may miss sections at present
 - Support other ways to fetch articles, eg FTP or IMAP for email.
 - Support other article formats, eg mbox/maildir.
 - Add the ability to read sources with state, eg RSS feeds.
-- Publish to other eBook formats such as EPUB or PDF.
+- Publish to other eBook formats such as PDF.
 - Add options to distribute published eBooks, eg by email or
 copy to an eReader.
 
