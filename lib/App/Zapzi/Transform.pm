@@ -1,5 +1,5 @@
 package App::Zapzi::Transform;
-# ABSTRACT: routines to transform Zapzi articles to readble HTML
+# ABSTRACT: routines to transform Zapzi articles to readable HTML
 
 =head1 DESCRIPTION
 

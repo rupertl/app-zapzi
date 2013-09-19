@@ -55,7 +55,7 @@ sub set
 =method delete(key)
 
 Delete the config item identified by C<key>. If the key does not exist
-then ignore the reques.
+then ignore the request.
 
 =cut
 

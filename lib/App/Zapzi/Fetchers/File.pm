@@ -33,7 +33,7 @@ sub name
 
 =method handles($content_type)
 
-Returns a valide filename if this module handles the given content-type
+Returns a valid filename if this module handles the given content-type
 
 =cut
 

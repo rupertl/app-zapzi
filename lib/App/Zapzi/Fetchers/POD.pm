@@ -33,7 +33,7 @@ sub name
 
 =method handles($content_type)
 
-Returns a valid filenam if this module handles the given content-type.
+Returns a valid filename if this module handles the given content-type.
 For POD this means it will search C<@INC> for a matching file.
 
 =cut

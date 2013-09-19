@@ -1,5 +1,5 @@
 package App::Zapzi::Roles::Publisher;
-# ABSTRACT: role definition for publusher modules
+# ABSTRACT: role definition for publisher modules
 
 =head1 DESCRIPTION
 
