@@ -11,6 +11,7 @@ test_init();
 
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
+test_config();
 test_list();
 test_list_folders();
 test_make_folder();
@@ -35,6 +36,84 @@ sub get_test_app
 sub test_init
 {
     ZapziTestDatabase::test_init();
+}
+
+sub test_config
+{
+    my $app = get_test_app();
+
+    # get all
+    stdout_like( sub { $app->process_args(qw(config get)) },
+                 qr/# Version of .*schema_version =/s,
+                 'config get' );
+    ok( ! $app->run, 'config get run' );
+
+    # get single
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config get publisher)) },
+                 qr/MOBI/,
+                 'config get single' );
+    ok( ! $app->run, 'config get single run' );
+
+    # get nonesuch
+    stdout_like( sub { $app->process_args(qw(config get nonesuch)) },
+                 qr/Config variable 'nonesuch' does not exist/,
+                 'config get nonesuch' );
+    ok( $app->run, 'config get nonesuch run' );
+
+    # set valid
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set publisher epub)) },
+                 qr/Set 'publisher' = 'EPUB'/,
+                 'config set valid' );
+    ok( ! $app->run, 'config set valid run' );
+
+    # set invalid
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set publisher XXX)) },
+                 qr/Invalid/,
+                 'config set invalid' );
+    ok( $app->run, 'config set invalid run' );
+
+    # set nonesuch
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set nonesuch xxx)) },
+                 qr/Invalid/,
+                 'config set nonesuch' );
+    ok( $app->run, 'config set nonesuch run' );
+
+    # set wrong number of args
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set)) },
+                 qr/Invalid config set command/,
+                 'config set wrong number of args 0' );
+    ok( $app->run, 'config set wrong number of args 0 run' );
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set publisher)) },
+                 qr/Invalid config set command/,
+                 'config set wrong number of args 1' );
+    ok( $app->run, 'config set wrong number of args 1 run' );
+
+    # get previously set
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config get publisher)) },
+                 qr/EPUB/,
+                 'config get previously set' );
+    ok( ! $app->run, 'config previously set run' );
+
+    # set valid change
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set publisher mobi)) },
+                 qr/Set 'publisher' = 'MOBI'/,
+                 'config set valid change' );
+    ok( ! $app->run, 'config set valid change run' );
+
+    # get previously changed
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config get publisher)) },
+                 qr/MOBI/,
+                 'config get previously changed' );
+    ok( ! $app->run, 'config previously changed run' );
 }
 
 sub test_list

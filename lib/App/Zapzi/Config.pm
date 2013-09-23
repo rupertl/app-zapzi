@@ -16,6 +16,21 @@ use warnings;
 use App::Zapzi;
 use Carp;
 
+# Define valid user config keys and documentation/validators
+our $_config_data =
+{
+    schema_version => {doc => "# Version of database schema to use\n",
+                       validate => sub { return; }},
+    publisher => {doc => "# Which format to publish eBooks in.\n" .
+                         "# Valid formats are EPUB, MOBI and HTML.\n",
+                  validate => sub
+                  {
+                      my $format = shift;
+                      return uc($format) if $format =~ /^(EPUB|MOBI|HTML)$/i;
+                      return;
+                  }}
+};
+
 =method get(key)
 
 Returns the value of C<key> or undef if it does not exist.
@@ -29,6 +44,37 @@ sub get
 
     my $rs = _config()->find({name => $key});
     return $rs ? $rs->value : undef;
+}
+
+=method get_doc(key)
+
+Returns the documentation for config C<key> or undef if it does not exist.
+
+=cut
+
+sub get_doc
+{
+    my ($key) = @_;
+    croak 'Key not provided' unless $key;
+    return $_config_data->{$key}->{doc};
+}
+
+=method validate(key, value)
+
+Check if C<value> is a valid setting for C<key> and return the
+canonical version of C<value> if OK, otherwise return undef.
+
+=cut
+
+sub validate
+{
+    my ($key, $value) = @_;
+    croak 'Key and value need to be provided'
+        unless $key && defined($value);
+
+    return unless $_config_data->{$key};
+
+    return $_config_data->{$key}->{validate}($value);
 }
 
 =method set(key, value)

@@ -72,6 +72,12 @@ and it will create a directory (by default ~/.zapzi) to store its
 database and files. You can override this directory by setting the
 environment variable C<ZAPZI_DIR>.
 
+To view or change configuration variables:
+
+  $ zapzi config get                      # to see all set variables
+  $ zapzi config get publisher            # to see one variable
+  $ zapzi config set publisher EPUB       # to set a variable
+
 =head2 ADDING ARTICLES
 
 To add an article, use C<zapzi add> with a filename on your computer,
@@ -220,6 +226,13 @@ pronounced ZAAP-zi in Cantonese.
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database
     if one exists already unless you set --force.
+
+  $ zapzi config get [KEYS]
+    Prints configuration variables specified by KEYS, or all config
+    variables if KEYS not provided.
+
+  $ zapzi config set KEY VALUE
+    Set configuration variable KEY to VALUE.
 
   $ zapzi add [-t TRANSFORMER] FILE | URL | POD
     Adds article to database. Accepts multiple file names or URLs.

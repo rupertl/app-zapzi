@@ -191,6 +191,7 @@ sub process_args
         Switch("help|h"),
         Switch("version|v"),
         Switch("init"),
+        Switch("config"),
         Switch("add"),
         Switch("list|ls"),
         Switch("list-folders|lsf"),
@@ -245,6 +246,7 @@ sub process_args
         }
     }
 
+    $self->config(@args) if $options->get_config;
     $self->list if $options->get_list;
     $self->list_folders if $options->get_list_folders;
     $self->make_folder(@args) if $options->get_make_folder;
@@ -287,6 +289,85 @@ sub init
         $self->database->init;
         print "Created Zapzi directory $dir\n";
         $self->run(0);
+    }
+}
+
+=method config(@args)
+
+Get or set configuration variables.
+
+If args is 'get' will list out all variables and their values. If args
+is 'get x' will list the value of variable x. If args is 'set x y'
+will set the value of x to be y.
+
+=cut
+
+sub config
+{
+    my $self = shift;
+    my @args = @_;
+    my $command = shift @args;
+
+    $self->run(0);
+    if (! $command || $command eq 'get')
+    {
+        if (@args)
+        {
+            # get a b c ...
+            for (@args)
+            {
+                my $key = $_;
+                my $value = App::Zapzi::Config::get($key);
+                if ($value)
+                {
+                    printf("%s%s = %s\n\n", App::Zapzi::Config::get_doc($key),
+                           $key, $value);
+                }
+                else
+                {
+                    print "Config variable '$key' does not exist\n";
+                    $self->run(1);
+                }
+            }
+        }
+        else
+        {
+            # get all
+            for (App::Zapzi::Config::get_keys())
+            {
+                printf("%s%s = %s\n\n", App::Zapzi::Config::get_doc($_),
+                       $_, App::Zapzi::Config::get($_));
+            }
+        }
+    }
+    elsif ($command eq 'set')
+    {
+        if (scalar(@args) != 2)
+        {
+            print "Invalid config set command - try 'set key value'\n";
+            $self->run(1);
+        }
+        else
+        {
+            # set key value
+            my ($key, $input) = @args;
+            my $value = App::Zapzi::Config::validate($key, $input);
+            if (! $value)
+            {
+                print "Invalid config set command '$key $input'\n";
+                $self->run(1);
+            }
+            else
+            {
+                App::Zapzi::Config::set($key, $value);
+                print "Set '$key' = '$value'\n";
+            }
+        }
+    }
+    else
+    {
+        print "Invalid config command - try 'get' or 'set'\n";
+        $self->run(1);
     }
 }
 
@@ -657,6 +738,13 @@ sub help
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database
     if one exists already unless you set --force.
+
+  $ zapzi config get [KEYS]
+    Prints configuration variables specified by KEYS, or all config
+    variables if KEYS not provided.
+
+  $ zapzi config set KEY VALUE
+    Set configuration variable KEY to VALUE.
 
   $ zapzi add [-t TRANSFORMER] FILE | URL | POD
     Adds article to database. Accepts multiple file names or URLs.

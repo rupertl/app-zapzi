@@ -15,12 +15,15 @@ test_get();
 test_set();
 test_get_keys();
 test_delete();
+test_get_doc();
+test_validate();
 
 done_testing();
 
 sub test_can
 {
-    can_ok( 'App::Zapzi::Config', qw(get set get_keys delete) );
+    can_ok( 'App::Zapzi::Config',
+            qw(get set get_keys delete get_doc validate) );
 }
 
 sub test_get
@@ -81,4 +84,38 @@ sub test_delete
 
     eval { App::Zapzi::Config::delete() };
     like( $@, qr/Key not provided/, 'Key has to be provided to delete' );
+}
+
+sub test_get_doc
+{
+    like( App::Zapzi::Config::get_doc('schema_version'),
+          qr/# Version of database schema to use/,
+          'Got documentation for a user config variable' );
+
+    is( App::Zapzi::Config::get_doc('nosuch'), undef,
+        'Non-user config variables have no documentation' );
+
+    eval { App::Zapzi::Config::get_doc() };
+    like( $@, qr/Key not provided/, 'Key has to be provided to get_doc' );
+}
+
+sub test_validate
+{
+    ok( App::Zapzi::Config::validate('publisher', 'MOBI'),
+        'Can set publisher to a valid value' );
+
+    is( App::Zapzi::Config::validate('publisher', 'mobi'), 'MOBI',
+        'Validate canonicalises inputs' );
+
+    is( App::Zapzi::Config::validate('publisher', 'invalid'), undef,
+        'Cannot set publisher to an invalid value' );
+
+    is( App::Zapzi::Config::validate('nonesuch', 'abc'), undef,
+        'Undefined keys lead to undef output' );
+
+    eval { App::Zapzi::Config::validate() };
+    like( $@, qr/need to be provided/, 'Key has to be provided to validate' );
+
+    eval { App::Zapzi::Config::validate('abc') };
+    like( $@, qr/need to be provided/, 'Value has to be provided to validate' );
 }
