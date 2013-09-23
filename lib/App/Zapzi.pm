@@ -81,12 +81,11 @@ has transformer => (is => 'rw', default => '');
 
 =attr format
 
-Format to publish a collection of folder articles in. Default is MOBI;
-EPUB and HTML are other valid options.
+Format to publish a collection of folder articles in.
 
 =cut
 
-has format => (is => 'rw', default => 'MOBI');
+has format => (is => 'rw');
 
 =attr encoding
 
@@ -218,7 +217,6 @@ sub process_args
     $self->long($options->get_long);
     $self->folder($options->get_folder // $self->folder);
     $self->transformer($options->get_transformer // $self->transformer);
-    $self->format($options->get_format // $self->format);
     $self->encoding($options->get_encoding // $self->encoding);
 
     $self->help if $options->get_help;
@@ -245,6 +243,10 @@ sub process_args
             return;
         }
     }
+
+    $self->format($options->get_format //
+                  $self->format //
+                  App::Zapzi::Config::get('publish_format'));
 
     $self->config(@args) if $options->get_config;
     $self->list if $options->get_list;

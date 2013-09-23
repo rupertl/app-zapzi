@@ -21,14 +21,14 @@ our $_config_data =
 {
     schema_version => {doc => "# Version of database schema to use\n",
                        validate => sub { return; }},
-    publisher => {doc => "# Which format to publish eBooks in.\n" .
-                         "# Valid formats are EPUB, MOBI and HTML.\n",
-                  validate => sub
-                  {
-                      my $format = shift;
-                      return uc($format) if $format =~ /^(EPUB|MOBI|HTML)$/i;
-                      return;
-                  }}
+    publish_format => {doc => "# Which format to publish eBooks in.\n" .
+                              "# Valid formats are EPUB, MOBI and HTML.\n",
+                       validate => sub
+                       {
+                           my $format = shift;
+                           return $format =~ /^(EPUB|MOBI|HTML)$/i ?
+                               uc($format) : undef;
+                       }}
 };
 
 =method get(key)

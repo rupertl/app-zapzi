@@ -125,7 +125,7 @@ sub init
 
     my @config = ({name => 'schema_version',
                    value => $self->schema->schema_version},
-                  {name => 'publisher',
+                  {name => 'publish_format',
                    value => 'MOBI'} );
     $self->schema->populate('Config', \@config);
 }

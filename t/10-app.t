@@ -50,7 +50,7 @@ sub test_config
 
     # get single
     $app = get_test_app();
-    stdout_like( sub { $app->process_args(qw(config get publisher)) },
+    stdout_like( sub { $app->process_args(qw(config get publish_format)) },
                  qr/MOBI/,
                  'config get single' );
     ok( ! $app->run, 'config get single run' );
@@ -63,14 +63,14 @@ sub test_config
 
     # set valid
     $app = get_test_app();
-    stdout_like( sub { $app->process_args(qw(config set publisher epub)) },
-                 qr/Set 'publisher' = 'EPUB'/,
+    stdout_like( sub { $app->process_args(qw(config set publish_format epub)) },
+                 qr/Set 'publish_format' = 'EPUB'/,
                  'config set valid' );
     ok( ! $app->run, 'config set valid run' );
 
     # set invalid
     $app = get_test_app();
-    stdout_like( sub { $app->process_args(qw(config set publisher XXX)) },
+    stdout_like( sub { $app->process_args(qw(config set publish_format XXX)) },
                  qr/Invalid/,
                  'config set invalid' );
     ok( $app->run, 'config set invalid run' );
@@ -89,28 +89,28 @@ sub test_config
                  'config set wrong number of args 0' );
     ok( $app->run, 'config set wrong number of args 0 run' );
     $app = get_test_app();
-    stdout_like( sub { $app->process_args(qw(config set publisher)) },
+    stdout_like( sub { $app->process_args(qw(config set publish_format)) },
                  qr/Invalid config set command/,
                  'config set wrong number of args 1' );
     ok( $app->run, 'config set wrong number of args 1 run' );
 
     # get previously set
     $app = get_test_app();
-    stdout_like( sub { $app->process_args(qw(config get publisher)) },
+    stdout_like( sub { $app->process_args(qw(config get publish_format)) },
                  qr/EPUB/,
                  'config get previously set' );
     ok( ! $app->run, 'config previously set run' );
 
     # set valid change
     $app = get_test_app();
-    stdout_like( sub { $app->process_args(qw(config set publisher mobi)) },
-                 qr/Set 'publisher' = 'MOBI'/,
+    stdout_like( sub { $app->process_args(qw(config set publish_format mobi)) },
+                 qr/Set 'publish_format' = 'MOBI'/,
                  'config set valid change' );
     ok( ! $app->run, 'config set valid change run' );
 
     # get previously changed
     $app = get_test_app();
-    stdout_like( sub { $app->process_args(qw(config get publisher)) },
+    stdout_like( sub { $app->process_args(qw(config get publish_format)) },
                  qr/MOBI/,
                  'config get previously changed' );
     ok( ! $app->run, 'config previously changed run' );
@@ -295,7 +295,7 @@ sub test_publish
     my $app = get_test_app();
 
     stdout_like( sub { $app->process_args(qw(publish)) },
-                 qr/5 articles.*Published/s,
+                 qr/5 articles.*Published.*\.mobi$/s,
                  'publish' );
     ok( ! $app->run, 'publish run' );
 
@@ -310,6 +310,15 @@ sub test_publish
                  qr/Published .*\.html$/,
                  'publish as different format' );
     ok( ! $app->run, 'pub format run' );
+
+    $app = get_test_app();
+    $app->process_args(qw(add t/testfiles/sample.txt));
+    $app->process_args(qw(config set publish_format epub));
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(publish)) },
+                 qr/Published .*\.epub$/,
+                 'publish as different format by config' );
+    ok( ! $app->run, 'pub format by config run' );
 
     $app = get_test_app();
     $app->process_args(qw(add t/testfiles/sample.txt));

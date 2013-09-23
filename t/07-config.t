@@ -101,14 +101,14 @@ sub test_get_doc
 
 sub test_validate
 {
-    ok( App::Zapzi::Config::validate('publisher', 'MOBI'),
-        'Can set publisher to a valid value' );
+    ok( App::Zapzi::Config::validate('publish_format', 'MOBI'),
+        'Can set publish_format to a valid value' );
 
-    is( App::Zapzi::Config::validate('publisher', 'mobi'), 'MOBI',
+    is( App::Zapzi::Config::validate('publish_format', 'mobi'), 'MOBI',
         'Validate canonicalises inputs' );
 
-    is( App::Zapzi::Config::validate('publisher', 'invalid'), undef,
-        'Cannot set publisher to an invalid value' );
+    is( App::Zapzi::Config::validate('publish_format', 'invalid'), undef,
+        'Cannot set publish_format to an invalid value' );
 
     is( App::Zapzi::Config::validate('nonesuch', 'abc'), undef,
         'Undefined keys lead to undef output' );
