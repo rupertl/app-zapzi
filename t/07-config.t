@@ -104,6 +104,9 @@ sub test_validate
     ok( App::Zapzi::Config::validate('publish_format', 'MOBI'),
         'Can set publish_format to a valid value' );
 
+    ok( App::Zapzi::Config::validate('publish_encoding', 'UTF-8'),
+        'Can set publish_encoding to a valid value' );
+
     is( App::Zapzi::Config::validate('publish_format', 'mobi'), 'MOBI',
         'Validate canonicalises inputs' );
 

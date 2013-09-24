@@ -6,6 +6,7 @@ use lib qw(t/lib);
 use ZapziTestDatabase;
 
 use App::Zapzi;
+use File::Slurp;
 
 test_init();
 
@@ -326,6 +327,29 @@ sub test_publish
                  qr/Published /,
                  'publish in different encoding' );
     ok( ! $app->run, 'pub encoding run' );
+
+    $app = get_test_app();
+    $app->process_args(qw(add t/testfiles/sample.txt));
+    $app->process_args(qw(config set publish_encoding ISO-8859-1));
+    $app->process_args(qw(config set publish_format HTML));
+    $app = get_test_app();
+    my $stdout = Test::Output::stdout_from(sub
+                                           { $app->process_args(qw(publish)) });
+    like( $stdout,
+          qr/Published .*\.html$/,
+          'publish as different encoding by config' );
+    if ($stdout =~ /Published (.+)$/)
+    {
+        my $published_file = $1;
+        my $contents = read_file($published_file);
+        like( $contents, qr/<meta charset="ISO-8859-1">/,
+              'Contents encoded correctly for ISO-8859-1' );
+    }
+    else
+    {
+        fail('Could not read published file');
+    }
+    ok( ! $app->run, 'pub encoding by config run' );
 
     $app->process_args(qw(add t/testfiles/sample.txt));
 

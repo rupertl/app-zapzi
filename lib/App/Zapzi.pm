@@ -217,7 +217,6 @@ sub process_args
     $self->long($options->get_long);
     $self->folder($options->get_folder // $self->folder);
     $self->transformer($options->get_transformer // $self->transformer);
-    $self->encoding($options->get_encoding // $self->encoding);
 
     $self->help if $options->get_help;
     $self->version if $options->get_version;
@@ -247,6 +246,9 @@ sub process_args
     $self->format($options->get_format //
                   $self->format //
                   App::Zapzi::Config::get('publish_format'));
+    $self->encoding($options->get_encoding //
+                  $self->encoding //
+                  App::Zapzi::Config::get('publish_encoding'));
 
     $self->config(@args) if $options->get_config;
     $self->list if $options->get_list;

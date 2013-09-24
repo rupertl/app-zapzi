@@ -28,6 +28,14 @@ our $_config_data =
                            my $format = shift;
                            return $format =~ /^(EPUB|MOBI|HTML)$/i ?
                                uc($format) : undef;
+                       }},
+    publish_encoding => {doc => "# Which encoding to publish eBooks in.\n" .
+                                "# Valid encodings are ISO-8859-1 and UTF-8.\n",
+                       validate => sub
+                       {
+                           my $enc = shift;
+                           return $enc =~ /^(ISO-8859-1|UTF-8|)$/i ?
+                               uc($enc) : undef;
                        }}
 };
 
