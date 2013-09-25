@@ -62,9 +62,9 @@ articles are archived so you can retrieve them later if needed.
 
 =back
 
-=head2 CONFIGURATION
+=head2 SETUP
 
-Zapzi needs very little configuration to get running - just type
+To get started, type:
 
   $ zapzi init
 
@@ -72,11 +72,8 @@ and it will create a directory (by default ~/.zapzi) to store its
 database and files. You can override this directory by setting the
 environment variable C<ZAPZI_DIR>.
 
-To view or change configuration variables:
-
-  $ zapzi config get                      # to see all set variables
-  $ zapzi config get publisher            # to see one variable
-  $ zapzi config set publisher EPUB       # to set a variable
+Zapzi has a number of configuration variables which you can use to
+override defaults; see L<CONFIGURATION> for further details.
 
 =head2 ADDING ARTICLES
 
@@ -214,6 +211,33 @@ copy to an eReader.
 
 Zapzi comes from the Chinese word 雜誌, meaning magazine. It is
 pronounced ZAAP-zi in Cantonese.
+
+=head1 CONFIGURATION
+
+To view or change configuration variables use the C<config get> or
+C<config set> commands, eg:
+
+  $ zapzi config get                      # to see all set variables
+  $ zapzi config get publish_format       # to see one variable
+  $ zapzi config set publish_format EPUB  # to set a variable
+
+The following configuration variables are available
+
+=over 4
+
+=item publish_format
+
+The eBook format Zapzi will use when running the C<publish> command.
+Default is MOBI; can be set to EPUB or HTML.
+
+=item publish_encoding
+
+The encoding used to create an eBook when running the C<publish>
+command. Default is unset, which means Zapzi will choose the best
+encoding for the publication format. Can be set to UTF-8 or
+ISO-8859-1.
+
+=back
 
 =head1 USAGE
 

@@ -52,9 +52,9 @@ footers) to make the article easier to view on an eReader.
 - Once you publish a folder of articles to an eBook file, the
 articles are archived so you can retrieve them later if needed.
 
-## Configuration
+## Setup
 
-Zapzi needs very little configuration to get running - just type
+To get started, type:
 
     $ zapzi init
 
@@ -62,11 +62,8 @@ and it will create a directory (by default ~/.zapzi) to store its
 database and files. You can override this directory by setting the
 environment variable `ZAPZI_DIR`.
 
-To view or change configuration variables:
-
-    $ zapzi config get                      # to see all set variables
-    $ zapzi config get publisher            # to see one variable
-    $ zapzi config set publisher EPUB       # to set a variable
+Zapzi has a number of configuration variables which you can use to
+override defaults; see Configuration below for further details.
 
 ## Adding Articles
 
@@ -163,28 +160,28 @@ You can chain together adding and showing, eg
 will add a copy of README.md to the database and then open a browser
 to show how it looks in readable format.
 
-# Support and Development
+# Configuration
 
-Bugs and requested issues can be reported at Github. Pull requests are
-also very welcome; please try to follow the existing style and
-organisation of the module.
+To view or change configuration variables use the `config get` or
+`config set` commands, eg:
 
-    https://github.com/rupertl/app-zapzi/
+    $ zapzi config get                      # to see all set variables
+    $ zapzi config get publish_format       # to see one variable
+    $ zapzi config set publish_format EPUB  # to set a variable
 
-# Bugs and Future Plans
+The following configuration variables are available:
 
-This is an early version of Zapzi and although the basic functionality
-is there I plan to improve it further. If you have any suggestions
-please add them to the issue tracker at Github.
+- publish\_format
 
-- Improve text extraction and formatting - complex pages may not
-render correctly or may miss sections at present
-- Support other ways to fetch articles, eg FTP or IMAP for email.
-- Support other article formats, eg mbox/maildir.
-- Add the ability to read sources with state, eg RSS feeds.
-- Publish to other eBook formats such as PDF.
-- Add options to distribute published eBooks, eg by email or
-copy to an eReader.
+    The eBook format Zapzi will use when running the `publish` command.
+    Default is MOBI; can be set to EPUB or HTML.
+
+- publish\_encoding
+
+    The encoding used to create an eBook when running the `publish`
+    command. Default is unset, which means Zapzi will choose the best
+    encoding for the publication format. Can be set to UTF-8 or
+    ISO-8859-1.
 
 # Usage
 
@@ -236,6 +233,29 @@ copy to an eReader.
       Publishes articles in FOLDER to an eBook.
       Format can be specified as MOBI, EPUB or HTML.
       Will archive articles unless --noarchive is set.
+
+# Support and Development
+
+Bugs and requested issues can be reported at Github. Pull requests are
+also very welcome; please try to follow the existing style and
+organisation of the module.
+
+    https://github.com/rupertl/app-zapzi/
+
+# Bugs and Future Plans
+
+This is an early version of Zapzi and although the basic functionality
+is there I plan to improve it further. If you have any suggestions
+please add them to the issue tracker at Github.
+
+- Improve text extraction and formatting - complex pages may not
+render correctly or may miss sections at present
+- Support other ways to fetch articles, eg FTP or IMAP for email.
+- Support other article formats, eg mbox/maildir.
+- Add the ability to read sources with state, eg RSS feeds.
+- Publish to other eBook formats such as PDF.
+- Add options to distribute published eBooks, eg by email or
+copy to an eReader.
 
 # Name
 
