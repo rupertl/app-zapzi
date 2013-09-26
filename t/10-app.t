@@ -45,7 +45,7 @@ sub test_config
 
     # get all
     stdout_like( sub { $app->process_args(qw(config get)) },
-                 qr/# Version of .*schema_version =/s,
+                 qr/# Format to publish.*publish_format = /s,
                  'config get' );
     ok( ! $app->run, 'config get run' );
 

@@ -19,6 +19,7 @@ use App::Zapzi::Articles;
 use App::Zapzi::FetchArticle;
 use App::Zapzi::Transform;
 use App::Zapzi::Publish;
+use App::Zapzi::UserConfig;
 use Moo 1.003000;
 use Carp;
 
@@ -245,10 +246,10 @@ sub process_args
 
     $self->format($options->get_format //
                   $self->format //
-                  App::Zapzi::Config::get('publish_format'));
+                  App::Zapzi::UserConfig::get('publish_format'));
     $self->encoding($options->get_encoding //
                   $self->encoding //
-                  App::Zapzi::Config::get('publish_encoding'));
+                  App::Zapzi::UserConfig::get('publish_encoding'));
 
     $self->config(@args) if $options->get_config;
     $self->list if $options->get_list;
@@ -315,32 +316,24 @@ sub config
     $self->run(0);
     if (! $command || $command eq 'get')
     {
-        if (@args)
+        # Get all unless keys were specified
+        @args = App::Zapzi::UserConfig::get_user_configurable_keys()
+            unless @args;
+
+        for (@args)
         {
-            # get a b c ...
-            for (@args)
+            my $key = $_;
+            my $doc = App::Zapzi::UserConfig::get_doc($key);
+            if ($doc)
             {
-                my $key = $_;
-                my $value = App::Zapzi::Config::get($key);
-                if ($value)
-                {
-                    printf("%s%s = %s\n\n", App::Zapzi::Config::get_doc($key),
-                           $key, $value);
-                }
-                else
-                {
-                    print "Config variable '$key' does not exist\n";
-                    $self->run(1);
-                }
+                print $doc;
+                my $value = App::Zapzi::UserConfig::get($key);
+                printf("%s = %s\n\n", $key, $value ? $value : '<not set>');
             }
-        }
-        else
-        {
-            # get all
-            for (App::Zapzi::Config::get_keys())
+            else
             {
-                printf("%s%s = %s\n\n", App::Zapzi::Config::get_doc($_),
-                       $_, App::Zapzi::Config::get($_));
+                print "Config variable '$key' does not exist\n";
+                $self->run(1);
             }
         }
     }
@@ -355,16 +348,14 @@ sub config
         {
             # set key value
             my ($key, $input) = @args;
-            my $value = App::Zapzi::Config::validate($key, $input);
-            if (! $value)
+            if (my $value = App::Zapzi::UserConfig::set($key, $input))
             {
-                print "Invalid config set command '$key $input'\n";
-                $self->run(1);
+                print "Set '$key' = '$value'\n";
             }
             else
             {
-                App::Zapzi::Config::set($key, $value);
-                print "Set '$key' = '$value'\n";
+                print "Invalid config set command '$key $input'\n";
+                $self->run(1);
             }
         }
     }
