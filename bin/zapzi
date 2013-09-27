@@ -21,6 +21,9 @@ __END__
   $ zapzi init
   Created Zapzi directory ~/.zapzi
 
+  Select configuration options. Press enter to accept defaults.
+  Format to publish eBooks in. (EPUB, MOBI or HTML) [default MOBI] : MOBI
+
   $ zapzi add ~/src/foo/README.txt
   Added article 2 to folder Inbox
 
@@ -72,8 +75,12 @@ and it will create a directory (by default ~/.zapzi) to store its
 database and files. You can override this directory by setting the
 environment variable C<ZAPZI_DIR>.
 
-Zapzi has a number of configuration variables which you can use to
-override defaults; see L<CONFIGURATION> for further details.
+Zapzi will then prompt for configuration options such as preferred
+format for publishing eBooks. If you run this command
+non-interactively it will use defaults.
+
+To view or change these options see L<CONFIGURATION> for further
+details.
 
 =head2 ADDING ARTICLES
 
