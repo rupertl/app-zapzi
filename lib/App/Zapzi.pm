@@ -9,6 +9,7 @@ use warnings;
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
+use IO::Interactive;
 use Term::Prompt 1.04;
 use Browser::Open;
 use Getopt::Lucid 1.05 qw( :all );
@@ -184,7 +185,7 @@ for input.
 has interactive =>
 (
     is => 'ro',
-    default => sub { -t STDIN; }
+    default => sub { IO::Interactive::is_interactive(); }
 );
 
 =method process_args(@args)
