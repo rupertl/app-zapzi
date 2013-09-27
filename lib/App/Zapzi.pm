@@ -9,6 +9,7 @@ use warnings;
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
+use Term::Prompt 1.04;
 use Browser::Open;
 use Getopt::Lucid 1.05 qw( :all );
 use File::HomeDir;
@@ -173,6 +174,19 @@ has test_database =>
     default => 0
 );
 
+=attr interactive
+
+If set, this is an interactive session where Zapzi can prompt the user
+for input.
+
+=cut
+
+has interactive =>
+(
+    is => 'ro',
+    default => sub { -t STDIN; }
+);
+
 =method process_args(@args)
 
 Read the arguments C<@args> (normally you'd pass in C<@ARGV> and
@@ -278,24 +292,73 @@ sub init
     my $self = shift;
     my $dir = $self->zapzi_dir;
 
+    $self->run(1);
+
     if (! $dir || $dir eq '')
     {
         print "Zapzi directory not supplied\n";
-        $self->run(1);
     }
     elsif (-d $dir && ! $self->force)
     {
         print "Zapzi directory $dir already exists\n";
         print "To force recreation, run with the --force option\n";
-        $self->run(1);
     }
     else
     {
         $self->database->init;
-        print "Created Zapzi directory $dir\n";
-        $self->run(0);
+        print "Created Zapzi directory $dir\n\n";
+        if ($self->init_config())
+        {
+            print "\nInitialisation completed. Type 'zapzi help' to view " .
+                "command line options\n";
+            $self->run(0);
+        }
     }
 }
+
+=method init_config
+
+On initialiseation, ask the user for settings for configuration
+variables. Will not ask if this is being run non-interactively.
+
+=cut
+
+sub init_config
+{
+    my $self = shift;
+
+    if ($self->interactive)
+    {
+        print "Select configuration options. " .
+              "Press enter to accept defaults.\n\n";
+    }
+    else
+    {
+        print "Not running interactively, so will use defaults for " .
+              "configuration variables.\n";
+        print "Use the 'zapzi config' command to view/set these later\n";
+    }
+
+    for (App::Zapzi::UserConfig::get_user_init_configurable_keys())
+    {
+        my $key = $_;
+        my $value = App::Zapzi::UserConfig::get_default($key);
+
+        if ($self->interactive)
+        {
+            $value = prompt('s', # validate by sub
+                            App::Zapzi::UserConfig::get_description($key),
+                            App::Zapzi::UserConfig::get_options($key),
+                            $value, # the default value
+                            App::Zapzi::UserConfig::get_validater($key));
+        }
+
+        return unless App::Zapzi::UserConfig::set($key, $value);
+    }
+
+    return 1;
+}
+
 
 =method config(@args)
 

@@ -124,9 +124,7 @@ sub init
     $self->schema->populate('Article', \@articles);
 
     my @config = ({name => 'schema_version',
-                   value => $self->schema->schema_version},
-                  {name => 'publish_format',
-                   value => 'MOBI'} );
+                   value => $self->schema->schema_version} );
     $self->schema->populate('Config', \@config);
 }
 

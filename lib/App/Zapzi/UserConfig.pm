@@ -60,6 +60,58 @@ sub get
     return App::Zapzi::Config::get($key) if $_config_data->{$key};
 }
 
+=method get_description(key)
+
+Returns the documentation for this config variable.
+
+=cut
+
+sub get_description
+{
+    my ($key) = @_;
+    croak 'Key not provided' unless $key;
+    return $_config_data->{$key}->{doc};
+}
+
+=method get_options(key)
+
+Returns a description of the options for this config variable.
+
+=cut
+
+sub get_options
+{
+    my ($key) = @_;
+    croak 'Key not provided' unless $key;
+    return $_config_data->{$key}->{options};
+}
+
+=method get_default(key)
+
+Returns the default for this config variable.
+
+=cut
+
+sub get_default
+{
+    my ($key) = @_;
+    croak 'Key not provided' unless $key;
+    return $_config_data->{$key}->{default};
+}
+
+=method get_validater(key)
+
+Returns the validater sub ref for this config variable.
+
+=cut
+
+sub get_validater
+{
+    my ($key) = @_;
+    croak 'Key not provided' unless $key;
+    return $_config_data->{$key}->{validate};
+}
+
 =method get_doc(key)
 
 Returns the documentation for config C<key> or undef if it does not exist.
@@ -97,7 +149,7 @@ sub set
     my $canon_value = _validate($key, $value);
     return unless $canon_value;
 
-    return $canon_value if App::Zapzi::Config::set($key, $value);
+    return $canon_value if App::Zapzi::Config::set($key, $canon_value);
 }
 
 sub _validate
@@ -120,6 +172,19 @@ Returns a list of keys in the config store that are configurable by the user.
 sub get_user_configurable_keys
 {
     return keys %{$_config_data};
+}
+
+=method get_user_init_configurable_keys
+
+Returns a list of keys in the config store that should be configured
+by the user at init time.
+
+=cut
+
+sub get_user_init_configurable_keys
+{
+    return grep { $_config_data->{$_}->{init_configurable} }
+           keys %{$_config_data};
 }
 
 1;

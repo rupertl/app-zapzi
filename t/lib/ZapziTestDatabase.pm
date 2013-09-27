@@ -16,7 +16,9 @@ sub get_test_app
     my $test_dir = _get_test_dir();
     my $dir = "$test_dir/zapzi";
 
-    my $app = App::Zapzi->new(test_database => 1, zapzi_dir => $dir);
+    my $app = App::Zapzi->new(test_database => 1,
+                              interactive => 0,
+                              zapzi_dir => $dir);
     $app->database->init($ddl);
 
     # Check to see if the DB was created by seeing if a table exists
@@ -36,11 +38,14 @@ sub test_init
     my $dir = "$test_dir/zapzi";
 
     my $app = App::Zapzi->new(test_database => 0,
+                              interactive => 0,
                               zapzi_dir => '');
     $app->process_args('init');
     ok( $app->run, 'Detect empty directory on init' );
 
-    $app = App::Zapzi->new(test_database => 0, zapzi_dir => $dir);
+    $app = App::Zapzi->new(test_database => 0,
+                           interactive => 0,
+                           zapzi_dir => $dir);
 
     $app->process_args('ls');
     ok( $app->run, 'Commands cannot be run before init' );

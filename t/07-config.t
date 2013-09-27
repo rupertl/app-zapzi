@@ -16,7 +16,8 @@ test_get();
 test_set();
 test_get_keys();
 test_delete();
-test_userconfig_get_doc();
+test_userconfig_init();
+test_userconfig_data();
 test_userconfig_get();
 test_userconfig_set();
 
@@ -90,8 +91,29 @@ sub test_delete
     like( $@, qr/Key not provided/, 'Key has to be provided to delete' );
 }
 
-sub test_userconfig_get_doc
+sub test_userconfig_init
 {
+    ok( $app->init_config(), 'Initialised user config variables' );
+}
+
+sub test_userconfig_data
+{
+    like( App::Zapzi::UserConfig::get_description('publish_format'),
+          qr/^Format to publish eBooks in/,
+          'Get description of user config variable' );
+
+    like( App::Zapzi::UserConfig::get_options('publish_format'),
+          qr/^EPUB, MOBI/,
+          'Get valid options for user config variable' );
+
+    like( App::Zapzi::UserConfig::get_default('publish_format'),
+          qr/^MOBI$/,
+          'Get default for user config variable' );
+
+    is( ref(App::Zapzi::UserConfig::get_validater('publish_format')),
+        'CODE',
+        'Get validater sub for user config variable' );
+
     like( App::Zapzi::UserConfig::get_doc('publish_format'),
           qr/# Format to publish eBooks in.\n# Options: EPUB, /mi,
           'Got documentation for a user config variable' );
@@ -107,6 +129,9 @@ sub test_userconfig_get_doc
 
     ok( App::Zapzi::UserConfig::get_user_configurable_keys(),
         'Can get user configurable keys list' );
+
+    ok( App::Zapzi::UserConfig::get_user_init_configurable_keys(),
+        'Can get user init configurable keys list' );
 }
 
 sub test_userconfig_get
