@@ -139,6 +139,12 @@ To see a summary of a particular folder, use C<list> or C<ls>:
 
 Use the C<-l> option to C<ls> to get a more detailed listing.
 
+You can delete articles with C<zapzi rm> and move articles between
+folders with C<zapzi mv>, for example:
+
+  $ zapzi rm 10                 # remove article 10 from the database
+  $ zapzi mv 12 13 Foo          # move articles 12 and 13 to folder Foo
+
 =head2 PUBLISHING
 
 To create an eBook, run C<zapzi publish> or C<zapzi pub>. By default
@@ -287,6 +293,9 @@ ISO-8859-1.
 
   $ zapzi delete-article | delete | rm ID
     Removes article ID.
+
+  $ zapzi move | mv ARTICLES FOLDER
+    Move one or more articles to the given folder
 
   $ zapzi export | cat ID
     Prints content of readable article to STDOUT

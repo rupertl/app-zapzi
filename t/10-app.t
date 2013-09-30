@@ -20,6 +20,7 @@ test_delete_folder();
 test_export();
 test_add();
 test_delete_article();
+test_move_article();
 test_publish();
 test_publish_archive();
 test_help_version();
@@ -289,6 +290,86 @@ sub test_delete_article
                  qr/Could not/,
                  'delete article error' );
     ok( $app->run, 'rm run' );
+}
+
+sub test_move_article
+{
+    my $app = get_test_app();
+
+    # Set up two folders
+    $app->process_args(qw(mkf ma));
+    $app->process_args(qw(mkf mb));
+
+    # Set up two articles in folder ma
+    my $stdout = Test::Output::stdout_from(
+        sub { $app->process_args(qw(add -f ma t/testfiles/sample.html)) });
+    my $article1;
+    if ($stdout =~ /Added article (\d+) to folder 'ma'/)
+    {
+        $article1 = $1;
+    }
+    ok( $article1, 'Added first test article for move' );
+
+    $app = get_test_app();
+    $stdout = Test::Output::stdout_from(
+        sub { $app->process_args(qw(add -f ma t/testfiles/sample.html)) });
+    my $article2;
+    if ($stdout =~ /Added article (\d+) to folder 'ma'/)
+    {
+        $article2 = $1;
+    }
+    ok( $article2, 'Added second test article for move' );
+
+    # Move individually to mb
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(split(/ /, "move $article1 mb")) },
+                 qr/Moved articles $article1 to 'mb'/ );
+    ok( ! $app->run, 'move 1 run' );
+    stdout_like( sub { $app->process_args(split(/ /, "move $article2 mb")) },
+                 qr/Moved articles $article2 to 'mb'/ );
+    ok( ! $app->run, 'move 2 run' );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args('lsf') }, qr/mb\s+2/,
+                 'Move completed OK' );
+
+    # Move in bulk to ma
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(
+                           split(/ /, "move $article1 $article2 ma")) },
+                 qr/Moved articles $article1 $article2 to 'ma'/ );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args('lsf') }, qr/mb\s+0/,
+                 'Move back completed OK' );
+
+    # No args
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(move)) },
+                 qr/Need to supply/,
+                 'Move with no args gives error' );
+    ok( $app->run, 'move no args run' );
+
+    # Bad folder
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(move 1 nonesuch)) },
+                 qr/Need to supply a valid folder/,
+                 'Move with invalid folder gives error' );
+    ok( $app->run, 'move bad folder run' );
+
+    # Missing articles
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(move mb)) },
+                 qr/Need to supply one or more article IDs/,
+                 'Move with missing article ID gives error' );
+    ok( $app->run, 'move missing article run' );
+
+    # Bad articles
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(move 99999 mb)) },
+                 qr/Could not get article/,
+                 'Move with bad article ID gives error' );
+    ok( $app->run, 'move bad article run' );
 }
 
 sub test_publish

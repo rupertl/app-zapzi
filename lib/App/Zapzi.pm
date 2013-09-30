@@ -215,6 +215,7 @@ sub process_args
         Switch("delete-article|delete|rm"),
         Switch("show|view"),
         Switch("export|cat"),
+        Switch("move|mv"),
         Switch("publish|pub"),
 
         Param("folder|f"),
@@ -275,6 +276,7 @@ sub process_args
     @args = $self->add(@args) if $options->get_add;
     $self->show('browser', @args) if $options->get_show;
     $self->show('stdout', @args) if $options->get_export;
+    $self->move(@args) if $options->get_move;
     $self->publish if $options->get_publish;
 
     # Fallthrough if no valid commands given
@@ -738,6 +740,57 @@ sub show
     }
 }
 
+=method move
+
+Move one or more articles to a folder.
+
+=cut
+
+sub move
+{
+    my $self = shift;
+    my @args = @_;
+
+    $self->run(0);
+
+    my $folder = pop @args;
+    if (! $folder || ! App::Zapzi::Folders::get_folder($folder))
+    {
+        print "Need to supply a valid folder name as last argument\n";
+        $self->run(1);
+        return;
+    }
+
+    if (scalar(@args) < 1 || grep { /[^0-9]/ } @args)
+    {
+        print "Need to supply one or more article IDs\n";
+        $self->run(1);
+        return;
+    }
+
+    my @moved;
+    for (@args)
+    {
+        my $id = $_;
+        my $article = App::Zapzi::Articles::get_article($id);
+        if (! $article)
+        {
+            print "Could not get article $id\n";
+            $self->run(1);
+        }
+        else
+        {
+            App::Zapzi::Articles::move_article($id, $folder);
+            push @moved, $_;
+        }
+    }
+
+    if (@moved)
+    {
+        print "Moved articles @moved to '$folder'\n";
+    }
+}
+
 =method publish
 
 Publish a folder of articles to an eBook
@@ -827,6 +880,9 @@ sub help
 
   $ zapzi delete-article | delete | rm ID
     Removes article ID.
+
+  $ zapzi move | mv ARTICLES FOLDER
+    Move one or more articles to the given folder
 
   $ zapzi export | cat ID
     Prints content of readable article to STDOUT

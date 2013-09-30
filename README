@@ -130,6 +130,12 @@ To see a summary of a particular folder, use `list` or `ls`:
 
 Use the `l` option to `ls` to get a more detailed listing.
 
+You can delete articles with `<zapzi rm` and move articles between
+folders with `zapzi mv`, for example:
+
+    $ zapzi rm 10                 # remove article 10 from the database
+    $ zapzi mv 12 13 Foo          # move articles 12 and 13 to folder Foo
+
 ## Publishing
 
 To create an eBook, run `zapzi publish` or `zapzi pub`. By default
@@ -228,6 +234,9 @@ The following configuration variables are available:
 
     $ zapzi delete-article | delete | rm ID
       Removes article ID.
+
+    $ zapzi move | mv ARTICLES FOLDER
+      Move one or more articles to the given folder
 
     $ zapzi export | cat ID
       Prints content of readable article to STDOUT
