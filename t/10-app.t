@@ -451,6 +451,13 @@ sub test_publish
                  qr/Failed to publish/,
                  'publish encoding error' );
     ok( $app->run, 'publish encoding error run' );
+
+    # Publish does not take any bare arguments
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(publish XXX)) },
+                 qr/Invalid .* arguments/,
+                 'publish arguments error' );
+    ok( $app->run, 'publish arguments error run' );
 }
 
 sub test_publish_archive

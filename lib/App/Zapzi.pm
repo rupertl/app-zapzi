@@ -277,7 +277,7 @@ sub process_args
     $self->show('browser', @args) if $options->get_show;
     $self->show('stdout', @args) if $options->get_export;
     $self->move(@args) if $options->get_move;
-    $self->publish if $options->get_publish;
+    $self->publish(@args) if $options->get_publish;
 
     # Fallthrough if no valid commands given
     $self->help if $self->run == -1;
@@ -800,8 +800,16 @@ Publish a folder of articles to an eBook
 sub publish
 {
     my $self = shift;
-    $self->run(0);
+    my @args = @_;
 
+    if (@args)
+    {
+        print "Invalid publish command arguments\n";
+        $self->run(1);
+        return;
+    }
+
+    $self->run(0);
     my $articles = App::Zapzi::Articles::get_articles($self->folder);
     my $count  = $articles->count;
 
