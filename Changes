@@ -2,6 +2,15 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.011     2013-10-07 15:54:47 Asia/Hong_Kong
+
+  * Added article move command and documented delete command
+  * Set and get config variables from command line application
+  * Prompt for user config options on first initialisation
+  * Config variable 'publish_format' sets the default eBook format
+  * Config variable 'publish_encoding' sets the default eBook encoding
+  * Validate arguments to publish command
+
 0.010     2013-09-18 15:13:25 Asia/Hong_Kong
 
   * Support for creating EPUB and HTML format eBooks
