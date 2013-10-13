@@ -130,7 +130,7 @@ To see a summary of a particular folder, use `list` or `ls`:
 
 Use the `l` option to `ls` to get a more detailed listing.
 
-You can delete articles with `<zapzi rm` and move articles between
+You can delete articles with `zapzi rm` and move articles between
 folders with `zapzi mv`, for example:
 
     $ zapzi rm 10                 # remove article 10 from the database
@@ -149,7 +149,7 @@ Options are:
 - EPUB
 - HTML (a single HTML file containing all the articles)
 
-You can also set the encoding with C<--encoding> but Zapzi will
+You can also set the encoding with `--encoding` but Zapzi will
 normally set this correctly based on the content and publication
 format.
 
@@ -157,7 +157,7 @@ If everything worked OK, Zapzi will create a new eBook in the ebooks
 sub-directory of your Zapzi directory, eg `~/.zapzi/ebooks`.
 
 When you publish a folder, the articles are moved to the Archive
-folder unless you set the --noarchive option.
+folder unless you set the `--noarchive` option.
 
 ## Showing and Exporting
 
