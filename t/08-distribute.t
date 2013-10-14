@@ -1,0 +1,114 @@
+#!perl
+use Test::Most;
+use utf8;
+
+use lib qw(t/lib);
+use ZapziTestDatabase;
+
+use App::Zapzi;
+use App::Zapzi::Distribute;
+
+test_can();
+
+my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
+my $test_file_base = generate_test_file();
+my $test_file_full = "$test_dir/$test_file_base";
+
+test_no_distributor();
+test_invalid_distributor();
+test_copy_distributor();
+
+done_testing();
+
+sub test_can
+{
+    can_ok( 'App::Zapzi::Distribute', qw(distribute) );
+}
+
+sub generate_test_file
+{
+    my $filename = "output.book";
+
+    open my $fh, '>', "$test_dir/$filename"
+        or die "Could not create test file for distribution: $!";
+
+    my $contents = "This is a test file for distibution\n";
+    print {$fh} $contents;
+
+    close $fh;
+
+    is( -s "$test_dir/$filename", length($contents),
+        "Created test file size OK" );
+
+    return $filename;
+}
+
+sub test_no_distributor
+{
+    my $dist = App::Zapzi::Distribute->new(file => $test_file_full);
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+
+    ok( $dist->distribute, 'Will do nothing if no distributor defined' );
+    is( $dist->completion_message, '', 'No message if no distributor' );
+
+    $dist = App::Zapzi::Distribute->new(file => $test_file_full,
+                                        method => '');
+    ok( $dist->distribute, 'Will do nothing if distributor set to blank' );
+}
+
+sub test_invalid_distributor
+{
+    my $dist = App::Zapzi::Distribute->new(file => $test_file_full,
+                                           method => 'nonesuch');
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+
+    ok( ! $dist->distribute, 'Error if invalid distributor set' );
+    like( $dist->completion_message, qr/'nonesuch' not defined/,
+          'Error message set if invalid distributor' );
+
+}
+
+sub test_copy_distributor
+{
+    my $destination_dir = "$test_dir/dest";
+    mkdir $destination_dir
+        or die "Could not create directory $destination_dir: $!\n";
+
+    my $destination_file = "$destination_dir/copied.book";
+
+    # Copy to directory
+    my $dist = App::Zapzi::Distribute->new(file => $test_file_full,
+                                           method => 'copy',
+                                           destination => $destination_dir);
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( $dist->distribute, 'Copy to directory returns OK' );
+    like( $dist->completion_message,
+          qr/File copied to '$destination_dir' successfully/,
+          'OK message for successful copy to directory' );
+    my $dir_copy_full = "$destination_dir/$test_file_base";
+    is( -s $dir_copy_full, -s $test_file_full,
+        'Copied file size correct' );
+
+    # Copy to file
+    $dist = App::Zapzi::Distribute->new(file => $test_file_full,
+                                        method => 'copy',
+                                        destination => $destination_file);
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( $dist->distribute, 'Copy to file returns OK' );
+    like( $dist->completion_message,
+          qr/File copied to '$destination_file' successfully/,
+          'OK message for successful copy to file' );
+    is( -s $destination_file, -s $test_file_full,
+        'Copied file size correct' );
+
+    # Copy to non-existent path
+    $destination_file = "$test_dir/no/such/path/to/file.book";
+    $dist = App::Zapzi::Distribute->new(file => $test_file_full,
+                                        method => 'copy',
+                                        destination => $destination_file);
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( ! $dist->distribute, 'Copy to non-existent path returns error' );
+    like( $dist->completion_message,
+          qr/Error copying file/,
+          'Error message for failed copy to file' );
+}
