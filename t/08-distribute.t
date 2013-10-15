@@ -17,6 +17,7 @@ my $test_file_full = "$test_dir/$test_file_base";
 test_no_distributor();
 test_invalid_distributor();
 test_copy_distributor();
+test_script_distributor();
 
 done_testing();
 
@@ -111,4 +112,40 @@ sub test_copy_distributor
     like( $dist->completion_message,
           qr/Error copying file/,
           'Error message for failed copy to file' );
+}
+
+sub test_script_distributor
+{
+    # Run a script that echos the param back and exits successfully
+    my $dist = App::Zapzi::Distribute->
+        new(file => $test_file_full,
+            method => 'script',
+            destination => 't/testfiles/distribute-script-echo.pl');
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( $dist->distribute, 'Echo script returns OK' );
+    like( $dist->completion_message,
+          qr/$test_file_base/,
+          'OK message for successful echo script' );
+
+    # Run a script that returns an error
+    $dist = App::Zapzi::Distribute->
+        new(file => $test_file_full,
+            method => 'script',
+            destination => 't/testfiles/distribute-script-error.pl');
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( ! $dist->distribute, 'Error script returns error' );
+    like( $dist->completion_message,
+          qr/Error signalled/,
+          'OK message for error script' );
+
+    # Script does not exist
+    $dist = App::Zapzi::Distribute->
+        new(file => $test_file_full,
+            method => 'script',
+            destination => 't/testfiles/no-such-script');
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( ! $dist->distribute, 'Non-existent script returns error' );
+    like( $dist->completion_message,
+          qr/Script does not exist/,
+          'OK message for non-existent script' );
 }

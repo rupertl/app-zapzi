@@ -1,5 +1,5 @@
 package App::Zapzi::Distributors::Copy;
-# ABSTRACT: distribute a publushed eBook by copying the file somewhere
+# ABSTRACT: distribute a published eBook by copying the file somewhere
 
 =head1 DESCRIPTION
 
