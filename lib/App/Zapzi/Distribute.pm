@@ -71,7 +71,7 @@ sub distribute
     my $self = shift;
 
     # Do nothing if no distributor defined
-    return 1 if ! $self->method;
+    return 1 if ! $self->method || lc($self->method) eq 'nothing';
 
     my $module = $self->_find_module();
     if (! defined $module)

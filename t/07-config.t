@@ -127,8 +127,8 @@ sub test_userconfig_data
     eval { App::Zapzi::UserConfig::get_doc() };
     like( $@, qr/Key not provided/, 'Key has to be provided to get_doc' );
 
-    ok( App::Zapzi::UserConfig::get_user_configurable_keys(),
-        'Can get user configurable keys list' );
+    my @ucks = App::Zapzi::UserConfig::get_user_configurable_keys();
+    ok( scalar(@ucks) > 1, 'Can get user configurable keys list' );
 
     ok( App::Zapzi::UserConfig::get_user_init_configurable_keys(),
         'Can get user init configurable keys list' );

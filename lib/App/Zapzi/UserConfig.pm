@@ -43,7 +43,26 @@ our $_config_data =
                              my $enc = shift;
                              return $enc =~ /^(ISO-8859-1|UTF-8|)$/i ?
                                  uc($enc) : undef;
-                         }}
+                         }},
+
+    distribution_method => {doc => "How to disribute eBooks after publication.",
+                            options => "[Copy] to another directory, " .
+                                       "run a [Script] or do [Nothing]",
+                            init_configurable => 1,
+                            default => 'Nothing',
+                            validate => sub
+                            {
+                                my $enc = shift;
+                                return $enc =~ /^(Copy|Script|Nothing|)$/i ?
+                                    ucfirst($enc) : undef;
+                            }},
+
+    distribution_destination => {doc => "Where to disribute eBooks after " .
+                                        "publication",
+                                options => "Script name, directory",
+                                init_configurable => 0,
+                                default => undef,
+                                validate => sub { my $d = shift; return $d; }},
 };
 
 =method get(key)
@@ -171,7 +190,8 @@ Returns a list of keys in the config store that are configurable by the user.
 
 sub get_user_configurable_keys
 {
-    return keys %{$_config_data};
+    my @keys = sort keys %{$_config_data};
+    return @keys;
 }
 
 =method get_user_init_configurable_keys

@@ -13,6 +13,7 @@ use IO::Interactive;
 use Term::Prompt 1.04;
 use Browser::Open;
 use Getopt::Lucid 1.05 qw( :all );
+use File::Basename;
 use File::HomeDir;
 use File::Temp;
 use App::Zapzi::Database;
@@ -22,6 +23,7 @@ use App::Zapzi::FetchArticle;
 use App::Zapzi::Transform;
 use App::Zapzi::Publish;
 use App::Zapzi::UserConfig;
+use App::Zapzi::Distribute;
 use Moo 1.003000;
 use Carp;
 
@@ -99,6 +101,14 @@ specified.
 =cut
 
 has encoding => (is => 'rw');
+
+=attr distribute
+
+Method to distribute a published eBook - eg copy, script, email.
+
+=cut
+
+has distribute => (is => 'rw');
 
 =method get_app
 =method BUILD
@@ -222,6 +232,7 @@ sub process_args
         Param("transformer|t"),
         Param("format|fmt"),
         Param("encoding|enc"),
+        Param("distribute|d"),
         Switch("force"),
         Switch("noarchive"),
         Switch("long|l"),
@@ -266,6 +277,9 @@ sub process_args
     $self->encoding($options->get_encoding //
                   $self->encoding //
                   App::Zapzi::UserConfig::get('publish_encoding'));
+    $self->distribute($options->get_distribute //
+                      $self->distribute //
+                      App::Zapzi::UserConfig::get('distribution_method'));
 
     $self->config(@args) if $options->get_config;
     $self->list if $options->get_list;
@@ -342,9 +356,10 @@ sub init_config
         print "Use the 'zapzi config' command to view/set these later\n";
     }
 
-    for (App::Zapzi::UserConfig::get_user_init_configurable_keys())
+    my @keys = App::Zapzi::UserConfig::get_user_init_configurable_keys();
+    while (@keys)
     {
-        my $key = $_;
+        my $key = shift @keys;
         my $value = App::Zapzi::UserConfig::get_default($key);
 
         if ($self->interactive)
@@ -354,6 +369,12 @@ sub init_config
                             App::Zapzi::UserConfig::get_options($key),
                             $value, # the default value
                             App::Zapzi::UserConfig::get_validater($key));
+        }
+
+        # Only ask distribution_destination if distribution_method is set
+        if ($key eq 'distribution_method' && lc($value) ne 'nothing')
+        {
+            unshift @keys, 'distribution_destination';
         }
 
         return unless App::Zapzi::UserConfig::set($key, $value);
@@ -802,7 +823,17 @@ sub publish
     my $self = shift;
     my @args = @_;
 
-    if (@args)
+    if ($self->distribute)
+    {
+        push @args, App::Zapzi::UserConfig::get('distribution_destination');
+        if (scalar @args == 0)
+        {
+            print "You need to provide an argument to the distribute command\n";
+            $self->run(1);
+            return;
+        }
+    }
+    elsif (@args)
     {
         print "Invalid publish command arguments\n";
         $self->run(1);
@@ -835,7 +866,31 @@ sub publish
         return;
     }
 
-    print "Published ", $pub->filename, "\n";
+    if ($self->distribute && lc($self->distribute) ne 'nothing')
+    {
+        print "Published ", basename($pub->filename), "\n";
+        my $dist = App::Zapzi::Distribute->
+                       new(file => $pub->filename,
+                           method => $self->distribute,
+                           destination => $args[0]);
+
+        if ($dist->distribute())
+        {
+            print "Distributed OK: " . $dist->completion_message . "\n";
+        }
+        else
+        {
+            print "Distribution error: " . $dist->completion_message . "\n";
+            print "Original file can still be found in " .
+                  $pub->filename . "\n";
+            $self->run(1);
+        }
+
+    }
+    else
+    {
+        print "Published ", $pub->filename, "\n";
+    }
 }
 
 =method help
