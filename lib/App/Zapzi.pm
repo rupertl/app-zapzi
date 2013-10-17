@@ -955,9 +955,11 @@ sub help
 
   $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
                         [--encoding ENC] [--noarchive]
+                        [--distribute METHOD DESTINATION]
     Publishes articles in FOLDER to an eBook.
     Format can be specified as MOBI, EPUB or HTML.
     Will archive articles unless --noarchive is set.
+    Optionally distribute using METHOD to DESTINATION.
 EOF
 
     $self->run(0);

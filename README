@@ -156,8 +156,36 @@ format.
 If everything worked OK, Zapzi will create a new eBook in the ebooks
 sub-directory of your Zapzi directory, eg `~/.zapzi/ebooks`.
 
+If you have set distribution options, it will also run these at this
+time. See the next section for more information.
+
 When you publish a folder, the articles are moved to the Archive
 folder unless you set the `--noarchive` option.
+
+## Distribution
+
+When an eBook is published, Zapzi can run an action on the completed
+file by setting distribution options. The following distribution
+methods are available:
+
+- Copy - will copy the file to another directory or file
+- Script - will run a script with the eBook as a parameter
+- Nothing - will do no distribution (the default)
+
+To use this at publication time, set the `--distribute` or `-d`
+option to the publish command. Some examples:
+
+    $ zapzi publish -d copy /path/to/directory
+    $ zapzi publish -d script /home/user/bin/myscript.sh
+
+The first example will copy the eBook to `</path/to/directory`. The
+second example will run the script `/home/user/bin/myscript.sh` with
+the eBook file as the only parameter.
+
+To set this up so distribution happens every time you publish without
+needing to provide the `-d` command line option, set the
+`distribution_method` and `distribution_destination` config
+parameters. See the Configuration section below for more details.
 
 ## Showing and Exporting
 
@@ -195,6 +223,18 @@ The following configuration variables are available:
     command. Default is unset, which means Zapzi will choose the best
     encoding for the publication format. Can be set to UTF-8 or
     ISO-8859-1.
+
+- distribution\_method
+
+    The method used to automatically distribute published eBook files.
+    Can be either 'Copy', 'Script' or 'Nothing'. Default is 'Nothing'.
+
+- distribution\_destination
+
+    Where to distribute published eBook files. If `distribute_method`
+    is set to 'Copy' then this should be a directory name. If the
+    method is 'Script' this should the the full path to an executable
+    script.
 
 # Usage
 
