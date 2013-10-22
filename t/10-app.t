@@ -23,6 +23,7 @@ test_delete_article();
 test_move_article();
 test_publish();
 test_publish_archive();
+test_publish_distribute();
 test_help_version();
 
 done_testing();
@@ -478,6 +479,67 @@ sub test_publish_archive
 
     stdout_like( sub { $app->process_args('lsf') }, qr/frob\s+2/,
                  'Articles not archived with --noarchive' );
+}
+
+sub test_publish_distribute
+{
+    my $app = get_test_app();
+
+    $app->process_args(qw(add t/testfiles/sample.txt));
+
+    # Simple copy
+    $app = get_test_app();
+    my $copied_to = "$test_dir/copied.ebook";
+    my @cmd = split(' ', "pub --noarchive -d copy $copied_to");
+    stdout_like( sub { $app->process_args(@cmd) },
+                 qr/Distributed OK/s,
+                 'pub distribute copy OK' );
+    ok( ! $app->run, 'pub distribute copy OK run' );
+    ok( -s $copied_to, 'file copied ok' );
+
+    # Simple script
+    $app = get_test_app();
+    @cmd = split(' ', "pub --noarchive -d script " .
+                      "t/testfiles/distribute-script-echo.pl");
+    stdout_like( sub { $app->process_args(@cmd) },
+                 qr/Distributed OK/s,
+                 'pub distribute script OK' );
+    ok( ! $app->run, 'pub distribute script OK run' );
+
+    # Simple script via user config
+    $app = get_test_app();
+    $app->process_args(qw(config set distribution_method script));
+    ok( ! $app->run, 'config set distribution_method' );
+    $app = get_test_app();
+    $app->process_args(qw(config set distribution_destination
+                         t/testfiles/distribute-script-echo.pl));
+    ok( ! $app->run, 'config set distribution_destination' );
+    $app = get_test_app();
+    @cmd = split(' ', "pub --noarchive");
+    stdout_like( sub { $app->process_args(@cmd) },
+                 qr/Distributed OK/s,
+                 'pub distribute script via config OK' );
+    ok( ! $app->run, 'pub distribute script via config OK run' );
+    ok( App::Zapzi::Config::delete('distribution_method'),
+        'Deleted distribution_method variable' );
+    ok( App::Zapzi::Config::delete('distribution_destination'),
+        'Deleted distribution_method variable' );
+
+    # Failed copy - no such dir
+    $app = get_test_app();
+    $copied_to = "$test_dir/no/such/dir/copied.ebook";
+    @cmd = split(' ', "pub --noarchive -d copy $copied_to");
+    stdout_like( sub { $app->process_args(@cmd) },
+                 qr/Distribution error/s,
+                 'pub distribute failed copy OK' );
+    ok( $app->run, 'pub distribute failed copy OK run' );
+
+    # Missing method args
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(pub --noarchive -d nonesuch)) },
+                 qr/method 'nonesuch' not defined/s,
+                 'pub distribute bad method OK' );
+    ok( $app->run, 'pub distribute bad method OK run' );
 }
 
 sub test_help_version
