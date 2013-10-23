@@ -2,6 +2,9 @@
 use Test::Most;
 use utf8;
 
+# For email distribution below\
+BEGIN { $ENV{EMAIL_SENDER_TRANSPORT} = 'Test' }
+
 use lib qw(t/lib);
 use ZapziTestDatabase;
 
@@ -18,6 +21,7 @@ test_no_distributor();
 test_invalid_distributor();
 test_copy_distributor();
 test_script_distributor();
+test_email_distributor();
 
 done_testing();
 
@@ -148,4 +152,30 @@ sub test_script_distributor
     like( $dist->completion_message,
           qr/Script does not exist/,
           'OK message for non-existent script' );
+}
+
+sub test_email_distributor
+{
+    # Use the test email transport (ie email is not actually sent out)
+    # to check if it was processed correctly.
+
+    my $recipient = 'test@example.com';
+    my $dist = App::Zapzi::Distribute->
+        new(file => $test_file_full,
+            method => 'email',
+            destination => $recipient);
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( $dist->distribute, 'Email with test transport returns OK' );
+    like( $dist->completion_message,
+          qr/Emailed to $recipient/,
+          'OK message for successful email with test transport' );
+
+    my @deliveries = Email::Sender::Simple->default_transport->deliveries;
+    is( scalar(@deliveries), 1, 'One email sent via test transport' );
+    my $email = $deliveries[0];
+    if ($email)
+    {
+        is( $email->{successes}->[0], $recipient,
+            "Correct recipient for test transport");
+    }
 }
