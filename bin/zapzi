@@ -60,6 +60,9 @@ footers) to make the article easier to view on an eReader.
 
 =item * eBooks can be created in MOBI, EPUB or HTML format.
 
+=item * eBooks can be automatically copied to a directory or emailed
+when published.
+
 =item * Once you publish a folder of articles to an eBook file, the
 articles are archived so you can retrieve them later if needed.
 
@@ -278,9 +281,6 @@ render correctly or may miss sections at present
 =item * Add the ability to read sources with state, eg RSS feeds.
 
 =item * Publish to other eBook formats such as PDF.
-
-=item * Add options to distribute published eBooks, eg by email or
-copy to an eReader.
 
 =back
 

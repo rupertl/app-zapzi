@@ -52,6 +52,8 @@ web - and create eBooks for reading later.
 footers) to make the article easier to view on an eReader.
 - Articles can be stored in different folders to organise your reading.
 - eBooks can be created in MOBI, EPUB or HTML format.
+- eBooks can be automatically copied to a directory or emailed
+when published.
 - Once you publish a folder of articles to an eBook file, the
 articles are archived so you can retrieve them later if needed.
 
@@ -338,8 +340,6 @@ render correctly or may miss sections at present
 - Support other article formats, eg mbox/maildir.
 - Add the ability to read sources with state, eg RSS feeds.
 - Publish to other eBook formats such as PDF.
-- Add options to distribute published eBooks, eg by email or
-copy to an eReader.
 
 # Name
 
