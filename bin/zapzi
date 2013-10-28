@@ -187,6 +187,8 @@ methods are available:
 
 =item * Copy - will copy the file to another directory or file
 
+=item * Email - will email the file to a recipient
+
 =item * Script - will run a script with the eBook as a parameter
 
 =item * Nothing - will do no distribution (the default)
@@ -197,16 +199,44 @@ To use this at publication time, set the C<--distribute> or C<-d>
 option to the publish command. Some examples:
 
   $ zapzi publish -d copy /path/to/directory
+  $ zapzi publish -d email me@my.address.com
   $ zapzi publish -d script /home/user/bin/myscript.sh
-
-The first example will copy the eBook to C</path/to/directory>. The
-second example will run the script '/home/user/bin/myscript.sh' with
-the eBook file as the only parameter.
 
 To set this up so distribution happens every time you publish without
 needing to provide the C<-d> command line option, set the
 C<distribution_method> and C<distribution_destination> config
 parameters. See the Configuration section below for more details.
+
+For email distribution, the From address used will be the same as the
+To address. You can override this by setting the
+C<EMAIL_SENDER_TRANSPORT_from> environment variable. By default, email
+will be sent via the local sendmail service on your machine; if you
+want to send by SMTP set the C<EMAIL_SENDER_TRANSPORT> environment
+variable to SMTP and configure the below environment variables as
+appropriate. You can also set any other options documented by
+L<Email::Sender>.
+
+=over 4
+
+=item EMAIL_SENDER_TRANSPORT_host: the name of the host to connect to;
+defaults to localhost
+
+=item EMAIL_SENDER_TRANSPORT_ssl: if set, connect via SSL; defaults to
+false
+
+=item EMAIL_SENDER_TRANSPORT_port: port to connect to; defaults to 25
+for non-SSL, 465 for SSL
+
+=item EMAIL_SENDER_TRANSPORT_timeout: maximum time in secs to wait for
+server; default is 120
+
+=item EMAIL_SENDER_TRANSPORT_sasl_username: the username to use for
+auth; optional
+
+=item EMAIL_SENDER_TRANSPORT_sasl_password: the password to use for
+auth; required if username is provided
+
+=back
 
 =head2 SHOWING AND EXPORTING
 
@@ -291,9 +321,10 @@ be either 'Copy', 'Script' or 'Nothing'. Default is 'Nothing'.
 
 =item distribution_destination
 
-Where to distribute published eBook files. If C<distribution_method> is
-set to 'Copy' then this should be a directory name. If the method is
-'Script' this should the the full path to an executable script.
+Where to distribute published eBook files. If C<distribution_method>
+is set to 'Copy' then this should be a directory name. If the method
+is 'Script' this should the the full path to an executable script. If
+the method is 'Email' then this should be the recipient's email address.
 
 =back
 

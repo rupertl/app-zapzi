@@ -104,7 +104,7 @@ sub _create_message
         header =>
         [
             To      => $self->destination,
-            From    => $self->destination,
+            From    => $ENV{EMAIL_SENDER_TRANSPORT_from} // $self->destination,
             Subject => "Zapzi distributed ebook",
             content_type   => 'multipart/mixed'
         ],
