@@ -2,6 +2,15 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.012     2013-10-29 15:09:24 Asia/Hong_Kong
+
+  * Added distributors to deliver eBooks after publication
+  * Copy distributor - copies file to another directory eg an eReader
+    connected via USB cable
+  * Script distributor - runs a script with the eBook as parameter
+  * Email distributor - send eBook as attachment to an email address,
+    eg to the Kindle personal documents service
+
 0.011     2013-10-07 15:54:47 Asia/Hong_Kong
 
   * Added article move command and documented delete command
