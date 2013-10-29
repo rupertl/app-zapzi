@@ -178,4 +178,24 @@ sub test_email_distributor
         is( $email->{successes}->[0], $recipient,
             "Correct recipient for test transport");
     }
+
+    # Try a missing recipient
+    $recipient = '';
+    $dist = App::Zapzi::Distribute->
+        new(file => $test_file_full,
+            method => 'email',
+            destination => $recipient);
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( ! $dist->distribute, 'Email with missing recipient gives an error' );
+    like( $dist->completion_message, qr/recipient does not exist/,
+          'Message indicates missing recipient' );
+
+    # Try making the sendmail call fail
+    $recipient = [];
+    $dist = App::Zapzi::Distribute->
+        new(file => $test_file_full,
+            method => 'email',
+            destination => $recipient);
+    isa_ok( $dist, 'App::Zapzi::Distribute' );
+    ok( ! $dist->distribute, 'Email throwing exception gives an error' );
 }
