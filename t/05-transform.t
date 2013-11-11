@@ -103,6 +103,16 @@ sub test_html_extractmain
     ok( $tx->to_readable, 'Transform sample HTML file' );
     is( $tx->title, 'Title 1',
         'Title selected from HTML extract with two title tags');
+
+    # Try an HTML file with embedded font tags
+    $f = App::Zapzi::FetchArticle->new(
+        source => 't/testfiles/html-font.html');
+    ok( $f->fetch, 'Fetch HTML with font tags' );
+    $tx = App::Zapzi::Transform->new(raw_article => $f);
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( $tx->to_readable, 'Transform sample HTML file with font tags' );
+    unlike( $tx->readable_text, qr/yellow/,
+            'Font attributes removed from HTML');
 }
 
 sub test_pod

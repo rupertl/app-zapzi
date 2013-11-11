@@ -53,6 +53,14 @@ sub _extract_html
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );
 
+    # Remove any font attributes as they rarely work as expected on
+    # eReaders - eg colours do not make sense on monochrome displays,
+    # font families will probably not exist.
+    for my $font ($tree->look_down(_tag => "font"))
+    {
+        $font->attr($_, undef) for $font->all_external_attr_names;
+    }
+
     return $tree;
 }
 
