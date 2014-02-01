@@ -904,11 +904,11 @@ sub help
     my $self = shift;
 
     print << 'EOF';
-  $ zapzi help|h
-    Shows this help text
+  $ zapzi help | h
+    Shows this help text.
 
-  $ zapzi version|v
-    Show version information
+  $ zapzi version | v
+    Shows version information.
 
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database
@@ -936,7 +936,7 @@ sub help
     Lists a summary of all folders.
 
   $ zapzi make-folder | mkf | md FOLDER
-    Make a new folder.
+    Makes a new folder.
 
   $ zapzi delete-folder | rmf | rd FOLDER
     Remove a folder and all articles in it.
@@ -945,13 +945,13 @@ sub help
     Removes article ID.
 
   $ zapzi move | mv ARTICLES FOLDER
-    Move one or more articles to the given folder
+    Move one or more articles to the given folder.
 
   $ zapzi export | cat ID
-    Prints content of readable article to STDOUT
+    Prints content of readable article to STDOUT.
 
   $ zapzi show | view ID
-    Opens a browser to view the readable text of article ID
+    Opens a browser to view the readable text of article ID.
 
   $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
                         [--encoding ENC] [--noarchive]

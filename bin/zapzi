@@ -331,10 +331,10 @@ the method is 'Email' then this should be the recipient's email address.
 =head1 USAGE
 
   $ zapzi help | h
-    Shows this help text
+    Shows this help text.
 
   $ zapzi version | v
-    Show version information
+    Shows version information.
 
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database
@@ -362,22 +362,22 @@ the method is 'Email' then this should be the recipient's email address.
     Lists a summary of all folders.
 
   $ zapzi make-folder | mkf | md FOLDER
-    Make a new folder.
+    Makes a new folder.
 
   $ zapzi delete-folder | rmf | rd FOLDER
-    Remove a folder and all articles in it.
+    Removes a folder and all articles in it.
 
   $ zapzi delete-article | delete | rm ID
     Removes article ID.
 
   $ zapzi move | mv ARTICLES FOLDER
-    Move one or more articles to the given folder
+    Move one or more articles to the given folder.
 
   $ zapzi export | cat ID
-    Prints content of readable article to STDOUT
+    Prints content of readable article to STDOUT.
 
   $ zapzi show | view ID
-    Opens a browser to view the readable text of article ID
+    Opens a browser to view the readable text of article ID.
 
   $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
                         [--encoding ENC] [--noarchive]
