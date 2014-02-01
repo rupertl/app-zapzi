@@ -37,6 +37,16 @@ sub test_text
     like( $tx->readable_text, qr/<p>No special formatting/,
           'Contents of text file OK' );
     like( $tx->title, qr/This is a sample text file/, 'Title of text file OK' );
+
+    $f = App::Zapzi::FetchArticle->new(
+        source => 't/testfiles/bad-markdown.txt');
+    ok( $f->fetch, 'Fetch text' );
+    $tx = App::Zapzi::Transform->new(raw_article => $f);
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( $tx->to_readable, 'Transform text file with bad markdown' );
+    is( $@, "", "Error suppressed from bad markdown" );
+    like( $tx->readable_text, qr/<p>Text::Markdown will report an error/,
+          'Contents of text with bad markdown OK' );
 }
 
 sub test_text_ws_long_lines

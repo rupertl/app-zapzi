@@ -68,9 +68,9 @@ sub transform
     my $md = Text::Markdown->new;
     $self->_set_readable_text($md->markdown($raw));
 
-    # In case of unbalanced tags etc Text::Markdown may set $@ so
-    # treat that as an error.
-    return if $@;
+    # Ignore any errors from Text::Markdown - usually complaints about
+    # unmatched HTML tags - as it still produces a usable result.
+    $@ = "" if $@;
 
     return 1;
 }
