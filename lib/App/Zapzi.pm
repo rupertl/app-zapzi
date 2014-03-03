@@ -475,6 +475,26 @@ sub validate_folder
     }
 }
 
+=method validate_article_ids(@args)
+
+Determines if @args could be article IDs.
+
+=cut
+
+sub validate_article_ids
+{
+    my ($self, @args) = @_;
+
+    if (scalar(@args) < 1 || grep { /[^0-9]/ } @args)
+    {
+        print "Need to supply one or more article IDs\n";
+        $self->run(1);
+        return;
+    }
+
+    return 1;
+}
+
 =method list
 
 Lists out the articles in L<folder>.
@@ -613,12 +633,7 @@ sub delete_article
     my $self = shift;
     my @args = @_;
 
-    if (! @args)
-    {
-        print "Need to provide article IDs\n";
-        $self->run(1);
-        return;
-    }
+    return unless $self->validate_article_ids(@args);
 
     $self->run(0);
     for (@args)
@@ -715,12 +730,7 @@ sub show
     my $output = shift;
     my @args = @_;
 
-    if (! @args)
-    {
-        print "Need to provide article IDs\n";
-        $self->run(1);
-        return;
-    }
+    return unless $self->validate_article_ids(@args);
 
     $self->run(0);
     my $tempdir;
@@ -782,12 +792,7 @@ sub move
         return;
     }
 
-    if (scalar(@args) < 1 || grep { /[^0-9]/ } @args)
-    {
-        print "Need to supply one or more article IDs\n";
-        $self->run(1);
-        return;
-    }
+    return unless $self->validate_article_ids(@args);
 
     my @moved;
     for (@args)

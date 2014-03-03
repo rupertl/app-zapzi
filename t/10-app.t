@@ -212,13 +212,19 @@ sub test_export
                  'cat' );
     ok( ! $app->run, 'cat run' );
 
-    stdout_like( sub { $app->process_args(qw(cat)) }, qr/Need to provide/,
+    stdout_like( sub { $app->process_args(qw(cat)) },
+                 qr/Need to supply one or more article IDs/,
                  'show missing article' );
     ok( $app->run, 'show error run' );
 
     stdout_like( sub { $app->process_args(qw(cat 0)) }, qr/Could not/,
                  'show error' );
     ok( $app->run, 'show error run' );
+
+    stdout_like( sub { $app->process_args(qw(cat zzz)) },
+                 qr/Need to supply one or more article IDs/,
+                 'show bad args' );
+    ok( $app->run, 'show bad args run' );
 }
 
 sub test_add
@@ -283,7 +289,7 @@ sub test_delete_article
     ok( ! $app->run, 'rm run' );
 
     stdout_like( sub { $app->process_args(qw(delete)) },
-                 qr/Need to provide/,
+                 qr/Need to supply one or more article IDs/,
                  'delete article missing ID' );
     ok( $app->run, 'rm run' );
 
