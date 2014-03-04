@@ -263,11 +263,7 @@ organisation of the module.
 
   https://github.com/rupertl/app-zapzi/
 
-=head1 BUGS AND FUTURE PLANS
-
-This is an early version of Zapzi and although the basic functionality
-is there I plan to improve it further. If you have any suggestions
-please add them to the issue tracker at Github.
+=head1 FUTURE PLANS
 
 =over 4
 

@@ -331,11 +331,7 @@ organisation of the module.
 
     https://github.com/rupertl/app-zapzi/
 
-# Bugs and Future Plans
-
-This is an early version of Zapzi and although the basic functionality
-is there I plan to improve it further. If you have any suggestions
-please add them to the issue tracker at Github.
+# Future Plans
 
 - Improve text extraction and formatting - complex pages may not
 render correctly or may miss sections at present
