@@ -2,6 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.013     2014-03-05 20:29:23+07:00 Asia/Bangkok
+
+  * Remove font tag attributes when using HTMLExtractMain transformer
+  * Ignore errors from Text::Markdown about matching braces as can
+    continue anyway
+  * Validate article IDs passed in to command line
+
 0.012     2013-10-29 15:09:24 Asia/Hong_Kong
 
   * Added distributors to deliver eBooks after publication
