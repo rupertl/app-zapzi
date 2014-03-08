@@ -3,7 +3,8 @@ package App::Zapzi::Transformers::TextMarkdown;
 
 =head1 DESCRIPTION
 
-This class takes text and returns readable HTML using Text::Markdown
+This class takes text (plain text or Markdown formatted text) and
+returns readable HTML using Text::Markdown.
 
 =cut
 

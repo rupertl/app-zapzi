@@ -1,10 +1,12 @@
 package App::Zapzi::Transformers::HTML;
-# ABSTRACT: transform text using HTMLExtractMain
+# ABSTRACT: process HTML without doing readability transforms
 
 =head1 DESCRIPTION
 
 This class takes HTML and returns the body without doing additional
-readable transforms.
+readable transforms - so tags such as script are removed but no text
+should be changed. Use this if HTMLExtractMain does not provide the
+desired results.
 
 =cut
 

@@ -3,7 +3,9 @@ package App::Zapzi::Transformers::HTMLExtractMain;
 
 =head1 DESCRIPTION
 
-This class takes HTML and returns readable HTML using HTML::ExtractMain.
+This class takes HTML and returns readable HTML using
+HTML::ExtractMain. It attempts to remove text that is not part of the
+main article body, eg menus or headers.
 
 =cut
 
