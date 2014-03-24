@@ -695,7 +695,7 @@ sub add
                                             transformer => $self->transformer);
         if (! $tx->to_readable)
         {
-            print "Could not transform article\n\n";
+            print "Could not transform article: ", $tx->error, "\n\n";
             $self->run(1);
             next;
         }

@@ -61,6 +61,15 @@ Title extracted from the article
 
 has title => (is => 'rwp', default => '');
 
+=attr error
+
+Holds details of any errors encountered while transforming the article;
+will be blank if no errors.
+
+=cut
+
+has error => (is => 'rwp', default => '');
+
 =method to_readable
 
 Converts L<raw_article> to readable text. Returns true if converted OK.
@@ -90,13 +99,30 @@ sub to_readable
         }
     }
 
-    return unless defined $module;
+    if (! defined($module))
+    {
+        if ($self->transformer)
+        {
+            $self->_set_error("no such transformer " .
+                              $self->transformer . "\n");
+        }
+        else
+        {
+            $self->_set_error("no suitable transformer");
+        }
+
+        return;
+    }
 
     my $rc = $module->transform;
     if ($rc)
     {
         $self->_set_title($module->title);
         $self->_set_readable_text($module->readable_text);
+    }
+    else
+    {
+        $self->_set_error("error while transforming");
     }
 
     return $rc;
