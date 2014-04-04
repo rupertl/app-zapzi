@@ -16,7 +16,7 @@ use warnings;
 use Carp;
 use Moo;
 use App::Zapzi;
-use EBook::MOBI 0.65;
+use EBook::MOBI 0.69;           # required to drop GD dependency
 
 with 'App::Zapzi::Roles::Publisher';
 
