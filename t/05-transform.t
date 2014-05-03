@@ -74,6 +74,8 @@ sub test_html
     like( $tx->readable_text, qr/<h1>Lorem/, 'Contents of HTML file OK' );
     unlike( $tx->readable_text, qr/<script>/,
             'Javascript stripped from HTML file' );
+    unlike( $tx->readable_text, qr/<iframe/,
+            'iframe stripped from HTML file' );
     like( $tx->readable_text, qr/Header!/,
           'Full HTML preserved with plain HTML transformer' );
     is( $tx->title, 'Sample “HTML” Document',

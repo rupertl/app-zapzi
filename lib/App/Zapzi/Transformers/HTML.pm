@@ -76,7 +76,8 @@ sub transform
     return unless $tree;
 
     # Delete some elements we don't need
-    for my $element ($tree->find_by_tag_name(qw{img script noscript object}))
+    for my $element ($tree->find_by_tag_name(
+                         qw{img script noscript object iframe}))
     {
         $element->delete;
     }
