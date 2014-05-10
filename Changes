@@ -2,6 +2,12 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.014     2014-05-10 18:35:44+07:00 Asia/Bangkok
+
+  * Removed requirement for GD module and system library
+  * Remove iframe tags when using HTML based transformers
+  * Improved error reporting for transformers
+
 0.013     2014-03-05 20:29:23+07:00 Asia/Bangkok
 
   * Remove font tag attributes when using HTMLExtractMain transformer
