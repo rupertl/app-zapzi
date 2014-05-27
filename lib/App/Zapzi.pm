@@ -13,9 +13,8 @@ use IO::Interactive;
 use Term::Prompt 1.04;
 use Browser::Open;
 use Getopt::Lucid 1.05 qw( :all );
-use File::Basename;
 use File::HomeDir;
-use File::Temp;
+use Path::Tiny;
 use App::Zapzi::Database;
 use App::Zapzi::Folders;
 use App::Zapzi::Articles;
@@ -735,7 +734,7 @@ sub show
     $self->run(0);
     my $tempdir;
 
-    $tempdir = File::Temp->newdir("zapzi-article-XXXXX", TMPDIR => 1)
+    $tempdir = Path::Tiny->tempdir("zapzi-article-XXXXX", TMPDIR => 1)
         if $output eq 'browser';
 
     for (@args)
@@ -873,7 +872,7 @@ sub publish
 
     if ($self->distribute && lc($self->distribute) ne 'nothing')
     {
-        print "Published ", basename($pub->filename), "\n";
+        print "Published ", path($pub->filename)->basename, "\n";
         my $dist = App::Zapzi::Distribute->
                        new(file => $pub->filename,
                            method => $self->distribute,

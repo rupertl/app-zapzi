@@ -6,7 +6,7 @@ use lib qw(t/lib);
 use ZapziTestDatabase;
 
 use App::Zapzi;
-use File::Slurp;
+use Path::Tiny;
 
 test_init();
 
@@ -429,7 +429,7 @@ sub test_publish
     if ($stdout =~ /Published (.+)$/)
     {
         my $published_file = $1;
-        my $contents = read_file($published_file);
+        my $contents = path($published_file)->slurp;
         like( $contents, qr/<meta charset="ISO-8859-1">/,
               'Contents encoded correctly for ISO-8859-1' );
     }

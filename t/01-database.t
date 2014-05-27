@@ -6,7 +6,7 @@ use lib qw(t/lib);
 use ZapziTestDatabase;
 use ZapziTestSchema;
 use App::Zapzi;
-use File::Slurp;
+use Path::Tiny;
 
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
@@ -54,7 +54,7 @@ sub test_schema
 
 sub test_upgrade
 {
-    my $ddl = read_file('t/ddl/create-version-0-db.sql');
+    my $ddl = path('t/ddl/create-version-0-db.sql')->slurp;
     ok( length($ddl) > 100, 'Read pre-upgrade DDL OK' );
 
     my ($test_dir, $app) = ZapziTestDatabase::get_test_app($ddl);

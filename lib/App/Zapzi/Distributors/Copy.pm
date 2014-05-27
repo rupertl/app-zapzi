@@ -19,7 +19,7 @@ use warnings;
 use Carp;
 use Moo;
 use App::Zapzi;
-use File::Copy;
+use Path::Tiny;
 
 with 'App::Zapzi::Roles::Distributor';
 
@@ -44,8 +44,8 @@ sub distribute
 {
     my $self = shift;
 
-    my $rc = copy($self->file, $self->destination);
-    if ($rc)
+    eval { path($self->file)->copy($self->destination) };
+    if (! $@)
     {
         $self->_set_completion_message("File copied to '" .
                                        $self->destination .

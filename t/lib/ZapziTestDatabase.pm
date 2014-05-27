@@ -2,7 +2,7 @@
 package ZapziTestDatabase;
 
 use Test::Most;
-use File::Temp ();
+use Path::Tiny;
 use App::Zapzi;
 
 sub get_test_app
@@ -62,7 +62,7 @@ sub test_init
 
 sub _get_test_dir
 {
-    return File::Temp->newdir("zapzi-XXXXX", TMPDIR => 1);
+    return Path::Tiny->tempdir("zapzi-XXXXX", TMPDIR => 1);
 }
 
 1;

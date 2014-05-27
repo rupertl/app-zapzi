@@ -14,7 +14,7 @@ use warnings;
 # VERSION
 
 use Carp;
-use File::Slurp;
+use Path::Tiny;
 use Pod::Find;
 use Moo;
 
@@ -56,7 +56,7 @@ sub fetch
 {
     my $self = shift;
 
-    my $pod = read_file($self->source);
+    my $pod = path($self->source)->slurp;
     $self->_set_text($pod);
 
     $self->_set_content_type('text/pod');

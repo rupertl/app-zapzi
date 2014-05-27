@@ -14,7 +14,7 @@ use warnings;
 # VERSION
 
 use Carp;
-use File::Slurp;
+use Path::Tiny;
 use Moo;
 use App::Zapzi;
 
@@ -91,7 +91,7 @@ sub finish_publication
     print {$self->file} "</body></html>\n";
     close $self->file;
 
-    $self->_set_collection_data(scalar read_file($self->filename));
+    $self->_set_collection_data(path($self->filename)->slurp);
 
     return $self->filename;
 }

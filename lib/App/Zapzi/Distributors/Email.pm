@@ -21,7 +21,7 @@ use Email::MIME 1.924;
 use Email::Sender::Simple 1.300006 qw(sendmail);
 use Email::Simple::Creator;
 use Email::Simple;
-use File::Basename;
+use Path::Tiny;
 use IO::All;
 use Moo;
 use Try::Tiny;
@@ -74,7 +74,7 @@ sub distribute
 sub _create_message
 {
     my $self = shift;
-    my $base = basename($self->file);
+    my $base = path($self->file)->basename;
 
     my @parts =
     (
