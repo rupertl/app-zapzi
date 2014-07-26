@@ -322,6 +322,15 @@ is set to 'Copy' then this should be a directory name. If the method
 is 'Script' this should the the full path to an executable script. If
 the method is 'Email' then this should be the recipient's email address.
 
+=item deactivate_links
+
+If set to Y, will replace links with text when using the
+HTMLExtractMain transformer. Motivation for this is eReaders with
+touch screens where tapping the screen will turn the page, unless
+you happen to touch a link in which case it will try to follow the
+link in a web browser. This can be annoying if you are offline as
+it will load the browser then ask if you want to go online.
+
 =back
 
 =head1 USAGE

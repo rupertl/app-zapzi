@@ -63,6 +63,16 @@ our $_config_data =
                                 init_configurable => 0,
                                 default => undef,
                                 validate => sub { my $d = shift; return $d; }},
+
+    deactivate_links => {doc => "If set, replace hyperlinks with link text",
+                                options => "Yes, No",
+                                init_configurable => 0,
+                                default => undef,
+                                validate => sub
+                                {
+                                    my $d = shift;
+                                    return $d =~ /^[yn]/i ? uc($d) : undef;
+                                }},
 };
 
 =method get(key)

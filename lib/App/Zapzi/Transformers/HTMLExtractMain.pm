@@ -55,6 +55,16 @@ sub _extract_html
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );
 
+    $self->_remove_fonts($tree);
+    $self->_optionally_deactivate_links($tree);
+
+    return $tree;
+}
+
+sub _remove_fonts
+{
+    my ($self, $tree) = @_;
+
     # Remove any font attributes as they rarely work as expected on
     # eReaders - eg colours do not make sense on monochrome displays,
     # font families will probably not exist.
@@ -62,8 +72,26 @@ sub _extract_html
     {
         $font->attr($_, undef) for $font->all_external_attr_names;
     }
+}
 
-    return $tree;
+sub _optionally_deactivate_links
+{
+    my ($self, $tree) = @_;
+
+    # Turn links into text if option was requested.
+
+    my $option = App::Zapzi::UserConfig::get('deactivate_links');
+
+    if ($option && $option eq 'Y')
+    {
+        for my $a ($tree->find_by_tag_name('a'))
+        {
+            if ($a->attr('href') !~ /^#/)
+            {
+                $a->replace_with_content($a->as_text);
+            }
+        }
+    }
 }
 
 1;

@@ -169,6 +169,12 @@ sub test_userconfig_set
     is( App::Zapzi::UserConfig::set('nonesuch', 'abc'), undef,
         'Undefined keys lead to undef output' );
 
+    ok( App::Zapzi::UserConfig::set('deactivate_links', 'Y'),
+        'Can set deactivate_links to a valid value' );
+
+    is( App::Zapzi::UserConfig::set('deactivate_links', 'invalid'), undef,
+        'Cannot set deactivate_links to an invalid value' );
+
     is( App::Zapzi::UserConfig::set('schema_version', 333), undef,
         'Cannot set non-user configurable variables' );
 
