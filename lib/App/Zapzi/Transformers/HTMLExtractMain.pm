@@ -82,7 +82,7 @@ sub _optionally_deactivate_links
 
     my $option = App::Zapzi::UserConfig::get('deactivate_links');
 
-    if ($option && $option eq 'Y')
+    if ($option && $option =~ /^Y/i)
     {
         for my $a ($tree->find_by_tag_name('a'))
         {

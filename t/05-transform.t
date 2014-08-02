@@ -137,7 +137,7 @@ sub test_html_extractmain
     like( $tx->readable_text, qr|example.com/some-link|,
           'Links present in HTML');
 
-    ok( App::Zapzi::UserConfig::set('deactivate_links', 'Y'),
+    ok( App::Zapzi::UserConfig::set('deactivate_links', 'Yes'),
         'Can set deactivate_links' );
     $tx = App::Zapzi::Transform->new(raw_article => $f);
     isa_ok( $tx, 'App::Zapzi::Transform' );
@@ -145,6 +145,13 @@ sub test_html_extractmain
     unlike( $tx->readable_text, qr|example.com/some-link|,
             'Links now not present in HTML');
 
+    ok( App::Zapzi::UserConfig::set('deactivate_links', 'No'),
+        'Can set deactivate_links off' );
+    $tx = App::Zapzi::Transform->new(raw_article => $f);
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    ok( $tx->to_readable, 'Transform sample HTML file with links' );
+    like( $tx->readable_text, qr|example.com/some-link|,
+          'Links present in HTML again');
 }
 
 sub test_pod

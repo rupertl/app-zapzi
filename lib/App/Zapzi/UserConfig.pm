@@ -71,7 +71,7 @@ our $_config_data =
                                 validate => sub
                                 {
                                     my $d = shift;
-                                    return $d =~ /^[yn]/i ? uc($d) : undef;
+                                    return $d =~ /^[yn]/i ? ucfirst($d) : undef;
                                 }},
 };
 
