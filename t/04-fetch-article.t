@@ -38,6 +38,16 @@ sub test_get_file
     like( $f->text, qr/sample text file/, 'Contents of text file OK' );
     is( $f->content_type, 'text/plain', 'Contents are plain text' );
 
+    $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.unknown');
+    isa_ok( $f, 'App::Zapzi::FetchArticle' );
+    ok( $f->fetch, 'Fetch file and identify as text' );
+    is( $f->fetcher, 'File',
+        'File without extension was handled by File fetcher as text' );
+    like( $f->validated_source, qr|testfiles/sample.unknown|,
+          'Unknown file source was set by File fetcher' );
+    like( $f->text, qr/sample text file/, 'Contents of text file OK' );
+    is( $f->content_type, 'text/plain', 'Contents are plain text' );
+
     $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.html');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( $f->fetch, 'Fetch sample html file from disk' );
@@ -47,6 +57,11 @@ sub test_get_file
     $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/nosuchfile.txt');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( ! $f->fetch, 'Detects file that does not exist' );
+    like( $f->error, qr/Failed/, 'Error reported' );
+
+    $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/empty.txt');
+    isa_ok( $f, 'App::Zapzi::FetchArticle' );
+    ok( ! $f->fetch, 'Detects file that is zero length' );
     like( $f->error, qr/Failed/, 'Error reported' );
 
     $f = App::Zapzi::FetchArticle->new(source =>

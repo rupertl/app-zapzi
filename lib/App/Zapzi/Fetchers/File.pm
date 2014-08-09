@@ -74,7 +74,7 @@ sub fetch
     my $content_type;
 
     # Try extension first
-    $content_type = 'text/plain' if $self->source =~ /\.(text|md|mkdn)$/;
+    $content_type = 'text/plain' if $self->source =~ /\.(txt|md|mkdn)$/;
     $content_type = 'text/html' if $self->source =~ /\.(html)$/;
     $content_type = 'text/pod' if $self->source =~ /\.(pm|pl)$/;
 
