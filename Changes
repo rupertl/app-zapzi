@@ -2,6 +2,12 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.015     2014-08-16 12:42:29+07:00 Asia/Bangkok
+
+  * Option to deactivate links when using HTMLExtractMain transformer
+  * Identify .txt files as text correctly
+  * (#1) Moved file slurp and other file operations to Path::Tiny
+
 0.014     2014-05-10 18:35:44+07:00 Asia/Bangkok
 
   * Removed requirement for GD module and system library
