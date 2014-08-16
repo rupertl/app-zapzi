@@ -86,7 +86,8 @@ sub _optionally_deactivate_links
     {
         for my $a ($tree->find_by_tag_name('a'))
         {
-            if ($a->attr('href') !~ /^#/)
+            my $href = $a->attr('href');
+            if ($href && $href !~ /^#/)
             {
                 $a->replace_with_content($a->as_text);
             }
