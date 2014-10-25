@@ -97,7 +97,11 @@ sub _http_request_headers
     no strict 'vars'; ## no critic - $VERSION does not exist in dev
     $ua .= "/$VERSION" if defined $VERSION;
 
-    return {headers => {'User-agent' => $ua}};
+    return {headers => {
+                           'User-agent' => $ua,
+                           # Don't gzip encode the response
+                           'Accept-encoding' => 'identity'
+                       }};
 }
 
 1;
