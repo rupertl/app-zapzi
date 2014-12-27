@@ -121,7 +121,7 @@ sub init
     my @articles = ({title => 'Welcome to Zapzi', folder => 100,
                      article_text =>
                          { text => '<p>Welcome to Zapzi! Please run <pre>zapzi -h</pre> to see documentation.</p>'}});
-    $self->schema->populate('Article', \@articles);
+    scalar $self->schema->populate('Article', \@articles);
 
     my @config = ({name => 'schema_version',
                    value => $self->schema->schema_version} );
