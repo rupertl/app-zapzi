@@ -11,6 +11,7 @@ use ZapziTestDatabase;
 use App::Zapzi;
 use App::Zapzi::Distribute;
 
+my $running_on_windows = $^O eq 'MSWin32';
 test_can();
 
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
@@ -20,7 +21,10 @@ my $test_file_full = "$test_dir/$test_file_base";
 test_no_distributor();
 test_invalid_distributor();
 test_copy_distributor();
-test_script_distributor();
+SKIP: {
+    skip "Script tests not supported on Windows" if $running_on_windows;
+    test_script_distributor();
+}
 test_email_distributor();
 
 done_testing();
@@ -42,7 +46,9 @@ sub generate_test_file
 
     close $fh;
 
-    is( -s "$test_dir/$filename", length($contents),
+    my $file_length = length($contents);
+    $file_length++ if $running_on_windows; # Account for CRLF on Windows
+    is( -s "$test_dir/$filename", $file_length,
         "Created test file size OK" );
 
     return $filename;

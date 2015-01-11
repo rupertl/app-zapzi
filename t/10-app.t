@@ -503,10 +503,35 @@ sub test_publish_distribute
     ok( ! $app->run, 'pub distribute copy OK run' );
     ok( -s $copied_to, 'file copied ok' );
 
-    # Simple script
+    my $running_on_windows = $^O eq 'MSWin32';
+    SKIP: {
+        skip "Script tests not supported on Windows" if $running_on_windows;
+        test_publish_distribute_scripts();
+    }
+
+    # Failed copy - no such dir
     $app = get_test_app();
-    @cmd = split(' ', "pub --noarchive -d script " .
-                      "t/testfiles/distribute-script-echo.pl");
+    $copied_to = "$test_dir/no/such/dir/copied.ebook";
+    @cmd = split(' ', "pub --noarchive -d copy $copied_to");
+    stdout_like( sub { $app->process_args(@cmd) },
+                 qr/Distribution error/s,
+                 'pub distribute failed copy OK' );
+    ok( $app->run, 'pub distribute failed copy OK run' );
+
+    # Missing method args
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(pub --noarchive -d nonesuch)) },
+                 qr/method 'nonesuch' not defined/s,
+                 'pub distribute bad method OK' );
+    ok( $app->run, 'pub distribute bad method OK run' );
+}
+
+sub test_publish_distribute_scripts
+{
+    # Simple script
+    my $app = get_test_app();
+    my @cmd = split(' ', "pub --noarchive -d script " .
+                 "t/testfiles/distribute-script-echo.pl");
     stdout_like( sub { $app->process_args(@cmd) },
                  qr/Distributed OK/s,
                  'pub distribute script OK' );
@@ -530,22 +555,6 @@ sub test_publish_distribute
         'Deleted distribution_method variable' );
     ok( App::Zapzi::Config::delete('distribution_destination'),
         'Deleted distribution_method variable' );
-
-    # Failed copy - no such dir
-    $app = get_test_app();
-    $copied_to = "$test_dir/no/such/dir/copied.ebook";
-    @cmd = split(' ', "pub --noarchive -d copy $copied_to");
-    stdout_like( sub { $app->process_args(@cmd) },
-                 qr/Distribution error/s,
-                 'pub distribute failed copy OK' );
-    ok( $app->run, 'pub distribute failed copy OK run' );
-
-    # Missing method args
-    $app = get_test_app();
-    stdout_like( sub { $app->process_args(qw(pub --noarchive -d nonesuch)) },
-                 qr/method 'nonesuch' not defined/s,
-                 'pub distribute bad method OK' );
-    ok( $app->run, 'pub distribute bad method OK run' );
 }
 
 sub test_help_version
