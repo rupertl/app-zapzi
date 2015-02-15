@@ -152,6 +152,14 @@ sub test_html_extractmain
     ok( $tx->to_readable, 'Transform sample HTML file with links' );
     like( $tx->readable_text, qr|example.com/some-link|,
           'Links present in HTML again');
+
+    # Try an empty HTML file, which should return error
+    $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/empty.html');
+    ok( $f->fetch, 'Fetch HTML' );
+    $tx = App::Zapzi::Transform->new(raw_article => $f,
+                                     transformer => 'HTMLExtractMain');
+    isa_ok( $tx, 'App::Zapzi::Transform' );
+    is( $tx->to_readable, undef, 'Empty HTML file returns error' );
 }
 
 sub test_pod

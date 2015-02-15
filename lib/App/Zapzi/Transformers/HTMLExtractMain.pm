@@ -55,8 +55,11 @@ sub _extract_html
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );
 
-    $self->_remove_fonts($tree);
-    $self->_optionally_deactivate_links($tree);
+    if ($tree)
+    {
+        $self->_remove_fonts($tree);
+        $self->_optionally_deactivate_links($tree);
+    }
 
     return $tree;
 }
