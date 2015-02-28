@@ -80,9 +80,12 @@ characters, eg
 
     $ zapzi add 'http://example.com/article?id=4'
 
-Zapzi will download a copy and store it in its database. Note that if
-you need to log into a site this will not work - save a copy of the
-page locally using your browser and then point Zapzi at the file.
+Use `zapzi add -` to add a list of articles read from standard input.
+
+Zapzi will download a copy of each and store it in its database. Note
+that if you need to log into a site this will not work - save a copy
+of the page locally using your browser and then point Zapzi at the
+file.
 
 ## Transformers
 
@@ -289,8 +292,9 @@ The following configuration variables are available:
     $ zapzi config set KEY VALUE
       Set configuration variable KEY to VALUE.
 
-    $ zapzi add [-t TRANSFORMER] FILE | URL | POD
-      Adds article to database. Accepts multiple file names or URLs.
+    $ zapzi add [-t TRANSFORMER] FILE | URL | POD | -
+      Adds article to database. Accepts multiple file names or URLs,
+      or read articles names from standard input with -
       TRANSFORMER determines how to extract the text from the article
       and can be HTML, HTMLExtractMain, POD or TextMarkdown
       If not specified, Zapzi will choose the best option based on the

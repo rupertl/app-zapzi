@@ -277,6 +277,21 @@ sub test_add
                  qr/Could not transform/,
                  'transform error' );
     ok( $app->run, 'add run' );
+
+    # Test providing article sources on stdin
+    my $fake_stdin =
+        "   t/testfiles/sample.txt   \n" .
+        "         \n" .
+        "";
+    open my $stdin, '<', \$fake_stdin
+        or die "Cannot open STDIN to read from string: $!";
+    local *STDIN = $stdin;
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(
+                           qw(add -)) },
+                 qr/Added article/,
+                 'add from stdin' );
+    ok( ! $app->run, 'add from stdin run' );
 }
 
 sub test_delete_article
@@ -384,7 +399,7 @@ sub test_publish
     my $app = get_test_app();
 
     stdout_like( sub { $app->process_args(qw(publish)) },
-                 qr/5 articles.*Published.*\.mobi$/s,
+                 qr/ articles.*Published.*\.mobi$/s,
                  'publish' );
     ok( ! $app->run, 'publish run' );
 

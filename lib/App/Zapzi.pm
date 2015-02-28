@@ -669,6 +669,11 @@ sub add
     my $self = shift;
     my @args = @_;
 
+    if (scalar @args == 1 && $args[0] eq '-')
+    {
+        @args = _read_lines_from_stdin();
+    }
+
     if (! @args)
     {
         print "Need to provide articles names to add\n";
@@ -714,6 +719,20 @@ sub add
     # Allow other commands in the command line to operate on the list of
     # articles added.
     return @article_ids;
+}
+
+sub _read_lines_from_stdin
+{
+    # Return an list of arguments by reading lines from STDIN
+
+    my @args;
+    while (<STDIN>)
+    {
+        $_ =~ s/^\s+|\s+$//g ; # remove leading and trailing whitespace
+        next if ($_ eq '');    # ignore blank lines
+        push(@args, $_);
+    }
+    return @args;
 }
 
 =method show(output, articles)
@@ -925,8 +944,9 @@ sub help
   $ zapzi config set KEY VALUE
     Set configuration variable KEY to VALUE.
 
-  $ zapzi add [-t TRANSFORMER] FILE | URL | POD
+  $ zapzi add [-t TRANSFORMER] FILE | URL | POD | -
     Adds article to database. Accepts multiple file names or URLs.
+    or read articles names from standard input with -
     TRANSFORMER determines how to extract the text from the article
     and can be HTML, HTMLExtractMain, POD or TextMarkdown
     If not specified, Zapzi will choose the best option based on the
