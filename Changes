@@ -2,6 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.016     2015-03-14 10:35:35+07:00 Asia/Bangkok
+
+  * 'zapzi add -' will read a list of articles to add from standard input
+  * Request data fetched via HTTP not to be compressed
+  * Better error handling if HTML document has no extractable text
+  * Fixes to tests and dist.ini
+
 0.015     2014-08-16 12:42:29+07:00 Asia/Bangkok
 
   * Option to deactivate links when using HTMLExtractMain transformer
