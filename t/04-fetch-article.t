@@ -15,8 +15,9 @@ my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 test_get_file();
 SKIP:
 {
-    skip('No internet connection so no URL tests', 14)
-        unless HTTP::Tiny->new->get('http://example.com/')->{success};
+    skip('Skipping tests that need internet connectivity; enable these ' .
+         'by setting environment variable ZAPZI_TEST_HTTP', 1)
+        unless defined $ENV{ZAPZI_TEST_HTTP};
     test_get_url();
 }
 test_get_pod();
