@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.017     2015-03-15 10:42:59+07:00 Asia/Bangkok
+
+  * Skip tests that require Internet connectivity
+
 0.016     2015-03-14 10:35:35+07:00 Asia/Bangkok
 
   * 'zapzi add -' will read a list of articles to add from standard input
